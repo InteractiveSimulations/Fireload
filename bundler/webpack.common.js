@@ -32,7 +32,11 @@ module.exports = {
             // glsl
             {
                 test: /\.glsl$/,
-                use: ['webpack-glsl-loader']
+                use: [
+                    {
+                        loader: 'webpack-glsl-loader',
+                    }
+                ]
             },
             // HTML
             {
