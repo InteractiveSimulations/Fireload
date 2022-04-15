@@ -1,35 +1,33 @@
 import './style.css'
 import * as THREE from 'three'
+import { GUI } from 'dat.gui'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {TransformControls} from 'three/examples/jsm/controls/TransformControls.js';
 import Stats from 'three/examples/jsm/libs/stats.module';
-import { GUI } from 'dat.gui'
-import { Vector3 } from 'three';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 
 window.addEventListener('resize', onWindowResize, false);
 window.addEventListener('pointerdown', onMouseDown, false);
 
-let renderer, scene, camera, control, clock, gui, transformControl, raycaster;
+let renderer, scene, camera, control, gui, transformControl, raycaster, obj_loader;
 let objects = [];
 let pointLightProperties;
 const fShader = require('./glsl/fragment.glsl');
 const vShader = require('./glsl/vertex.glsl');
 
-
-
 function init() {
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.appendChild(renderer.domElement);
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
-    camera.position.set(0, -15, 10);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000);
+    camera.position.set(0, 10, 0);
     camera.lookAt(0,0,0);
 
     scene = new THREE.Scene();
-    clock = new THREE.Clock();
+    obj_loader = new OBJLoader();
 
     control = new OrbitControls(camera, renderer.domElement);
     control.addEventListener('change', render);
@@ -43,15 +41,39 @@ function init() {
     })
     raycaster = new THREE.Raycaster();
 
+    //skybox
+    //TODO: fix webpack loading of img
+    let materialArray = [];
+    let tex_lloader_ft = new THREE.TextureLoader().load('static/skyboxes/arid_ft.jpg');
+    let tex_lloader_bk = new THREE.TextureLoader().load('assets/images/arid2_bk.jpg');
+    let tex_lloader_up = new THREE.TextureLoader().load('assets/images/arid2_up.jpg');
+    let tex_lloader_dn = new THREE.TextureLoader().load('assets/images/arid2_dn.jpg');
+    let tex_lloader_rt = new THREE.TextureLoader().load('assets/images/arid2_rt.jpg');
+    let tex_lloader_lf = new THREE.TextureLoader().load('assets/images/arid2_lf.jpg');
+
+    materialArray.push(new THREE.MeshBasicMaterial({map: tex_lloader_ft}));
+    materialArray.push(new THREE.MeshBasicMaterial({map: tex_lloader_bk}));
+    materialArray.push(new THREE.MeshBasicMaterial({map: tex_lloader_up}));
+    materialArray.push(new THREE.MeshBasicMaterial({map: tex_lloader_dn}));
+    materialArray.push(new THREE.MeshBasicMaterial({map: tex_lloader_rt}));
+    materialArray.push(new THREE.MeshBasicMaterial({map: tex_lloader_lf}));
+
+    let skyboxGeo = new THREE.BoxGeometry(1000, 1000, 1000);
+    let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+    scene.add(skybox);
+
     //const gridHelper = new THREE.GridHelper(10, 20);
     //scene.add(gridHelper);
 
-    initObjects();
+    initBasicObj();
+    initObj();
     initLights();
     initGui();
+
+    update();
 }
 
-function initObjects() {
+function initBasicObj() {
     const plane = new THREE.Mesh(
         new THREE.BoxGeometry(10, 10, 0.3),
         new THREE.MeshPhongMaterial({
@@ -60,6 +82,8 @@ function initObjects() {
             shininess: 10,
             side: THREE.DoubleSide
         }));
+    //rotate
+    plane.rotation.x = -Math.PI / 2;
     plane.position.set(0, 0, -0.7);
     plane.receiveShadow = true;
     const geometry = new THREE.BoxGeometry();
@@ -84,6 +108,25 @@ function initObjects() {
     scene.add(cube2);
     scene.add(plane);
     scene.add(transformControl);
+}
+
+function initObj() {
+    /* TODO: load obj + tex using webpack?*/ 
+    var wood = 'wood/Wood.obj';
+    obj_loader.load(wood,
+    function(obj) {
+        obj.scale.set(0.5, 0.5, 0.5);
+        //rotate
+        //scene.add(obj);
+    },
+    function(xhr) {
+        console.log( xhr.loaded / xhr.total * 100 + "% loaded");
+    },
+    function (err) {
+        console.log("An error happened !");
+    }
+    );
+    render(); 
 }
 
 function initGui() {
@@ -121,6 +164,7 @@ function initGui() {
         render();
     })
 
+    /* TODO: fix Performance visuals*/ 
     const perfFolder = gui.addFolder('Performance');
     var stats = new Stats();
     stats.domElement.height = '48px';
@@ -139,9 +183,9 @@ function initLights() {
     scene.add(ambientLight);
 
     pointLightProperties = {
-        intensity: 0.3,
+        intensity: 0.25,
         showHelper: false,
-        position: new Vector3(4,4,4),
+        position: new THREE.Vector3(4,3,-2),
         color: 0xffffff,
     };
     pointLight = new THREE.PointLight(pointLightProperties.color, pointLightProperties.intensity);
@@ -162,6 +206,7 @@ function render() {
 
 function update() {
     render();
+    requestAnimationFrame(update);
 }
 
 function onWindowResize() {
@@ -186,4 +231,3 @@ function onMouseDown(event) {
 }
 
 init();
-window.requestAnimationFrame(update);
