@@ -92,6 +92,20 @@ module.exports = {
                         }
                     }
                 ]
+            },
+            // Models
+            {
+                test: /\.(obj|fbx|glb|gltf)$/,
+                use:
+                [
+                    {
+                        loader: 'model-loader',
+                        options:
+                        {
+                            outputPath: 'assets/models/'
+                        }
+                    }
+                ]
             }
         ]
     }
