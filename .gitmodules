@@ -1,3 +1,0 @@
-[submodule "third-party/ThreeClient"]
-	path = third-party/ThreeClient
-	url = git@github.com:InteractiveSimulations/ThreeClient.git
