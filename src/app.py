@@ -3,6 +3,7 @@
 import websockets
 import json
 import blender
+import asyncio
 
 
 # coroutine with the connection as argument.
@@ -22,6 +23,7 @@ async def handler(websocket):
         sceneInformation = json.loads(message)
 
         blender.startBlender(sceneInformation)
+        #blender.startBlender()
 
 
 # coroutine which waits for a client to connect.
@@ -37,4 +39,5 @@ async def main():
 
 if __name__ == "__main__":
     print("Start websocket server.")
+    #asyncio.run(handler())
     asyncio.run(main())
