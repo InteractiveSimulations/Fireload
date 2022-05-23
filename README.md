@@ -6,7 +6,7 @@ The work and development progress of the fireload project can be found in this r
 > The client will then incorporate the Fire Simulation into the scene he has created.
 > Our goal is to be able to perform a simulation at a very low cost while still maintaining a high level of quality for our clients.
 
-The [Contribution Policy](#Contribution Policy) should be consulted when contributing to this project
+The [Contribution Policy](#contribution-policy) should be consulted when contributing to this project
 
 ## Contribution Policy
 
