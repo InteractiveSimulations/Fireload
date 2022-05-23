@@ -13,7 +13,7 @@ The [Contribution Policy](#contribution-policy) should be consulted when contrib
     # clone this repo
     git clone https://github.com/InteractiveSimulations/Fireload.git
     # or ssh
-    git@github.com:InteractiveSimulations/Fireload.git
+    git clone git@github.com:InteractiveSimulations/Fireload.git
 ```
 Then you have to generate the **distribution** folder with webpack.
 Please refer to [this](ThreeClient/README.md#generate-distribution-folder)
