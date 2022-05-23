@@ -8,6 +8,20 @@ The work and development progress of the **fireløad** project can be found in t
 
 The [Contribution Policy](#contribution-policy) should be consulted when contributing to this project
 
+## Getting Started
+```bash
+    # clone this repo
+    git clone https://github.com/InteractiveSimulations/Fireload.git
+    # or ssh
+    git@github.com:InteractiveSimulations/Fireload.git
+```
+Then you have to generate the **distribution** folder with webpack.
+Please refer to [this](ThreeClient/README.md#generate-distribution-folder)
+
+
+[Start the server](Server/README.md#instructions)
+
+
 ## Contribution Policy
 
 When working on features, it is necessary to work in a subbranch, e.g. :
