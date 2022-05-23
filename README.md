@@ -1,6 +1,6 @@
 # Fireløad
 
-The work and development progress of the fireload project can be found in this repository. It is a project that is being actively developed as part of the IA and Web Course of the Technical University of Koeln.
+The work and development progress of the **fireløad** project can be found in this repository. It is a project that is being actively developed as part of the IA and Web Course of the Technical University of Koeln.
 
 > It is the main goal of this project to create a fire simulation that runs server-side-on Blender and then get sent to the client via a Python server through the use of WebSockets.
 > The client will then incorporate the Fire Simulation into the scene he has created.
