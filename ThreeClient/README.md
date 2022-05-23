@@ -1,4 +1,5 @@
 # Three Js Client
+This is the Client-Side of the **fireløad** project. 
 
 
 ## Setup
