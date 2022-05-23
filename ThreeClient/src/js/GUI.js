@@ -3,6 +3,9 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader";
 import * as THREE from "three";
 
+/// @file GUI.js
+/// @namespace Sync
+/// Module for loading and storing data
 class GUI {
     #gui; //make it private
     #scene;
@@ -48,7 +51,10 @@ class GUI {
         this.#floorFolder.add(floorController, 'texture', ['none', 'wood', 'small tiles']).name('Texture').onChange(loadFloorMaterial);
         this.#floorFolder.add(floorController, 'repeat', 0.2, 50).name('Repeat').onChange(loadFloorMaterial);
     }
-
+    /// @function GUI.loadObject
+    /// Loads an Object
+    /// @param {Number} the Object Number
+    /// Loads an resource
     loadObject(objectId){
         let objectLoader = new GLTFLoader();
         objectLoader.setPath('/assets/models/')
