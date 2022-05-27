@@ -21,7 +21,6 @@ module.exports = merge(
             },
             port: 8080,
             compress: true,
-            https: true,
             bonjour: true,
             hot: true,
             open:true,
