@@ -3,7 +3,7 @@ import * as Loader from './Loader.js'
 
 //gui class takes in scene, objects and floor
 export default class UI{
-    constructor(scene, objects, floor, camera, ambientLight){
+    constructor(scene, objects, floor, camera, ambientLight, renderer){
 
         this.datgui = new GUI();
 
@@ -47,16 +47,19 @@ export default class UI{
         //create settings folder
         this.settingsFolder = this.datgui.addFolder('Settings');
             this.cameraFolder = this.settingsFolder.addFolder('Camera');
-                //this.cameraFolder.add(this.camera, 'fov', 30, 90, 0.1).onChange(function(){ this.camera.updateProjectionMatrix()}).name('Fiel of view');
+                this.cameraFolder.add(camera, 'fov', 30, 90, 0.1).onChange(function(){ camera.updateProjectionMatrix()}).name('Fiel of view');
             this.graphicsFolder = this.settingsFolder.addFolder('Graphics');
-                this.graphicsFolder.add(hdriController, 'resolution', ['1k', '2k', '4k']).name('HDRI texture resolution').onChange(function() { Loader.loadHDRI(hdriController, scene) });
-                this.graphicsFolder.add(floorController, 'resolution', ['1k', '2k']).name('Floor texture resolution').onChange(function() { Loader.loadFloorMaterial(floorController, floor) });
+                this.hdriSettingsFolder = this.graphicsFolder.addFolder('HDRI'); 
+                    this.hdriSettingsFolder.add(hdriController, 'resolution', ['1k', '2k', '4k']).name('HDRI texture resolution').onChange(function() { Loader.loadHDRI(hdriController, scene) });
+                this.floorSettingsFolder = this.graphicsFolder.addFolder('Floor')
+                    this.floorSettingsFolder.add(floorController, 'resolution', ['1k', '2k']).name('Floor texture resolution').onChange(function() { Loader.loadFloorMaterial(floorController, floor) });
+                    this.floorSettingsFolder.add(floorController, 'filtering', 1, renderer.getMaxAnisotropy()).name('Anisotropic Filtering').onChange(function() {Loader.loadFloorMaterial(floorMaterial, floor) });
         //create light folder
         this.lightFolder = this.datgui.addFolder('Light');
             this.ambientLightFolder = this.lightFolder.addFolder('Ambient light');
-                this.ambientLightFolder.addColor(ambientLightController, 'skyColor').onChange(function(color) { this.ambientLight.skyColor = new THREE.Color(color); });
-                this.ambientLightFolder.addColor(ambientLightController, 'groundColor').onChange(function(color) { this.ambientLight.groundColor = new THREE.Color(color); });
-                this.ambientLightFolder.add(ambientLightController, 'intensity').onChange(function(value) { this.ambientLight.intensity = value; });
+                this.ambientLightFolder.addColor(ambientLightController, 'skyColor').onChange(function(color) { ambientLight.skyColor = new THREE.Color(color); });
+                this.ambientLightFolder.addColor(ambientLightController, 'groundColor').onChange(function(color) { ambientLight.groundColor = new THREE.Color(color); });
+                this.ambientLightFolder.add(ambientLightController, 'intensity').onChange(function(value) { ambientLight.intensity = value; });
     }
 
     

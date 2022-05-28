@@ -32,7 +32,7 @@ function init() {
     initRendering();
     initControls();
     //create gui
-    gui = new UI(scene, objects, floor, camera, ambientLight);
+    gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
 }
 
