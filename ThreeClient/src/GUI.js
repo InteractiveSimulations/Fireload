@@ -30,13 +30,15 @@ export default class UI{
         }
         //create floor folder
         this.floorFolder = this.datgui.addFolder('Floor');
-            this.floorFolder.add(floorController, 'texture', ['none', 'wood', 'small tiles']).name('Texture').onChange(function() { Loader.loadFloorMaterial(floorController, floor)});
-            this.floorFolder.add(floorController, 'repeat', 0.2, 50).name('Repeat').onChange(function() { Loader.loadFloorMaterial(floorController, floor)});
+            this.floorFolder.add(floorController, 'texture', ['none', 'wood', 'small tiles']).name('Texture').onChange(function() { Loader.loadFloorMaterial(floorController, floor) });
+            this.floorFolder.add(floorController, 'repeat', 0.2, 50).name('Repeat').onChange(function() { Loader.loadFloorMaterial(floorController, floor) });
         //create hdri folder
         this.hdriFolder = this.datgui.addFolder('HDRI');
             this.hdriFolder.add(hdriController, 'texture', ['none', 'apartment 1 [day][sunny]', 'apartment 2 [day][sunny]', 'apartment 3 [day][sunny]',
             'forrest 1 [day][overcast]', 'forrest 2 [day][sunny]', 'forrest 3 [day][sunny]', 'field 1 [sunrise][sunny]', 'field 2 [day][sunny]', 'field 3 [sunset][sunny]',
-            'city 1 [day][sunny]', 'city 2 [day][overcast]', 'city 3 [night]']).name('Texture').onChange(function() { Loader.loadHDRI(hdriController, scene)});
+            'city 1 [day][sunny]', 'city 2 [day][overcast]', 'city 3 [night]']).name('Texture').onChange(function() { Loader.loadHDRI(hdriController, scene) });
+            this.hdriFolder.add(hdriController, 'background').name('Use as background').onChange(function() { Loader.changeHDRI(hdriController, scene) });
+            this.hdriFolder.add(hdriController, 'lighting').name('Use for lighting').onChange(function() { Loader.changeHDRI(hdriController, scene) });
         //create object folder       
         this.objectFolder = this.datgui.addFolder('Objects');
             this.furnitureFolder = this.objectFolder.addFolder('Furniture');
@@ -47,8 +49,8 @@ export default class UI{
             this.cameraFolder = this.settingsFolder.addFolder('Camera');
                 //this.cameraFolder.add(this.camera, 'fov', 30, 90, 0.1).onChange(function(){ this.camera.updateProjectionMatrix()}).name('Fiel of view');
             this.graphicsFolder = this.settingsFolder.addFolder('Graphics');
-                this.graphicsFolder.add(hdriController, 'resolution', ['1k', '2k', '4k']).name('HDRI texture resolution').onChange(function() { Loader.loadHDRI(hdriController, scene)});
-                this.graphicsFolder.add(floorController, 'resolution', ['1k', '2k']).name('Floor texture resolution').onChange(function() { Loader.loadFloorMaterial(floorController, floor)});
+                this.graphicsFolder.add(hdriController, 'resolution', ['1k', '2k', '4k']).name('HDRI texture resolution').onChange(function() { Loader.loadHDRI(hdriController, scene) });
+                this.graphicsFolder.add(floorController, 'resolution', ['1k', '2k']).name('Floor texture resolution').onChange(function() { Loader.loadFloorMaterial(floorController, floor) });
         //create light folder
         this.lightFolder = this.datgui.addFolder('Light');
             this.ambientLightFolder = this.lightFolder.addFolder('Ambient light');

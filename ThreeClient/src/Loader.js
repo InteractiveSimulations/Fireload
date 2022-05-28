@@ -108,6 +108,46 @@ export function loadHDRI(hdriController, scene){
 }
 //changes effect of hdri on lighting or background
 export function changeHDRI(hdriController, scene){
+    if(hdriController.background == true){       
+        //check if hdri is set as environment/lighting map, so that it doesn't need to be loaded twice
+        if(scene.environment != null && scene.environment != 'undefined'){
+            scene.background = scene.environment;
+        }
+        //when hdri is not loaded as environment/lighting map, hdri needs to be reloaded
+        else{
+            var hdriLoader = new RGBELoader();
+            hdriLoader.setPath('/assets/textures/hdri/');
+            hdriLoader.load(hdriController.texture + '_' + hdriController.resolution + '.hdr', function(texture){ 
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+                scene.background = texture;
+            });
+        }
+    }
+
+    if(hdriController.background == false){
+        scene.background = null;
+    }
+
+    if(hdriController.lighting == true){
+        //check if hdri is set as background map, so that it doesn't need to be loaded twice
+        if(scene.background != null && scene.background != 'undefined'){
+            scene.environment = scene.background;
+        }
+        //when hdri is not loaded as background map, hdri needs to be reloaded
+        else{
+            var hdriLoader = new RGBELoader();
+            hdriLoader.setPath('/assets/textures/hdri/');
+            hdriLoader.load(hdriController.texture + '_' + hdriController.resolution + '.hdr', function(texture){ 
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+                scene.environment = texture;
+            });
+        }
+    }
+
+    if(hdriController.lighting == false){
+        scene.environment = null;
+    }
+    /*
     if(hdriController.background == true || hdriController.lighting == true){
         var hdriLoader = new RGBELoader();
         hdriLoader.setPath('/assets/textures/hdri/');
@@ -140,6 +180,7 @@ export function changeHDRI(hdriController, scene){
         scene.background = null;
         scene.lighting = null;   
     }
+    */
 }
 //takes in the object name and adds it to the scene and object list
 export function loadObject(objectController, scene, objects){
