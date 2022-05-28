@@ -28,37 +28,58 @@ document.body.appendChild(stats.dom);
 
 
 function init() {
-    //creating and setting up camera
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
-    camera.position.set(10, 5, 10);
+    initScene();
+    initRendering();
+    initControls();
+    //create gui
+    gui = new UI(scene, objects, floor, camera, ambientLight);
+    update();
+}
 
-    //create scene
-    scene = new THREE.Scene();
+function initScene(){
+     //creating and setting up camera
+     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
+     camera.position.set(10, 5, 10);
+     //create scene
+     scene = new THREE.Scene();
+    //initialising objects and lights
+     initObjects();
+     initLights();
+}
 
+function initObjects(){
     //create floor
     floor = new THREE.Mesh(new THREE.BoxGeometry(10, 0.1, 10), new THREE.MeshStandardMaterial());
     scene.add(floor);
+    //adding cube
+    let cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
+    cube.position.set(0, 0.5, 0);
+    scene.add(cube);
+    objects.push(cube);
+}
 
-    //create gui
-    gui = new UI(scene, objects, floor, camera, ambientLight);
+function initLights(){
+    ambientLight = new THREE.HemisphereLight(0xe0f3ff, 0xffc26e, 0.2);
+    scene.add(ambientLight);
+}
 
+function initRendering(){
     //creating and setting up the renderer
     renderer = new THREE.WebGLRenderer( {antialias: true} );
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-
     //set tonemapping
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1;
     renderer.outputEncoding = THREE.sRGBEncoding;  
-
     //appending renderer to dom
     document.body.appendChild(renderer.domElement);
+}
 
+function initControls(){
     //setting up orbit controls
     orbitControls = new OrbitControls(camera, renderer.domElement);
     orbitControls.addEventListener('change', render);
-
     //setting up transform controls
     transformControls = new TransformControls(camera, renderer.domElement);
     transformControls.addEventListener('change', render);
@@ -68,31 +89,9 @@ function init() {
     transformControls.addEventListener('mouseUp', function() {
         orbitControls.enabled = true;
     })
-    scene.add(transformControls);
-
-    var test = new FirstPersonController(camera, renderer.domElement);
-    
+    scene.add(transformControls);  
     //create raycaster
     raycaster = new THREE.Raycaster();
-
-    //init
-    initObjects();
-    initLights();
-    update();
-}
-
-function initObjects() {
-    //adding cube
-    let cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
-    cube.position.set(0, 0.5, 0);
-    scene.add(cube);
-    objects.push(cube);
-}
-
-function initLights() {
-    //adding floor to the scene
-    ambientLight = new THREE.HemisphereLight(0xe0f3ff, 0xffc26e, 0.2);
-    scene.add(ambientLight);
 }
 
 function changeToFPControls(){
