@@ -26,6 +26,7 @@ let selected;
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
+
 function init() {
     //creating and setting up camera
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
@@ -169,3 +170,4 @@ function onKeyDown(event){
 }
 
 init();
+
