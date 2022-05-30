@@ -147,40 +147,6 @@ export function changeHDRI(hdriController, scene){
     if(hdriController.lighting == false){
         scene.environment = null;
     }
-    /*
-    if(hdriController.background == true || hdriController.lighting == true){
-        var hdriLoader = new RGBELoader();
-        hdriLoader.setPath('/assets/textures/hdri/');
-        hdriLoader.load(hdriController.texture + '_' + hdriController.resolution + '.hdr', function(texture){
-            texture.mapping = THREE.EquirectangularReflectionMapping;
-            if(hdriController.background == true){
-                scene.background = texture;
-            }
-            if(hdriController.background == false){
-                scene.background = null;
-            }
-            if(hdriController.lighting == true){
-                scene.environment = texture;
-            }
-            if(hdriController.lighting == false){
-                scene.environment = null;
-            }
-        },
-        //called when loading is in progresses
-        function ( xhr ) {
-            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-        },
-        //called when loading has errors
-        function ( error ) {
-            console.log( 'An error happened while loading the HDRI texture!' );
-        }
-        );
-    }
-    else{
-        scene.background = null;
-        scene.lighting = null;   
-    }
-    */
 }
 //takes in the object name and adds it to the scene and object list
 export function loadObject(objectController, scene, objects){
@@ -201,4 +167,35 @@ export function loadObject(objectController, scene, objects){
 		    console.log( 'An error happened' );
 	    }
     );
+}
+
+//takes in the object name and adds it to the scene as the only object, deletes other objects
+export function loadObjectAsOnly(objectController, scene, object){
+    if(objectController.object == 'none'){
+        console.log('none')
+        scene.remove( object );
+        object = null;
+    }
+    else{
+    var objectLoader = new GLTFLoader();
+    objectLoader.setPath('/assets/models/')
+    objectLoader.load(objectController.object + '.glb', 
+        //called when resource is loaded
+	    function ( gltf ) {
+            scene.remove(object);
+            object = gltf.scene;
+            console.log(object);
+	    	scene.add( gltf.scene );
+	    },
+	    //called when loading is in progresses
+	    function ( xhr ) {
+		    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+	    },
+	    //called when loading has errors
+	    function ( error ) {
+		    console.log( 'An error happened' );
+	    }
+    );
+    }
+    
 }
