@@ -83,12 +83,14 @@ function switchToFPControls(){
     controller.destroy();
     gui.hide();
     controller = new FirstPersonController(camera, document);
+    fire = new Fire(null, null, camera, scene);
 }
 
 function switchToOrbitControls(){
     controller.destroy();
     gui.hide();
     controller = new OrbitController(camera, document.body, scene, objects, selected);
+    fire.destroy();
     update();
 }
 
@@ -102,7 +104,7 @@ function update() {
     render();
     requestAnimationFrame(update);
     if(fire != null && fire != 'undefined'){
-        //fire.update();
+        fire.update();
     }
 }
 
