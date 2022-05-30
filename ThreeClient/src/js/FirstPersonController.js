@@ -3,12 +3,12 @@ import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockCont
 
 export default class FirstPersonController{
     constructor(camera, document){
+        document.body.requestPointerLock();
+        this.controls = new PointerLockControls(camera, document.body); //can only be called after pointerlock call request
         this.camera = camera;
         camera.position.set(-5, 1.7, -5);
         camera.lookAt(0,0,0);
         this.camera.rotation.order = 'YXZ';
-        document.body.requestPointerLock();
-        this.controls = new PointerLockControls(camera, document.body); //can only be called after pointerlock call request
         
         this.moveForward = false;
         this.moveBackward = false;

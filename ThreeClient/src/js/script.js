@@ -1,10 +1,9 @@
-import './style.css'
+import '../style.css'
 import * as THREE from 'three'
 import UI  from './GUI.js'
 import Stats from 'three/examples/jsm/libs/stats.module';
 import FirstPersonController from './FirstPersonController';
 import OrbitController from './OrbitController.js';
-import { ObjectSpaceNormalMap } from 'three';
 
 window.addEventListener('resize', onWindowResize, false);
 window.addEventListener('pointerdown', onMouseDown, false);
@@ -14,7 +13,6 @@ window.addEventListener('keyup', onKeyUp, false);
 window.addEventListener('mousemove', onMouseMove, false);
 
 let renderer, scene, camera;
-//let orbitControls, fpControls, transformControls;
 let controller;
 let gui;
 
@@ -32,9 +30,7 @@ document.body.appendChild(stats.dom);
 function init() {
     initScene();
     initRendering();
-    //initOrbitControls();
     controller = new OrbitController(camera, renderer.domElement, scene, objects, selected);
-    //controller = new OrbitController(camera, document);
     //create gui
     gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
@@ -84,6 +80,10 @@ function switchToFPControls(){
     controller.destroy();
     gui.hide();
     controller = new FirstPersonController(camera, document);
+}
+
+function switchToOrbitControls(){
+
 }
 
 function render() {
