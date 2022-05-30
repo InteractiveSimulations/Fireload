@@ -4,6 +4,7 @@ import UI  from './GUI.js'
 import Stats from 'three/examples/jsm/libs/stats.module';
 import FirstPersonController from './FirstPersonController';
 import OrbitController from './OrbitController.js';
+import Fire from './Fire';
 
 window.addEventListener('resize', onWindowResize, false);
 window.addEventListener('pointerdown', onMouseDown, false);
@@ -18,6 +19,8 @@ let gui;
 
 let floor;
 let ambientLight;
+
+let fire = null;
 
 let objects = [];
 let selected;
@@ -39,7 +42,7 @@ function init() {
 function initScene(){
     //creating and setting up camera
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
-    camera.position.set(10, 5, 10);
+    camera.position.set(10, 10, 10);
     //create scene
     scene = new THREE.Scene();
     //initialising objects and lights
@@ -83,7 +86,10 @@ function switchToFPControls(){
 }
 
 function switchToOrbitControls(){
-
+    controller.destroy();
+    gui.hide();
+    controller = new OrbitController(camera, document.body, scene, objects, selected);
+    update();
 }
 
 function render() {
@@ -95,6 +101,9 @@ function update() {
     controller.move();
     render();
     requestAnimationFrame(update);
+    if(fire != null && fire != 'undefined'){
+        //fire.update();
+    }
 }
 
 function onWindowResize() {
@@ -122,7 +131,15 @@ function onKeyDown(event){
     switch(event.code){
         //change to fp controls
         case 'KeyF':
+        console.log('switching to first person');
         switchToFPControls();
+        break;
+        
+        case 'KeyO':
+        console.log('switching to orbit');
+        switchToOrbitControls();
+        
+        //switchToFPControls();
         break;
     }
 }

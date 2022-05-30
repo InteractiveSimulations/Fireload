@@ -70,4 +70,7 @@ export default class UI{
     hide(){
         GUI.toggleHide();
     }
+    show(){
+        GUI.toggleShow();
+    }
 }

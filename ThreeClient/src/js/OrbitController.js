@@ -6,7 +6,6 @@ export default class OrbitController{
     constructor(camera, domElement, scene, objects, selected){
         //setting up orbit controls
         let orbitControls = new OrbitControls(camera, domElement);
-        console.log(typeof orbitControls);
         //setting up transform controls
         
         this.transformControls = new TransformControls(camera, domElement);
@@ -18,12 +17,13 @@ export default class OrbitController{
         this.transformControls.addEventListener('mouseUp', function() {
             orbitControls.enabled = true;
         })
-        scene.add(this.transformControls);  
+        scene.add(this.transformControls);
         
         //create raycaster
         this.raycaster = new THREE.Raycaster(); 
         //scene data
         this.camera = camera;
+        this.camera.position.set(10, 10, 10);
         this.scene = scene;
         this.objects = objects;
         this.selected = selected;

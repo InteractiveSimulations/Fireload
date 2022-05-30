@@ -7,8 +7,9 @@ export default class FirstPersonController{
         this.controls = new PointerLockControls(camera, document.body); //can only be called after pointerlock call request
         this.camera = camera;
         camera.position.set(-5, 1.7, -5);
-        camera.lookAt(0,0,0);
         this.camera.rotation.order = 'YXZ';
+        camera.rotation.set( 0, 0, 0 );
+        camera.lookAt( 0, 0, 0 );
         
         this.moveForward = false;
         this.moveBackward = false;
@@ -24,7 +25,7 @@ export default class FirstPersonController{
 		this.direction = new THREE.Vector3();
     }
     destroy(){
-        
+        this.controls.unlock();
     }
     onMouseDown(event){
 
