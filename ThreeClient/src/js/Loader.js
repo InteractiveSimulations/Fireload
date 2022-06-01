@@ -155,8 +155,9 @@ export function loadObject(objectController, scene, objects){
     objectLoader.load(objectController.object + '.glb', 
         //called when resource is loaded
 	    function ( gltf ) {
+            gltf.scene.name = objectController.object;
 	    	scene.add( gltf.scene );
-            objects.push( gltf.scene );
+            objects.obj.push( gltf.scene );
 	    },
 	    //called when loading is in progresses
 	    function ( xhr ) {
@@ -184,7 +185,6 @@ export function loadObjectAsOnly(objectController, scene, object){
 	    function ( gltf ) {
             scene.remove(object);
             object = gltf.scene;
-            console.log(object);
 	    	scene.add( gltf.scene );
 	    },
 	    //called when loading is in progresses
