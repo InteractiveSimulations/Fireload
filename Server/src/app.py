@@ -20,10 +20,14 @@ async def handler(websocket):
 
         # JSON 'Drehbuch' abfangen
         # Prototype: Nur Startposition des Feuers
+        # sceneInformation has JSONFile as String
         sceneInformation = json.loads(message)
 
-        blender.startBlender(sceneInformation)
-        #blender.startBlender()
+        with open('Pfad des Test.Json Ordners/jsonName.json', 'w') as outfile:
+            outfile.write(message)
+
+        #blender.startBlender(sceneInformation)
+        blender.startBlender()
 
 
 # coroutine which waits for a client to connect.

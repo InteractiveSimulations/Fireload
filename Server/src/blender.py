@@ -1,26 +1,23 @@
 import subprocess
 import os
+import json
 
-
-# Funktion startet Blender und übergibt das Drehbuch
+#Function starts blender and transfers the 'szenario' ('Drehbuch')
 def startBlender():
-    blenderPath = 'C:/Program Files/Blender Foundation/Blender 2.93'
-    file = 'C:/Users/natas/Documents/Studium/TH/6_Semester/IA_WEB_Projekt/TestDateiBlender/TestBlender.blend'
 
-    #subprocess.run(['blender', '-b', '-P', file])
-    #subprocess.run(['blender', r'C:\Users\natas\Documents\Studium\TH\6_Semester\IA_WEB_Projekt\TestDateiBlender\TestBlender.blend'])
-    #subprocess.run(['blender', file], shell = True)
-    #subprocess.run(['C:/Program Files/Blender Foundation/Blender 2.93'])
-    #subprocess.run(['blender'])
+    #blenderPath = '../../Blender Foundation/Blender 2.93'
+    blenderPath = 'C:/Program Files/Blender Foundation/Blender 2.93'
+    file_ = '../../BlenderSimulation/FireSimulation/Versionen/Fire_v4.blend'
+    file = 'C:/Users/natas/Documents/Studium/TH/6_Semester/IA_WEB_Projekt/Fire_v5.blend'
+
+    #Outputpfad, indem die Bilder gespeichert werden
+    imagesPath = 'C:/Users/natas/Documents/Studium/TH/6_Semester/IA_WEB_Projekt/Project/EXRImages/'
 
     os.chdir(blenderPath)
 
-    process = subprocess.Popen(['dir'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    print(stdout)
-
-    subprocess.run(['blender', file])
+    #script = ServerScript(json)
+    #Runs Blender in background and saves images
+    subprocess.run(['blender', '-b', file, '-o', imagesPath, '-a']) #Blenderdatei
 
 if __name__ == "__main__":
-    print("test")
     startBlender()
