@@ -1,4 +1,4 @@
-let websocket;
+export let websocket;
 
 function showMessage(message) {
     window.setTimeout(() => window.alert(message), 50);
