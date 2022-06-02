@@ -15,7 +15,7 @@ function receiveSimulation( data ) {
 export function requestSimulation( json ) {
 
     try {
-        websocket.send(json);
+        websocket.send( JSON.stringify(json, null, 2) );
     }
     catch (err) {
         // @Todo inform client via GUI that the connection isn't established
