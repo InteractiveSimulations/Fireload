@@ -67,7 +67,7 @@ export default class UI{
                         0
                     ]
                 };
-                WEBSOCKET.startSimulation(data);
+                WEBSOCKET.requestSimulation(data);
             }
         }
         let activeObjectController = {
