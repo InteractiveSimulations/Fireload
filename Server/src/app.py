@@ -23,6 +23,10 @@ async def handler(websocket):
         # sceneInformation has JSONFile as String
         # sceneInformation = json.loads(message)
 
+        print(message)
+
+        # @Todo throws an exception for a second request:
+        #  FileNotFoundError: [Errno 2] No such file or directory: '../../BlenderSimulation/Test_Json/Test.json'
         with open('../../BlenderSimulation/Test_Json/Test.json', 'w') as outfile:
             outfile.write(message)
 

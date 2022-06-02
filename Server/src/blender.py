@@ -12,13 +12,13 @@ def startBlender():
 
     dir_name = os.path.dirname(__file__).replace("\\", "/")
     print(dir_name)
-    version = dir_name + '/../../BlenderSimulation/FireSimulation/Versionen/Fire_v5.blend'
+    version = dir_name + '/../../BlenderSimulation/FireSimulation/Fire_v7.blend'
 
 
 
 
     # Outputpfad, indem die Bilder gespeichert werden
-    images_path = dir_name + '/../../BlenderSimulation/EXR Images/'
+    images_path = dir_name + '/../../BlenderSimulation/RenderImages/'
 
     os.chdir(blender_path)
 
