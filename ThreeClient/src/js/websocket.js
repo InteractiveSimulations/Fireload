@@ -12,7 +12,7 @@ function receiveSimulation( data ) {
  * Requests a simulation.
  * @param {string} json - json string which represents the scenes current state and the simulation script.
  */
-function requestSimulation( json ) {
+export function requestSimulation( json ) {
 
     try {
         websocket.send(json);
