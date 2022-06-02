@@ -5,7 +5,7 @@ const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
-    entry: path.resolve(__dirname, '../src/script.js'),
+    entry: path.resolve(__dirname, '../src/js/script.js'),
     output:
     {
         filename: 'bundle.[contenthash].js',
