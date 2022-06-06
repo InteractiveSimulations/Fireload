@@ -1,5 +1,7 @@
 **/node_modules
 **/package-lock.json
+**/.png
+**/.json
 **/.vscode
 **/.idea
 **/.DS_Store
