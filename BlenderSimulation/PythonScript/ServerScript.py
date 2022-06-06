@@ -12,12 +12,15 @@ from pathlib import Path
 #gerade funktioniert es nur ein einzelnes Objekt mit dem json hinzuzufügen 
 #open a JSON in Python 
 fileDirectory = os.path.dirname(__file__)               #directory of the Blender file
-parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> Versionen
-parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> FireSimulation
-parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> BlenderSimulation
-parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Fireload   
+parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> BlenderSimulation
+parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> Fireload
+parentDirectory3 = os.path.dirname(parentDirectory2)
+#parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Fireload
 
-dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
+##
+dirJson = os.path.join(parentDirectory3, "Fireload", "BlenderSimulation", "Test_Json", "JsonForBlender.JSON").replace("\\", "/")
+print(os.path.exists(dirJson))
+print(dirJson)
 
 with open(dirJson, 'r') as json_file:
 #with open('c:\\Users\\MaxBe\\Documents\\UNI\\Fireload\\BlenderSimulation\\Test_Json\\JsonForBlender.json', 'r') as json_file:
@@ -47,9 +50,9 @@ bpy.data.scenes["Scene"].frame_end = EndFrame
 #Renderformat
 #directorys of the folder
 #Rednder images
-dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
+dirRenderImages = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","RenderImages","")
 #zBuffer images
-dirZBufferImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","zBuffer","")
+dirZBufferImages = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","RenderImages","zBuffer","")
 #change the dutput directory of every node
 for scene in bpy.data.scenes:
     for node in scene.node_tree.nodes:
