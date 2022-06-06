@@ -6,7 +6,8 @@ import json
 def startBlender():
 
     # blenderPath = '../../Blender Foundation/Blender 2.93'
-    blender_path = 'C:/Program Files/Blender Foundation/Blender 2.93'
+    # @Todo blender as path variable and in readme
+    blender_path = 'C:\Program Files\Blender Foundation\Blender 3.1'
 
     dir_name = os.path.dirname(__file__).replace("\\", "/")     #current work directory
     parent_directory1 = os.path.dirname(dir_name)               #Server directory
