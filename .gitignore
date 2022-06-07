@@ -6,7 +6,7 @@
 
 # ignoring blender stuff
 **/FireSimulation/cache*
-**/RenderImages
+**/RenderImages/**/*.png
 **/Test_Json
 **/*.blend1
 **/*.uni
