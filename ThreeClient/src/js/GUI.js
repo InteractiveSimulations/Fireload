@@ -1,36 +1,79 @@
 import { GUI } from 'dat.gui'
 import * as Loader from './Loader.js'
+import * as WEBSOCKET from './websocket'
 
 //gui class takes in scene, objects and floor
 export default class UI{
+    #active_object;
+    #gui_select_objects;
+    #objects;
     constructor(scene, objects, floor, camera, ambientLight, renderer){
 
         this.datgui = new GUI();
+        this.#objects = objects;
+        let that = this;
 
-        var floorController = {
+        let floorController = {
             texture: 'none',
             resolution: '1k',
             filtering: 1,
             repeat: 1
         }
-        var hdriController = {
+        let hdriController = {
             texture: 'none',
             resolution: '1k',
             background: true,
             lighting: true
         }      
-        var objectController = {
+        let objectController = {
             object: 'cube',
-            load: function(){ Loader.loadObject(objectController, scene, objects) }
+            load: function(){
+                Loader.loadObject(objectController, scene, that.#objects);
+            }
         }
-        var ambientLightController = {
+        let ambientLightController = {
             skyColor: 0xe0f3ff,
             groundColor: 0xffc26e,
             intensity: 0.2
         }
-        var JSONController = {
-            start: function(){  }
+        let JSONController = {
+            start: function(){
+                let data = {
+                    "Framerate": 30,
+                    "StartFrame": 1,
+                    "EndFrame": 180,
+                    "resolution_x": 1920,
+                    "resolution_y": 1080,
+                    "SmokeDomain_size": [
+                        20,
+                        20,
+                        20
+                    ],
+                    "Type": "Suzanne",
+                    "id": "Suzanne",
+                    "scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "location": [
+                        0,
+                        0,
+                        1
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ]
+                };
+                WEBSOCKET.requestSimulation(data);
+            }
         }
+        let activeObjectController = {
+            activeObject: 'empty',
+        };
+
         //create floor folder
         this.floorFolder = this.datgui.addFolder('Floor');
             this.floorFolder.add(floorController, 'texture', ['none', 'wood', 'small tiles']).name('Texture').onChange(function() { Loader.loadFloorMaterial(floorController, floor) });
@@ -44,9 +87,8 @@ export default class UI{
             this.hdriFolder.add(hdriController, 'lighting').name('Use for lighting').onChange(function() { Loader.changeHDRI(hdriController, scene) });
         //create object folder       
         this.objectFolder = this.datgui.addFolder('Objects');
-            this.furnitureFolder = this.objectFolder.addFolder('Furniture');
-                this.furnitureFolder.add(objectController, 'object', ['none', 'cube', 'sphere', 'suzanne']).name('Object');
-                this.furnitureFolder.add(objectController, 'load').name('Add object');       
+                this.objectFolder.add(objectController, 'object', ['cube', 'sphere', 'suzanne', 'table', 'tv']).name('Object');
+                this.objectFolder.add(objectController, 'load').name('Add object');
         //create settings folder
         this.settingsFolder = this.datgui.addFolder('Settings');
             this.cameraFolder = this.settingsFolder.addFolder('Camera');
@@ -64,7 +106,10 @@ export default class UI{
                 this.ambientLightFolder.addColor(ambientLightController, 'groundColor').onChange(function(color) { ambientLight.groundColor = new THREE.Color(color); });
                 this.ambientLightFolder.add(ambientLightController, 'intensity').onChange(function(value) { ambientLight.intensity = value; });
         //simulation folder
-        this.datgui.add(JSONController, 'start').name('Start simulation');   
+        this.#gui_select_objects = this.datgui.add(activeObjectController, 'activeObject', ['empty']).name('Select Object');
+        this.datgui.add(JSONController, 'start').name('Start simulation');
+
+
     }
 
     hide(){
@@ -72,5 +117,9 @@ export default class UI{
     }
     show(){
         GUI.toggleShow();
+    }
+
+    #getObjectNames() {
+
     }
 }
