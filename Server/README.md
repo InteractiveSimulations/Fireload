@@ -4,7 +4,7 @@ This is the Server-Side of the **fireløad** project.
 
 ## Blender
 
-Put your directory of the blender.exe to your path varibales, so blender can be started
+Please put your directory of the blender.exe to your path varibales, so blender can be started.
 
 ## Instructions
 
