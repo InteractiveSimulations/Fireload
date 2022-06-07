@@ -1,9 +1,19 @@
-**/node_modules
-**/package-lock.json
-**/.png
-**/.json
+# ignoring general stuff
 **/.vscode
 **/.idea
 **/.DS_Store
 **/__pycache__
+
+# ignoring blender stuff
+**/FireSimulation/cache*
+**/RenderImages
+**/Test_Json
+**/*.blend1
+**/*.uni
+**/*.vdb
+
+# ignoring client stuff
+**/node_modules
+**/package-lock.json
 dist
+docs/html/search
