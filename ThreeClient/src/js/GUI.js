@@ -42,8 +42,8 @@ export default class UI{
                     "Framerate": 30,
                     "StartFrame": 1,
                     "EndFrame": 180,
-                    "resolution_x": 1920,
-                    "resolution_y": 1080,
+                    "resolution_x": 400,
+                    "resolution_y": 400,
                     "SmokeDomain_size": [
                         20,
                         20,

@@ -57,10 +57,10 @@ function initObjects(){
     floor = new THREE.Mesh(new THREE.BoxGeometry(10, 0.1, 10), new THREE.MeshStandardMaterial());
     scene.add(floor);
     //adding cube
-    //let cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
-    //cube.name = "cube";
-    //cube.position.set(0, 0.5, 0);
-    //scene.add(cube);
+    let cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
+    cube.name = "cube";
+    cube.position.set(0, 0.5, 0);
+    scene.add(cube);
     //objects.obj.push(cube);
 }
 
@@ -83,17 +83,22 @@ function initRendering(){
 }
 
 function switchToFPControls(){
-    controller.destroy();
-    gui.hide();
-    controller = new FirstPersonController(camera, document);
-    fire = new Fire(null, null, camera, scene);
+    if(controller instanceof OrbitController){
+        controller.destroy();
+        gui.hide();
+        controller = new FirstPersonController(camera, document);
+        fire = new Fire(null, null, camera, scene);
+    }
 }
 
 function switchToOrbitControls(){
-    controller.destroy();
-    gui.hide();
-    controller = new OrbitController(camera, document.body, scene, objects, selected);
-    fire.destroy();
+    if(controller instanceof FirstPersonController){
+        controller.destroy();
+        gui.hide();
+        controller = new OrbitController(camera, document.body, scene, objects, selected);
+        fire.destroy();
+        fire = null;
+    }
     update();
 }
 
