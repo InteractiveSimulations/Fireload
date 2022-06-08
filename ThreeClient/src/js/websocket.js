@@ -4,16 +4,23 @@ function showMessage(message) {
     window.setTimeout(() => window.alert(message), 50);
 }
 
-function receiveSimulation( data ) {
-    const event = JSON.parse(data);
+// @Todo the client probably only receives a message that the simulation ist ready to download and the download link
+function receiveSimulation( message ) {
+
+    // let img = new Image()
+    // const arrayBuffer = message.data;
+    //
+    // img.src = 'data:image/png;base64,' + arrayBuffer;
+    // console.log("size= "+ arrayBuffer.length);
 }
 
 /**
  * Requests a simulation.
- * @param {string} json - json string which represents the scenes current state and the simulation script.
+ * @param {object} json - json data which represents the scenes current state and the simulation script.
  */
 export function requestSimulation( json ) {
 
+    console.log(typeof json)
     try {
         websocket.send( JSON.stringify(json, null, 2) );
     }
@@ -33,13 +40,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Open the WebSocket connection and register event handlers.
     websocket = new WebSocket("ws://localhost:8001/");
-    receiveSimulation();
 
-    websocket.addEventListener( "message",  receiveSimulation );
-    websocket.addEventListener( "close",    sessionHandling   );
-
-    // websocket.onmessage = receiveSimulation
-    // websocket.onclose   = sessionHandling
+    websocket.onmessage = receiveSimulation
+    websocket.onclose   = sessionHandling
 
 });
 

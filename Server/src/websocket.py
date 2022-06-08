@@ -32,6 +32,8 @@ async def handler(websocket):
 
         blender.startBlender()
 
+        websocket.send()
+
 
 # coroutine which waits for a client to connect.
 # main() only exists once.

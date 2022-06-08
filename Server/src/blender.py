@@ -7,7 +7,7 @@ def startBlender():
 
     # blenderPath = '../../Blender Foundation/Blender 2.93'
     # @Todo blender as path variable and in readme
-    blender_path = 'C:\Program Files\Blender Foundation\Blender 3.1'
+    #blender_path = 'C:\Program Files\Blender Foundation\Blender 3.1'
 
     dir_name = os.path.dirname(__file__).replace("\\", "/")     #current work directory
     parent_directory1 = os.path.dirname(dir_name)               #Server directory
@@ -24,7 +24,7 @@ def startBlender():
     #images_path = dir_name + '/../../BlenderSimulation/RenderImages/'
     images_path = parent_directory2 + '/BlenderSimulation/RenderImages/'
 
-    os.chdir(blender_path)
+    #os.chdir(blender_path)
 
     # script = ServerScript(json)
     # Runs Blender in background and saves images

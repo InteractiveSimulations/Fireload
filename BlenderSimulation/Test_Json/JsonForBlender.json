@@ -1,7 +1,7 @@
 {
   "Framerate": 30,
   "StartFrame": 1,
-  "EndFrame": 2,
+  "EndFrame": 180,
   "resolution_x": 1920,
   "resolution_y": 1080,
   "SmokeDomain_size": [
@@ -9,8 +9,8 @@
     20,
     20
   ],
-  "Type": "Suzanne",
-  "id": "Suzanne",
+  "Type": "Cube",
+  "id": "Cube",
   "scale": [
     1,
     1,
