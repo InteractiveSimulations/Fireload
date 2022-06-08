@@ -7,11 +7,10 @@ function showMessage(message) {
 // @Todo the client probably only receives a message that the simulation ist ready to download and the download link
 function receiveSimulation( message ) {
 
-    // let img = new Image()
-    // const arrayBuffer = message.data;
-    //
-    // img.src = 'data:image/png;base64,' + arrayBuffer;
-    // console.log("size= "+ arrayBuffer.length);
+    const simulation = JSON.parse(message.data)
+    console.log( simulation.status )
+    console.log( simulation.url )
+
 }
 
 /**
@@ -20,7 +19,6 @@ function receiveSimulation( message ) {
  */
 export function requestSimulation( json ) {
 
-    console.log(typeof json)
     try {
         websocket.send( JSON.stringify(json, null, 2) );
     }

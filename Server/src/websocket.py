@@ -32,7 +32,12 @@ async def handler(websocket):
 
         blender.startBlender()
 
-        websocket.send()
+        simulation = {
+            "status": "READY",
+            "url": "http://localhost:8000/"
+        }
+
+        await websocket.send(json.dumps(simulation))
 
 
 # coroutine which waits for a client to connect.
