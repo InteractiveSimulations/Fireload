@@ -14,7 +14,7 @@ def startBlender():
     parent_directory2 = os.path.dirname(parent_directory1)      #Fireload directory
 
     #Joined path, path of the fireSim version
-    version = os.path.join(parent_directory2, "BlenderSimulation", "FireSimulation", "Fire_v7.blend").replace("\\", "/")
+    version = os.path.join(parent_directory2, "BlenderSimulation", "FireSimulation", "Fire_v8.blend").replace("\\", "/")
     #version = dir_name + '/../../BlenderSimulation/FireSimulation/Fire_v7.blend'
 
     #Path of the ServerScript

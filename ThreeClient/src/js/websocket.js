@@ -1,15 +1,17 @@
 export let websocket;
+export let simStatus;
 
 function showMessage(message) {
     window.setTimeout(() => window.alert(message), 50);
 }
 
 // @Todo the client probably only receives a message that the simulation ist ready to download and the download link
-function receiveSimulation( message ) {
+function receiveSimulationStatus( message ) {
 
-    const simulation = JSON.parse(message.data)
-    console.log( simulation.status )
-    console.log( simulation.url )
+    const json = JSON.parse(message.data)
+    simStatus = message.data.simStatus;
+
+    console.log( json.simStatus )
 
 }
 
@@ -39,7 +41,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Open the WebSocket connection and register event handlers.
     websocket = new WebSocket("ws://localhost:8001/");
 
-    websocket.onmessage = receiveSimulation
+    websocket.onmessage = receiveSimulationStatus
     websocket.onclose   = sessionHandling
 
 });

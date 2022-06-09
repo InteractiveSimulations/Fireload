@@ -27,7 +27,7 @@ async def handler(websocket):
 
         # @Todo throws an exception for a second request:
         #  FileNotFoundError: [Errno 2] No such file or directory: '../../BlenderSimulation/Test_Json/Test.json'
-        with open('../../BlenderSimulation/Test_Json/Test.json', 'w') as outfile:
+        with open('../../BlenderSimulation/Test_Json/JsonForBlender.json', 'w') as outfile:
             outfile.write(message)
 
         blender.startBlender()
