@@ -71,6 +71,30 @@ export function loadFloorMaterial(floorController, floor){
     }
 }
 
+export function loadFire(fireController, fire){
+    var materials = [];
+    var textureLoader = new THREE.TextureLoader();
+    textureLoader.setPath('assets/fire/');
+    for(let i = 1; i <= 180; i++){
+        //loading albedo/diffuse map
+        var texture = textureLoader.load('fire_1 (' + i + ').png',
+        //called when loading is in progresses
+        function ( texture ) {
+            console.log( ( texture.loaded / texture.total * 100 ) + '% loaded' );
+        },
+        //called when loading has errors
+        function ( error ) {
+            console.log( 'An error happened while loading the fire texture!' );
+        }
+        );
+        texture.anisotropy = 8;
+        var material = new THREE.MeshBasicMaterial( { map: texture } );
+        material.transparent = true;
+        materials.push(material);
+    }
+    return materials;
+}
+
 //takes in the hdri name and the resolution and adds hdri to scene
 export function loadHDRI(hdriController, scene){
     if(hdriController.texture == 'none'){
