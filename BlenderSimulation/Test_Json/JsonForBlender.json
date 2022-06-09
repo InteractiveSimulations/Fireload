@@ -1,9 +1,15 @@
 {
   "Framerate": 30,
   "StartFrame": 1,
+<<<<<<< HEAD
   "EndFrame": 2,
   "resolution_x": 400,
   "resolution_y": 400,
+=======
+  "EndFrame": 180,
+  "resolution_x": 1920,
+  "resolution_y": 1920,
+>>>>>>> b60d55f4c6fd17670fffe5419a20a9749035a7ca
   "SmokeDomain_size": [
     20,
     20,
