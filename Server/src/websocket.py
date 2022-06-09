@@ -33,8 +33,7 @@ async def handler(websocket):
         blender.startBlender()
 
         simulation = {
-            "status": "READY",
-            "url": "http://localhost:8000/"
+            "simStatus": "READY"
         }
 
         await websocket.send(json.dumps(simulation))

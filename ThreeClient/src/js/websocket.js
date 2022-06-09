@@ -8,10 +8,9 @@ function showMessage(message) {
 // @Todo the client probably only receives a message that the simulation ist ready to download and the download link
 function receiveSimulationStatus( message ) {
 
-    const json = JSON.parse(message.data)
-    simStatus = message.data.simStatus;
-
-    console.log( json.simStatus )
+    const json = JSON.parse(message.data);
+    console.log(message.data);
+    console.log( json.simStatus );
 
 }
 
@@ -28,7 +27,7 @@ export function requestSimulation( json ) {
         // @Todo inform client via GUI that the connection isn't established
         // InvalidStateError DOMException
         // Thrown if WebSocket.readyState is CONNECTING.
-        showMessage( "websocket connection not established.")
+        showMessage( "websocket connection not established.");
     }
 
 }
@@ -41,8 +40,8 @@ window.addEventListener("DOMContentLoaded", () => {
     // Open the WebSocket connection and register event handlers.
     websocket = new WebSocket("ws://localhost:8001/");
 
-    websocket.onmessage = receiveSimulationStatus
-    websocket.onclose   = sessionHandling
+    websocket.onmessage = receiveSimulationStatus;
+    websocket.onclose   = sessionHandling;
 
 });
 
