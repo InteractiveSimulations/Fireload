@@ -1,5 +1,4 @@
-import * as THREE from 'three'
-import * as Loader from './Loader.js'
+import * as THREE from 'three';
 
 export default class Fire{
     constructor(video, parent, camera, scene){

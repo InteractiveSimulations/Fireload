@@ -1,6 +1,6 @@
-import '../style.css'
-import * as THREE from 'three'
-import UI  from './GUI.js'
+import '../style.css';
+import * as THREE from 'three';
+import UI  from './GUI.js';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import FirstPersonController from './FirstPersonController';
 import OrbitController from './OrbitController.js';

@@ -1,7 +1,6 @@
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import UI  from './GUI.js'
-import * as THREE from 'three'
+import * as THREE from 'three';
 //takes in texture name and resolution and sets texture as floor texture
 export function loadFloorMaterial(floorController, floor){
     //standard material is applied when none is chosen
