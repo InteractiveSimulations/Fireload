@@ -71,7 +71,7 @@ export function loadFloorMaterial(floorController, floor){
     }
 }
 
-export function loadFire(fireController, fire){
+export function loadFireFromFrames(fireController, fire){
     var materials = [];
     var textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/fire/');

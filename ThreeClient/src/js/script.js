@@ -87,7 +87,7 @@ function switchToFPControls(){
         controller.destroy();
         gui.hide();
         controller = new FirstPersonController(camera, document);
-        fire = new Fire(null, null, camera, scene);
+        fire = new Fire(document.getElementById("video"), null, camera, scene);
     }
 }
 
