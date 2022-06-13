@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import '../style.css';
 import * as THREE from 'three';
 import UI  from './GUI.js';
+=======
+import '../style.css'
+import * as THREE from 'three'
+import UI  from './GUI.js'
+>>>>>>> 5dca00fefc2669f7cd65339b54b8fdd95a04d936
 import Stats from 'three/examples/jsm/libs/stats.module';
 import FirstPersonController from './FirstPersonController';
 import OrbitController from './OrbitController.js';
@@ -39,7 +45,10 @@ function init() {
     //create gui
     gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5dca00fefc2669f7cd65339b54b8fdd95a04d936
 }
 
 function initScene(){
@@ -88,6 +97,7 @@ function switchToFPControls(){
         controller.destroy();
         gui.hide();
         controller = new FirstPersonController(camera, document);
+<<<<<<< HEAD
 
         const my_video = document.createElement('video');
         my_video.loop = true;
@@ -98,6 +108,9 @@ function switchToFPControls(){
 
         //fire = new Fire(document.getElementById("video"), null, camera, scene);
         fire = new Fire(my_video, null, camera, scene);
+=======
+        fire = new Fire(null, null, camera, scene);
+>>>>>>> 5dca00fefc2669f7cd65339b54b8fdd95a04d936
     }
 }
 

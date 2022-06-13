@@ -50,7 +50,8 @@ bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
 #Renderformat
 #directorys of the folder
 #Rednder images
-dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
+#dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
+dirRenderImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","")
 #zBuffer images
 dirZBufferImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","zBuffer","")
 #change the dutput directory of every node
@@ -61,15 +62,17 @@ for scene in bpy.data.scenes:
 
 
 bpy.data.scenes["Scene"].render.filepath = dirRenderImages          #change the output directory of the renders images
-#bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
-#bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
+bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
+bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
+bpy.context.scene.render.image_settings.compression = 100
 
-bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video
-bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'                   #change container to MPEG4
-bpy.context.scene.render.ffmpeg.codec = 'PNG'                        #change video codec to QT 
-bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
+
+#bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video
+#bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'                   #change container to MPEG4
+#bpy.context.scene.render.ffmpeg.codec = 'QTRLE'                        #change video codec to QT 
+#bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 #feuer schön 
 #codec verbessern 
 #sind die videos wirklich pngs?

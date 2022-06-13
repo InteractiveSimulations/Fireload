@@ -1,6 +1,11 @@
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+<<<<<<< HEAD
 import * as THREE from 'three';
+=======
+import UI  from './GUI.js'
+import * as THREE from 'three'
+>>>>>>> 5dca00fefc2669f7cd65339b54b8fdd95a04d936
 //takes in texture name and resolution and sets texture as floor texture
 export function loadFloorMaterial(floorController, floor){
     //standard material is applied when none is chosen
@@ -70,7 +75,11 @@ export function loadFloorMaterial(floorController, floor){
     }
 }
 
+<<<<<<< HEAD
 export function loadFireFromFrames(fireController, fire){
+=======
+export function loadFire(fireController, fire){
+>>>>>>> 5dca00fefc2669f7cd65339b54b8fdd95a04d936
     var materials = [];
     var textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/fire/');

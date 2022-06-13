@@ -1,26 +1,23 @@
 import subprocess
 import os
+import json
 
-
-# Funktion startet Blender und übergibt das Drehbuch
+#Function starts blender and transfers the 'szenario' ('Drehbuch')
 def startBlender():
-    blenderPath = 'C:/Program Files/Blender Foundation/Blender 2.93'
-    file = 'C:/Users/natas/Documents/Studium/TH/6_Semester/IA_WEB_Projekt/TestDateiBlender/TestBlender.blend'
 
-    #subprocess.run(['blender', '-b', '-P', file])
-    #subprocess.run(['blender', r'C:\Users\natas\Documents\Studium\TH\6_Semester\IA_WEB_Projekt\TestDateiBlender\TestBlender.blend'])
-    #subprocess.run(['blender', file], shell = True)
-    #subprocess.run(['C:/Program Files/Blender Foundation/Blender 2.93'])
-    #subprocess.run(['blender'])
+    dir_name = os.path.dirname(__file__).replace("\\", "/")     #current work directory
+    parent_directory1 = os.path.dirname(dir_name)               #Server directory
+    parent_directory2 = os.path.dirname(parent_directory1)      #Fireload directory
 
-    os.chdir(blenderPath)
+    #Joined path, path of the fireSim version
+    version = os.path.join(parent_directory2, "BlenderSimulation", "FireSimulation", "Fire_v7.blend").replace("\\", "/")
 
-    process = subprocess.Popen(['dir'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    print(stdout)
+    #Path of the ServerScript
+    script = os.path.join(parent_directory2, "BlenderSimulation", "PythonScript", "ServerScript.py")
 
-    subprocess.run(['blender', file])
+    # Runs Blender in background and saves images
+    #'blender', '-b', version, '--python', script, -o', images_path, '-a'
+    subprocess.run(['blender', '-b', version, '--python', script, '-a']) #Blenderdatei
 
 if __name__ == "__main__":
-    print("test")
     startBlender()
