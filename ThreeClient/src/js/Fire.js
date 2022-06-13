@@ -1,24 +1,17 @@
 import * as THREE from 'three';
+import * as Loader from './Loader.js';
 
 export default class Fire{
     constructor(video, parent, camera, scene){
         this.parent = parent;
         this.camera = camera;
         //create fire mesh
-        this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(4, 4));
-        this.mesh.position.set(0, 1.8, 0.75);
+        this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(8, 8));
+        this.mesh.position.set(0, 3.3, 0.75);
         this.scene = scene;
 
         //only used when the fire is loaded as individual frames
-        //this.material = Loader.loadFire(null, this.mesh);
-
-        //creating material (only used when the fire is loaded as a video)
-        video.play();
-        let videoTexture = new THREE.VideoTexture(video);
-        this.material = new THREE.MeshBasicMaterial( {map: videoTexture } );
-        this.material.needsUpdate = true;
-        this.mesh.material = this.material;
-
+        this.material = Loader.loadFireFromFrames(null, this.mesh, 1, 300);
  
         //adding fire meseh to the scene
         this.boundingBox = new THREE.Box3().setFromObject(this.mesh);
@@ -30,6 +23,8 @@ export default class Fire{
         this.counter = 0;
         this.clock = new THREE.Clock();
         this.deltaTime = 0;
+        this.numberOfFrames = 300;
+        this.frameRate = 30;
     }
 
     destroy(){
@@ -60,14 +55,14 @@ export default class Fire{
         //rotating fire around pivot point/parent object
         this.pivot.rotation.y = angle;
         //updating fire texture (only used when the fire is loaded as individual frames)
-        /*
+        
         this.deltaTime += this.clock.getDelta();
-        if(this.deltaTime > (1/30)){
-            this.mesh.material = this.material[this.counter % 179];
+        if(this.deltaTime > (1/this.FrameRate)){
+            this.mesh.material = this.material[this.counter % numberOfFrames - 1];
             this.counter++;
-            this.deltaTime = this.deltaTime % (1/30);
+            this.deltaTime = this.deltaTime % (1/this.FrameRate);
         }
-        */
+        
         
     }
 

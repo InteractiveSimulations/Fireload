@@ -70,13 +70,23 @@ export function loadFloorMaterial(floorController, floor){
     }
 }
 
-export function loadFireFromFrames(fireController, fire){
+export function loadFireFromFrames(fireController, fire, start, numberOfFrames){
     var materials = [];
     var textureLoader = new THREE.TextureLoader();
-    textureLoader.setPath('assets/fire/');
-    for(let i = 1; i <= 180; i++){
+    textureLoader.setPath('assets/simulations/');
+    for(let i = start; i <= (start + numberOfFrames); i++){
+        let zeros = '000';
         //loading albedo/diffuse map
-        var texture = textureLoader.load('fire_1 (' + i + ').png',
+        if(i >= 10){
+            zeros = '00';
+        }
+        if(i >= 100){
+            zeros = '00';
+        }
+        if(i >= 1000){
+            zeros = '';
+        }
+        var texture = textureLoader.load(zeros + i + '.png',
         //called when loading is in progresses
         function ( texture ) {
             console.log( ( texture.loaded / texture.total * 100 ) + '% loaded' );

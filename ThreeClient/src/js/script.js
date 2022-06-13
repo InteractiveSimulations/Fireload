@@ -62,7 +62,7 @@ function initObjects(){
     cube.name = "cube";
     cube.position.set(0, 0.5, 0);
     scene.add(cube);
-    //objects.obj.push(cube);
+    objects.obj.push(cube);
 }
 
 function initLights(){
@@ -88,16 +88,7 @@ function switchToFPControls(){
         controller.destroy();
         gui.hide();
         controller = new FirstPersonController(camera, document);
-
-        const my_video = document.createElement('video');
-        my_video.loop = true;
-        my_video.autoplay = true;
-        my_video.width = 400;
-        my_video.height = 400;
-        my_video.src= "assets/video.mp4";
-
-        //fire = new Fire(document.getElementById("video"), null, camera, scene);
-        fire = new Fire(my_video, null, camera, scene);
+        fire = new Fire(null, null, camera, scene);
     }
 }
 
