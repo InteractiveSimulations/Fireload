@@ -17,6 +17,7 @@ parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSi
 parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
 parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located 
 
+
 dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
 
 with open(dirJson, 'r') as json_file:
@@ -68,14 +69,11 @@ bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
 bpy.context.scene.render.image_settings.compression = 100
 
-
+#render a video with alpha
 #bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video
 #bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'                   #change container to MPEG4
 #bpy.context.scene.render.ffmpeg.codec = 'QTRLE'                        #change video codec to QT 
 #bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
-#feuer schön 
-#codec verbessern 
-#sind die videos wirklich pngs?
 
     
 
@@ -127,7 +125,8 @@ def set_size_SD(name, x, y, z): #läuft nur wenn die SmokeDomain ausgewählt ist
     vertex[7].co.y = y/2
     
     bmesh.update_edit_mesh(me, loop_triangles=True)
-
+    bpy.context.object.modifiers["Fluid"].domain_settings.cache_frame_end = EndFrame
+    
     vertex.clear()
     bpy.ops.object.mode_set(mode = 'OBJECT')
 
