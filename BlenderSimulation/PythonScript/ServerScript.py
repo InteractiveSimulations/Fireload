@@ -15,7 +15,11 @@ fileDirectory = os.path.dirname(__file__)               #directory of the Blende
 parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
 parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSimulation
 parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
+<<<<<<< HEAD
 # parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located
+=======
+parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located 
+>>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
 
 dirJson = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
 
@@ -68,7 +72,11 @@ bpy.data.scenes["Scene"].render.image_settings.use_preview = False
 
 bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video
 bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'                   #change container to MPEG4
+<<<<<<< HEAD
 bpy.context.scene.render.ffmpeg.codec = 'QTRLE'                        #change video codec to QT 
+=======
+bpy.context.scene.render.ffmpeg.codec = 'PNG'                        #change video codec to QT 
+>>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
 bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 #feuer schön 
 #codec verbessern 

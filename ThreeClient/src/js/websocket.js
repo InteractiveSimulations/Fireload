@@ -1,10 +1,14 @@
 export let websocket;
+<<<<<<< HEAD
 export let simStatus;
+=======
+>>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
 
 function showMessage(message) {
     window.setTimeout(() => window.alert(message), 50);
 }
 
+<<<<<<< HEAD
 // @Todo the client probably only receives a message that the simulation ist ready to download and the download link
 function receiveSimulationStatus( message ) {
 
@@ -12,22 +16,38 @@ function receiveSimulationStatus( message ) {
     console.log(message.data);
     console.log( json.simStatus );
 
+=======
+function receiveSimulation( data ) {
+    const event = JSON.parse(data);
+>>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
 }
 
 /**
  * Requests a simulation.
+<<<<<<< HEAD
  * @param {object} json - json data which represents the scenes current state and the simulation script.
+=======
+ * @param {string} json - json string which represents the scenes current state and the simulation script.
+>>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
  */
 export function requestSimulation( json ) {
 
     try {
+<<<<<<< HEAD
         websocket.send( JSON.stringify(json, null, 2) );
+=======
+        websocket.send(json);
+>>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
     }
     catch (err) {
         // @Todo inform client via GUI that the connection isn't established
         // InvalidStateError DOMException
         // Thrown if WebSocket.readyState is CONNECTING.
+<<<<<<< HEAD
         showMessage( "websocket connection not established.");
+=======
+        showMessage( "websocket connection not established.")
+>>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
     }
 
 }
@@ -39,9 +59,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Open the WebSocket connection and register event handlers.
     websocket = new WebSocket("ws://localhost:8001/");
+<<<<<<< HEAD
 
     websocket.onmessage = receiveSimulationStatus;
     websocket.onclose   = sessionHandling;
+=======
+    receiveSimulation();
+
+    websocket.addEventListener( "message",  receiveSimulation );
+    websocket.addEventListener( "close",    sessionHandling   );
+
+    // websocket.onmessage = receiveSimulation
+    // websocket.onclose   = sessionHandling
+>>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
 
 });
 
