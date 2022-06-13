@@ -12,10 +12,10 @@ from pathlib import Path
 #gerade funktioniert es nur ein einzelnes Objekt mit dem json hinzuzufügen 
 #open a JSON in Python 
 fileDirectory = os.path.dirname(__file__)               #directory of the Blender file
-parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> Versionen
-parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> FireSimulation
-parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> BlenderSimulation
-parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Fireload   
+parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
+parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSimulation
+parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
+parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located 
 
 dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
 
@@ -44,6 +44,9 @@ bpy.data.scenes["Scene"].render.resolution_y = resolutionY
 bpy.data.scenes["Scene"].frame_start = StartFrame
 bpy.data.scenes["Scene"].frame_end = EndFrame
 
+#Framerate
+bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
+
 #Renderformat
 #directorys of the folder
 #Rednder images
@@ -58,11 +61,20 @@ for scene in bpy.data.scenes:
 
 
 bpy.data.scenes["Scene"].render.filepath = dirRenderImages          #change the output directory of the renders images
-bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
-bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
+#bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
+#bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
 
+bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video
+bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'                   #change container to MPEG4
+bpy.context.scene.render.ffmpeg.codec = 'PNG'                        #change video codec to QT 
+bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
+#feuer schön 
+#codec verbessern 
+#sind die videos wirklich pngs?
+
+    
 
 
 #Change the Size of an SmokeDomain
@@ -152,6 +164,10 @@ def add_obj(object):
     bpy.context.object.modifiers["Fluid"].fluid_type = 'FLOW'
     bpy.context.object.modifiers["Fluid"].flow_settings.flow_behavior = 'INFLOW'
     bpy.context.object.modifiers["Fluid"].flow_settings.flow_type = 'BOTH'
+    bpy.context.object.modifiers["Fluid"].flow_settings.fuel_amount = 1.4  
+    bpy.context.object.modifiers["Fluid"].flow_settings.surface_distance = 0.01
+    bpy.context.object.modifiers["Fluid"].flow_settings.use_plane_init = True
+
     bpy.ops.object.mode_set(mode = 'OBJECT')
     bpy.data.collections['FireEmitters'].objects.link(bpy.context.object)
     bpy.data.collections['Collection'].objects.unlink(bpy.context.object)
@@ -161,8 +177,8 @@ def del_obj(object):        #deletes a Object by name(Stirng)
     objs.remove(objs[object], do_unlink=True)
     
 def del_all_objects():      #delete all objects in the FireEmitters Collection
-    for o in bpy.data.collections['FireEmitters'].objects:
-        bpy.data.objects.remove(o)
+    for obj in bpy.data.collections['FireEmitters'].objects:
+        bpy.data.objects.remove(obj)
 
         
 
@@ -172,8 +188,10 @@ add_obj(type)
 set_scale(type, scale[0], scale[1], scale[2])
 set_location(type, location[0], location[1], location[2])
 set_rotation(type, rotation[0], rotation[1], rotation[2])
-set_location("Camera", 11,-11,11)
-set_location("ZBufferCamera", 11,-11,11)
+set_location("Camera", 22,-22,11)
+set_location("ZBufferCamera", 22,-22,11)
+set_rotation("Camera", 87, 0, 45)
+set_rotation("ZBufferCamera", 87, 0, 45) 
 
 #Wenn das Script läuft immer in einem EXTRA Ordner speichern!!!
 
