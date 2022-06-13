@@ -74,19 +74,19 @@ export function loadFireFromFrames(fireController, fire, start, numberOfFrames){
     var materials = [];
     var textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/simulations/');
-    for(let i = start; i <= (start + numberOfFrames); i++){
+    for(let i = 1; i <= 300; i++){
         let zeros = '000';
         //loading albedo/diffuse map
         if(i >= 10){
             zeros = '00';
         }
         if(i >= 100){
-            zeros = '00';
+            zeros = '0';
         }
         if(i >= 1000){
             zeros = '';
         }
-        var texture = textureLoader.load(zeros + i + '.png',
+        var texture = textureLoader.load( zeros + i + '.png',
         //called when loading is in progresses
         function ( texture ) {
             console.log( ( texture.loaded / texture.total * 100 ) + '% loaded' );
