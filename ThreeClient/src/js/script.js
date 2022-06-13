@@ -39,6 +39,7 @@ function init() {
     //create gui
     gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
+
 }
 
 function initScene(){
@@ -87,7 +88,16 @@ function switchToFPControls(){
         controller.destroy();
         gui.hide();
         controller = new FirstPersonController(camera, document);
-        fire = new Fire(document.getElementById("video"), null, camera, scene);
+
+        const my_video = document.createElement('video');
+        my_video.loop = true;
+        my_video.autoplay = true;
+        my_video.width = 400;
+        my_video.height = 400;
+        my_video.src= "assets/video.mp4";
+
+        //fire = new Fire(document.getElementById("video"), null, camera, scene);
+        fire = new Fire(my_video, null, camera, scene);
     }
 }
 
