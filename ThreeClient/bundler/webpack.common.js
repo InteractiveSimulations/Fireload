@@ -106,7 +106,22 @@ module.exports = {
                         }
                     }
                 ]
-            }
+            },
+            // Models
+            {
+                test: /\.(mp4|mov)$/,
+                use:
+                    [
+                        {
+                            loader: 'file-loader',
+                            options:
+                                {
+                                    outputPath: 'assets/video/'
+                                }
+                        }
+                    ]
+            },
+
         ]
     }
 }
