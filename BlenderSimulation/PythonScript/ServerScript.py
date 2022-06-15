@@ -15,13 +15,10 @@ fileDirectory = os.path.dirname(__file__)               #directory of the Blende
 parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
 parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSimulation
 parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
-<<<<<<< HEAD
-# parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located
-=======
 parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located 
->>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
 
-dirJson = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
+
+dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
 
 with open(dirJson, 'r') as json_file:
 #with open('c:\\Users\\MaxBe\\Documents\\UNI\\Fireload\\BlenderSimulation\\Test_Json\\JsonForBlender.json', 'r') as json_file:
@@ -54,9 +51,10 @@ bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
 #Renderformat
 #directorys of the folder
 #Rednder images
-dirRenderImages = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","RenderImages","")
+#dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
+dirRenderImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","")
 #zBuffer images
-dirZBufferImages = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","RenderImages","zBuffer","")
+dirZBufferImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","zBuffer","")
 #change the dutput directory of every node
 for scene in bpy.data.scenes:
     for node in scene.node_tree.nodes:
@@ -65,22 +63,17 @@ for scene in bpy.data.scenes:
 
 
 bpy.data.scenes["Scene"].render.filepath = dirRenderImages          #change the output directory of the renders images
-#bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
-#bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
+bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
+bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
+bpy.context.scene.render.image_settings.compression = 100
 
-bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video
-bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'                   #change container to MPEG4
-<<<<<<< HEAD
-bpy.context.scene.render.ffmpeg.codec = 'QTRLE'                        #change video codec to QT 
-=======
-bpy.context.scene.render.ffmpeg.codec = 'PNG'                        #change video codec to QT 
->>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
-bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
-#feuer schön 
-#codec verbessern 
-#sind die videos wirklich pngs?
+#render a video with alpha
+#bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video
+#bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'                   #change container to MPEG4
+#bpy.context.scene.render.ffmpeg.codec = 'QTRLE'                        #change video codec to QT 
+#bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 
     
 
@@ -132,7 +125,8 @@ def set_size_SD(name, x, y, z): #läuft nur wenn die SmokeDomain ausgewählt ist
     vertex[7].co.y = y/2
     
     bmesh.update_edit_mesh(me, loop_triangles=True)
-
+    bpy.context.object.modifiers["Fluid"].domain_settings.cache_frame_end = EndFrame
+    
     vertex.clear()
     bpy.ops.object.mode_set(mode = 'OBJECT')
 
