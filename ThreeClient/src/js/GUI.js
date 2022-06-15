@@ -49,8 +49,8 @@ export default class UI{
                         20,
                         20
                     ],
-                    "Type": "Suzanne",
-                    "id": "Suzanne",
+                    "Type": "Cube",
+                    "id": "Cube",
                     "scale": [
                         1,
                         1,
