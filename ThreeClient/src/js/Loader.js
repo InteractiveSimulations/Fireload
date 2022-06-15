@@ -141,9 +141,9 @@ export function loadHDRI(hdriController, scene){
 }
 //changes effect of hdri on lighting or background
 export function changeHDRI(hdriController, scene){
-    if(hdriController.background == true){       
+    if(hdriController.background === true){
         //check if hdri is set as environment/lighting map, so that it doesn't need to be loaded twice
-        if(scene.environment != null && scene.environment != 'undefined'){
+        if(scene.environment != null && scene.environment !== 'undefined'){
             scene.background = scene.environment;
         }
         //when hdri is not loaded as environment/lighting map, hdri needs to be reloaded

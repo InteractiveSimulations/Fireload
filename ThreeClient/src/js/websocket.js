@@ -16,11 +16,7 @@ function receiveSimulationStatus( message ) {
 
 /**
  * Requests a simulation.
-<<<<<<< HEAD
  * @param {object} json - json data which represents the scenes current state and the simulation script.
-=======
- * @param {string} json - json string which represents the scenes current state and the simulation script.
->>>>>>> 9b38d0d00f9416e6602f6f36c5496109a7d40b3f
  */
 export function requestSimulation( json ) {
 
