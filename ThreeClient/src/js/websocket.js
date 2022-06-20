@@ -10,12 +10,14 @@ function receiveSimulation( data ) {
 
 /**
  * Requests a simulation.
- * @param {string} json - json string which represents the scenes current state and the simulation script.
+ * @param {object} json - json object which represents the scenes current state and the simulation script.
  */
 export function requestSimulation( json ) {
 
     try {
-        websocket.send(json);
+        let jsonString = JSON.stringify(json)
+        console.log(jsonString)
+        websocket.send(jsonString);
     }
     catch (err) {
         // @Todo inform client via GUI that the connection isn't established
@@ -33,7 +35,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Open the WebSocket connection and register event handlers.
     websocket = new WebSocket("ws://localhost:8001/");
-    receiveSimulation();
 
     websocket.addEventListener( "message",  receiveSimulation );
     websocket.addEventListener( "close",    sessionHandling   );

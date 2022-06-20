@@ -23,15 +23,15 @@ dirJson = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Jso
 with open(dirJson, 'r') as json_file:
 #with open('c:\\Users\\MaxBe\\Documents\\UNI\\Fireload\\BlenderSimulation\\Test_Json\\JsonForBlender.json', 'r') as json_file:
     allData = json.load(json_file)
-    type = allData['Type']
-    location= allData['location']
-    Framerate = allData['Framerate']
-    StartFrame = allData['StartFrame']
-    EndFrame = allData['EndFrame']
-    resolutionX = allData['resolution_x']
-    resolutionY =allData['resolution_y']
-    SmokeDomain_size = allData['SmokeDomain_size']
-    id = allData['id']
+    type = allData['objectType']
+    location = allData['location']
+    Framerate = allData['frameRate']
+    StartFrame = allData['startFrame']
+    EndFrame = allData['endFrame']
+    resolutionX = allData['resolutionX']
+    resolutionY = allData['resolutionY']
+    SmokeDomain_size = allData['smokeDomainSize']
+    id = allData['objectId']
     scale = allData['scale']
     rotation = allData['rotation']
 
@@ -153,7 +153,7 @@ def set_rotation(name, x, y, z):
 # add a burning object
 def add_obj(object):
 
-    if object == "Cube":    
+    if object == "Cube":
         bpy.ops.mesh.primitive_cube_add(enter_editmode=False)
 
     elif object == "Sphere":

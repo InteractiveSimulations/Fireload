@@ -70,11 +70,11 @@ export function loadFloorMaterial(floorController, floor){
     }
 }
 
-export function loadFireFromFrames(fireController, fire, start, numberOfFrames){
+export function loadFireFromFrames(JSONController){
     var materials = [];
     var textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/simulations/');
-    for(let i = 1; i <= 300; i++){
+    for(let i = JSONController.startFrame; i <= JSONController.endFrame; i++){
         let zeros = '000';
         //loading albedo/diffuse map
         if(i >= 10){
@@ -224,7 +224,7 @@ export function loadObjectAsOnly(objectController, scene, objects){
 	        },
 	        //called when loading has errors
 	        function ( error ) {
-		        console.log( 'An error happened' );
+		        console.error( 'An error happened while loading the object: ' + error);
 	        }
         );
     }

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as Loader from './Loader.js';
 
 export default class Fire{
-    constructor(video, parent, camera, scene){
+    constructor(JSONController, parent, camera, scene){
         this.parent = parent;
         this.camera = camera;
         //create fire mesh
@@ -15,7 +15,7 @@ export default class Fire{
         this.scene.add(this.light);
 
         //only used when the fire is loaded as individual frames
-        this.material = Loader.loadFireFromFrames(null, this.mesh, 1, 300);
+        this.material = Loader.loadFireFromFrames(JSONController);
  
         //adding fire meseh to the scene
         this.boundingBox = new THREE.Box3().setFromObject(this.mesh);
@@ -27,8 +27,8 @@ export default class Fire{
         this.counter = 0;
         this.clock = new THREE.Clock();
         this.deltaTime = 0;
-        this.numberOfFrames = 300.0;
-        this.frameRate = 30.0;
+        this.frameRate = JSONController.frameRate;
+        this.numberOfFrames = JSONController.endFrame - JSONController.startFrame;
     }
 
     destroy(){

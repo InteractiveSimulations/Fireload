@@ -2,9 +2,12 @@ import { GUI } from 'dat.gui'
 import { ObjectSpaceNormalMap } from 'three';
 import * as Loader from './Loader.js'
 import * as WEBSOCKET from './websocket'
+import {JoinNode} from "three/examples/jsm/nodes/utils/JoinNode";
+
 
 //gui class takes in scene, objects and floor
 export default class UI{
+
     constructor(scene, objects, floor, camera, ambientLight, renderer){
 
         this.datgui = new GUI();
@@ -22,7 +25,7 @@ export default class UI{
             lighting: true
         }      
         let objectController = {
-            objectType: 'cube',
+            objectType: 'Cube',
             objectId: objects.length,
 
             load: function(){
@@ -34,27 +37,30 @@ export default class UI{
             groundColor: 0xffc26e,
             intensity: 0.2
         }
-        let JSONController = {
+        this.JSONController = {
             resolutionX: 400,
             resolutionY: 400,
             smokeDomainSizeX: 20,
             smokeDomainSizeY: 20,
             smokeDomainSizeZ: 20,
+            frameRate: 30,
+            startFrame: 1,
+            endFrame: 180,
 
             start: function(){
                 let data = {
-                    "frameRate": 30,
-                    "startFrame": 1,
-                    "endFrame": 180,
-                    "resolutionX": JSONController.resolutionX,
-                    "resolutionY": JSONController.resolutionY,
+                    "frameRate": this.frameRate,
+                    "startFrame": this.startFrame,
+                    "endFrame": this.endFrame,
+                    "resolutionX": this.resolutionX,
+                    "resolutionY": this.resolutionY,
                     "smokeDomainSize": [
-                        JSONController.smokeDomainSizeX,
-                        JSONController.smokeDomainSizeY,
-                        JSONController.smokeDomainSizeZ
+                        this.smokeDomainSizeX,
+                        this.smokeDomainSizeY,
+                        this.smokeDomainSizeZ
                     ],
-                    "objectType": "Suzanne",
-                    "objectId": "Suzanne",
+                    "objectType": objectController.objectType,
+                    "objectId": objectController.objectId,
                     "scale": [
                         //selectedObject.getSize();
                         1,
@@ -110,14 +116,19 @@ export default class UI{
         //create fire folder
         this.fireFolder = this.datgui.addFolder('Fire');
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
-                this.resolutionFolder.add(JSONController, 'resolutionX', 20, 2000).name('Resolution X');
-                this.resolutionFolder.add(JSONController, 'resolutionY', 20, 2000).name('Resolution Y');
+                this.resolutionFolder.add(this.JSONController, 'resolutionX', 20, 2000).name('Resolution X');
+                this.resolutionFolder.add(this.JSONController, 'resolutionY', 20, 2000).name('Resolution Y');
             this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
-                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X');
-                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y');
-                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z');
+                this.smokeDomainFolder.add(this.JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X');
+                this.smokeDomainFolder.add(this.JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y');
+                this.smokeDomainFolder.add(this.JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z');
+            this.framesFolder = this.fireFolder.addFolder('Frames');
+                this.framesFolder.add(this.JSONController, 'startFrame', 1, 1000).name('Start Frame');
+                this.framesFolder.add(this.JSONController, 'endFrame', this.JSONController.startFrame, 1000).name('End Frame');
+                this.framesFolder.add(this.JSONController, 'frameRate', 30, 60).name('Frame Rate');
+
         //simulation folder
-        this.datgui.add(JSONController, 'start').name('Start simulation');
+        this.datgui.add(this.JSONController, 'start').name('Start simulation');
 
 
     }
@@ -129,7 +140,8 @@ export default class UI{
         GUI.toggleShow();
     }
 
-    #getObjectNames() {
-
+    getJSONController() {
+        return this.JSONController;
     }
+
 }
