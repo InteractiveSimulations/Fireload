@@ -3,6 +3,7 @@
 **/.idea
 **/.DS_Store
 **/__pycache__
+**/waveletNoiseTile.bin
 
 # ignoring blender stuff
 **/FireSimulation/cache*
@@ -14,6 +15,7 @@
 **/*.vdb
 
 # ignoring client stuff
+ThreeClient/static/assets/simulations/*.png
 **/node_modules
 **/package-lock.json
 dist

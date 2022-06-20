@@ -15,10 +15,10 @@ fileDirectory = os.path.dirname(__file__)               #directory of the Blende
 parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
 parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSimulation
 parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
-parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located 
+#parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located
 
 
-dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
+dirJson = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
 
 with open(dirJson, 'r') as json_file:
 #with open('c:\\Users\\MaxBe\\Documents\\UNI\\Fireload\\BlenderSimulation\\Test_Json\\JsonForBlender.json', 'r') as json_file:
@@ -52,9 +52,9 @@ bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
 #directorys of the folder
 #Rednder images
 #dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
-dirRenderImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","")
+dirRenderImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","")
 #zBuffer images
-dirZBufferImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","zBuffer","")
+dirZBufferImages = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","RenderImages","zBuffer","")
 #change the dutput directory of every node
 for scene in bpy.data.scenes:
     for node in scene.node_tree.nodes:
