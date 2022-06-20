@@ -141,9 +141,9 @@ export function loadHDRI(hdriController, scene){
 }
 //changes effect of hdri on lighting or background
 export function changeHDRI(hdriController, scene){
-    if(hdriController.background === true){
+    if(hdriController.background == true){       
         //check if hdri is set as environment/lighting map, so that it doesn't need to be loaded twice
-        if(scene.environment != null && scene.environment !== 'undefined'){
+        if(scene.environment != null && scene.environment != 'undefined'){
             scene.background = scene.environment;
         }
         //when hdri is not loaded as environment/lighting map, hdri needs to be reloaded
@@ -204,31 +204,36 @@ export function loadObject(objectController, scene, objects){
 }
 
 //takes in the object name and adds it to the scene as the only object, deletes other objects
-export function loadObjectAsOnly(objectController, scene, object){
-    if(objectController.object == 'none'){
-        console.log('none')
-        scene.remove( object );
-        object = null;
-    }
-    else{
-    var objectLoader = new GLTFLoader();
-    objectLoader.setPath('/assets/models/')
-    objectLoader.load(objectController.object + '.glb', 
-        //called when resource is loaded
-	    function ( gltf ) {
-            scene.remove(object);
-            object = gltf.scene;
-	    	scene.add( gltf.scene );
-	    },
-	    //called when loading is in progresses
-	    function ( xhr ) {
-		    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-	    },
-	    //called when loading has errors
-	    function ( error ) {
-		    console.log( 'An error happened' );
-	    }
-    );
+export function loadObjectAsOnly(objectController, scene, objects){
+    removeAllObjectsFromScene(scene, objects);
+    if(objectController.objectType != 'none'){
+        var objectLoader = new GLTFLoader();
+        objectLoader.setPath('/assets/models/')
+        objectLoader.load(objectController.objectType + '.glb', 
+            //called when resource is loaded
+	        function ( gltf ) {
+                gltf.scene.material = new THREE.MeshStandardMaterial();
+                gltf.scene.scale.set(0.5, 0.5, 0.5);
+                gltf.scene.position.set(0, 0.55, 0);
+	    	    scene.add( gltf.scene );
+                objects.push(gltf.scene);
+	        },
+	        //called when loading is in progresses
+	        function ( xhr ) {
+		        console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+	        },
+	        //called when loading has errors
+	        function ( error ) {
+		        console.log( 'An error happened' );
+	        }
+        );
     }
     
+}
+
+export function removeAllObjectsFromScene(scene, objects){
+    for(let i = objects.length - 1; i >= 0; i--){
+        scene.remove(objects[i]);
+    }
+    objects = [];
 }

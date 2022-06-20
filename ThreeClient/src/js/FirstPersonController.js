@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import {PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js'
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 
 export default class FirstPersonController{
     constructor(camera, document){

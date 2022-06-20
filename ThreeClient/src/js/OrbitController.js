@@ -47,6 +47,12 @@ export default class OrbitController{
             this.transformControls.attach(intersects[0].object);
             this.selected = intersects[0].object;
         }
+        else {
+            this.transformControls.detach();
+            this.selected = null;
+        }
+        
+        
     }
 
     onMouseMove(event){
@@ -58,10 +64,9 @@ export default class OrbitController{
     }
 
     removeObject(){
-        if(this.selected != null || this.selected !== 'undefined'){
+        if(this.selected != null | this.selected != 'undefinded'){
             const index = this.objects.indexOf(this.selected);
             if(index > -1){
-                this.transformControls.detach();
                 this.objects.splice(index, 1);
                 this.scene.remove(this.selected);
             };
@@ -85,11 +90,7 @@ export default class OrbitController{
                 break;
             case 'KeyX':
                 this.removeObject();
-                break;
-            case 'Escape':
-                this.transformControls.detach();
-                this.selected = null;
-                break;
+                break;           
         }
     }
 

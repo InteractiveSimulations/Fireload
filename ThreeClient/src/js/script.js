@@ -22,9 +22,7 @@ let ambientLight;
 
 let fire = null;
 
-let objects = {
-    obj: [],
-};
+let objects = [];
 let selected;
 
 //create performance stats
@@ -35,7 +33,7 @@ document.body.appendChild(stats.dom);
 function init() {
     initScene();
     initRendering();
-    controller = new OrbitController(camera, renderer.domElement, scene, objects.obj, selected);
+    controller = new OrbitController(camera, renderer.domElement, scene, objects, selected);
     //create gui
     gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
@@ -52,33 +50,22 @@ function initScene(){
     initObjects();
     initLights();
 }
+
 function initObjects(){
     //create floor
     floor = new THREE.Mesh(new THREE.BoxGeometry(10, 0.1, 10), new THREE.MeshStandardMaterial());
-    floor.receiveShadow = true;
     scene.add(floor);
     //adding cube
-    let cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial());
+    let cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
     cube.name = "cube";
-    cube.castShadow = true;
     cube.position.set(0, 0.5, 0);
-
-
     scene.add(cube);
-    objects.obj.push(cube);
+    objects.push(cube);
 }
 
 function initLights(){
     ambientLight = new THREE.HemisphereLight(0xe0f3ff, 0xffc26e, 0.2);
-    const light = new THREE.PointLight(0xffffff,0.5,);
-    light.position.set(0, 5, 5);
-    light.castShadow = true;
-    const light_helper = new THREE.PointLightHelper(light, 0.5);
-
-
     scene.add(ambientLight);
-    scene.add(light);
-    scene.add(light_helper);
 }
 
 function initRendering(){
@@ -86,9 +73,6 @@ function initRendering(){
     renderer = new THREE.WebGLRenderer( {antialias: true} );
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    //set shadows
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
     //set tonemapping
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1;
@@ -110,7 +94,7 @@ function switchToOrbitControls(){
     if(controller instanceof FirstPersonController){
         controller.destroy();
         gui.hide();
-        controller = new OrbitController(camera, renderer.domElement, scene, objects.obj, selected);
+        controller = new OrbitController(camera, document.body, scene, objects, selected);
         fire.destroy();
         fire = null;
     }
@@ -124,11 +108,11 @@ function render() {
 function update() {
     stats.update();
     controller.move();
+    render();
     requestAnimationFrame(update);
     if(fire != null && fire != 'undefined'){
         fire.update();
     }
-    render();
 }
 
 function onWindowResize() {
@@ -159,11 +143,11 @@ function onKeyDown(event){
         console.log('switching to first person');
         switchToFPControls();
         break;
-
+        
         case 'KeyO':
         console.log('switching to orbit');
         switchToOrbitControls();
-
+        
         //switchToFPControls();
         break;
     }
