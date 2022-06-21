@@ -22,7 +22,9 @@ let ambientLight;
 
 let fire = null;
 
-let objects = [];
+let objects = {
+    elements: [],
+};
 let selected;
 
 //create performance stats
@@ -60,7 +62,7 @@ function initObjects(){
     cube.name = "cube";
     cube.position.set(0, 0.5, 0);
     scene.add(cube);
-    objects.push(cube);
+    objects.elements.push(cube);
 }
 
 function initLights(){

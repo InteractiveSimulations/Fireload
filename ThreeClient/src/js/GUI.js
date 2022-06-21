@@ -27,6 +27,7 @@ export default class UI{
         let objectController = {
             objectType: 'Cube',
             objectId: objects.length,
+            elements: objects.elements,
 
             load: function(){
                 Loader.loadObjectAsOnly(objectController, scene, objects);
@@ -35,7 +36,7 @@ export default class UI{
         let ambientLightController = {
             skyColor: 0xe0f3ff,
             groundColor: 0xffc26e,
-            intensity: 0.2
+            intensity: 0.25
         }
         this.JSONController = {
             resolutionX: 400,

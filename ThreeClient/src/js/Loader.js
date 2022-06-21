@@ -190,7 +190,7 @@ export function loadObject(objectController, scene, objects){
 	    function ( gltf ) {
             gltf.scene.name = objectController.object;
 	    	scene.add( gltf.scene );
-            objects.obj.push( gltf.scene );
+            objects.elements.push( gltf.scene );
 	    },
 	    //called when loading is in progresses
 	    function ( xhr ) {
@@ -206,17 +206,15 @@ export function loadObject(objectController, scene, objects){
 //takes in the object name and adds it to the scene as the only object, deletes other objects
 export function loadObjectAsOnly(objectController, scene, objects){
     removeAllObjectsFromScene(scene, objects);
-    if(objectController.objectType != 'none'){
+    if(objectController.objectType !== 'none'){
         var objectLoader = new GLTFLoader();
         objectLoader.setPath('/assets/models/')
-        objectLoader.load(objectController.objectType + '.glb', 
+        objectLoader.load(objectController.objectType.toLowerCase() + '.glb',
             //called when resource is loaded
 	        function ( gltf ) {
                 gltf.scene.material = new THREE.MeshStandardMaterial();
-                gltf.scene.scale.set(0.5, 0.5, 0.5);
-                gltf.scene.position.set(0, 0.55, 0);
 	    	    scene.add( gltf.scene );
-                objects.push(gltf.scene);
+                objects.elements.push(gltf.scene);
 	        },
 	        //called when loading is in progresses
 	        function ( xhr ) {
@@ -232,8 +230,8 @@ export function loadObjectAsOnly(objectController, scene, objects){
 }
 
 export function removeAllObjectsFromScene(scene, objects){
-    for(let i = objects.length - 1; i >= 0; i--){
-        scene.remove(objects[i]);
+    for(let i = objects.elements.length - 1; i >= 0; i--){
+        scene.remove(objects.elements[i]);
     }
-    objects = [];
+    objects.elements = [];
 }
