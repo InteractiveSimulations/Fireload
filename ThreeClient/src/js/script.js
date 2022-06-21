@@ -78,7 +78,8 @@ function initRendering(){
     //set tonemapping
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1;
-    renderer.outputEncoding = THREE.sRGBEncoding;  
+    renderer.shadowMap.enabled = true;
+    renderer.outputEncoding = THREE.sRGBEncoding;
     //appending renderer to dom
     document.body.appendChild(renderer.domElement);
 }

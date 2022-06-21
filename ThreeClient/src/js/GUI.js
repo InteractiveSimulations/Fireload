@@ -7,19 +7,22 @@ import {JoinNode} from "three/examples/jsm/nodes/utils/JoinNode";
 
 //gui class takes in scene, objects and floor
 export default class UI{
-
+    #objects;
+    #name_controller;
     constructor(scene, objects, floor, camera, ambientLight, renderer){
 
         this.datgui = new GUI();
+        this.#objects = objects;
+        let that = this;
 
         let floorController = {
-            texture: 'none',
+            texture: 'small tiles',
             resolution: '1k',
             filtering: 1,
             repeat: 1
         }
         let hdriController = {
-            texture: 'none',
+            texture: 'field 3 [sunset][sunny]',
             resolution: '1k',
             background: true,
             lighting: true
@@ -27,10 +30,18 @@ export default class UI{
         let objectController = {
             objectType: 'Cube',
             objectId: objects.length,
-            elements: objects.elements,
+            activeObject: 'none',
 
             load: function(){
                 Loader.loadObjectAsOnly(objectController, scene, objects);
+                //Loader.loadObject(objectController, scene, that.#objects); //uncomment when loading multiple obj
+                /* this adds the loaded item to the gui list for selection! */
+                let list = [];
+                that.#objects.elements.forEach(function (item) {
+                    list.push(item.name);
+                })
+                list.push(this.objectType);
+                that.#name_controller = that.#name_controller.options(list);
             }
         }
         let ambientLightController = {
@@ -60,20 +71,22 @@ export default class UI{
                         this.smokeDomainSizeY,
                         this.smokeDomainSizeZ
                     ],
-                    "objectType": objectController.objectType,
+                    "objectType": objectController.activeObject,
                     "objectId": objectController.objectId,
                     "scale": [
-                        //selectedObject.getSize();
+                        /* todo: get val from active object */
                         1,
                         1,
                         1
                     ],
                     "location": [
+                        /* todo: get val from active object */
                         0,
                         0,
                         1
                     ],
                     "rotation": [
+                        /* todo: get val from active object */
                         0,
                         0,
                         0
@@ -96,7 +109,7 @@ export default class UI{
             this.hdriFolder.add(hdriController, 'lighting').name('Use for lighting').onChange(function() { Loader.changeHDRI(hdriController, scene) });
         //create object folder       
         this.objectFolder = this.datgui.addFolder('Objects');
-                this.objectFolder.add(objectController, 'objectType', ['none','cube', 'sphere', 'suzanne', 'table', 'tv']).name('Object');
+                this.objectFolder.add(objectController, 'objectType', ['none','Cube', 'Sphere', 'Suzanne', 'Table', 'Tv']).name('Object');
                 this.objectFolder.add(objectController, 'load').name('Add object');
         //create settings folder
         this.settingsFolder = this.datgui.addFolder('Settings');
@@ -116,6 +129,7 @@ export default class UI{
                 this.ambientLightFolder.add(ambientLightController, 'intensity').onChange(function(value) { ambientLight.intensity = value; });
         //create fire folder
         this.fireFolder = this.datgui.addFolder('Fire');
+            this.#name_controller = this.fireFolder.add(objectController, 'activeObject', ["none"]).name('Select Object');
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
                 this.resolutionFolder.add(this.JSONController, 'resolutionX', 20, 2000).name('Resolution X');
                 this.resolutionFolder.add(this.JSONController, 'resolutionY', 20, 2000).name('Resolution Y');
@@ -131,6 +145,9 @@ export default class UI{
         //simulation folder
         this.datgui.add(this.JSONController, 'start').name('Start simulation');
 
+        /* init floor */
+        Loader.loadFloorMaterial(floorController, floor);
+        Loader.loadHDRI(hdriController, scene);
 
     }
 
@@ -143,6 +160,15 @@ export default class UI{
 
     getJSONController() {
         return this.JSONController;
+    }
+    /* private function that returns a list of all objects in the scene */
+    #getObjectNames() {
+        let list = [];
+        this.#objects.elements.forEach(function (item) {
+            list.push(item.name);
+        })
+        console.log("list is: " + list);
+        return list;
     }
 
 }

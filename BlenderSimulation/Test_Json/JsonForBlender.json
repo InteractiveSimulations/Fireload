@@ -1,1 +1,28 @@
-{"frameRate":30,"startFrame":1,"endFrame":50,"resolutionX":400,"resolutionY":400,"smokeDomainSize":[20,20,20],"objectType":"Cube","objectId":1,"scale":[1,1,1],"location":[0,0,1],"rotation":[0,0,0]}
+{
+  "frameRate": 30,
+  "startFrame": 1,
+  "endFrame": 90,
+  "resolutionX": 400,
+  "resolutionY": 400,
+  "smokeDomainSize": [
+    20,
+    20,
+    20
+  ],
+  "objectType": "Cube",
+  "scale": [
+    1,
+    1,
+    1
+  ],
+  "location": [
+    0,
+    0,
+    1
+  ],
+  "rotation": [
+    0,
+    0,
+    0
+  ]
+}

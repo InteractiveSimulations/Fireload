@@ -185,10 +185,10 @@ export function changeHDRI(hdriController, scene){
 export function loadObject(objectController, scene, objects){
     var objectLoader = new GLTFLoader();
     objectLoader.setPath('/assets/models/')
-    objectLoader.load(objectController.object + '.glb', 
+    objectLoader.load(objectController.objectType.toLowerCase() + '.glb',
         //called when resource is loaded
 	    function ( gltf ) {
-            gltf.scene.name = objectController.object;
+            gltf.scene.name = objectController.objectType;
 	    	scene.add( gltf.scene );
             objects.elements.push( gltf.scene );
 	    },
@@ -212,7 +212,15 @@ export function loadObjectAsOnly(objectController, scene, objects){
         objectLoader.load(objectController.objectType.toLowerCase() + '.glb',
             //called when resource is loaded
 	        function ( gltf ) {
-                gltf.scene.material = new THREE.MeshStandardMaterial();
+                gltf.scene.material = new THREE.MeshPhysicalMaterial({
+                    roughness: 0.35,
+                    metalness: 0.45,
+                    reflectivity: 0.55,
+                    clearcoatRoughness: 1,
+                    flatShading: false,
+                })
+                gltf.scene.name = objectController.objectType.toLowerCase();
+                gltf.scene.position.set(0, 1, 0);
 	    	    scene.add( gltf.scene );
                 objects.elements.push(gltf.scene);
 	        },
