@@ -7,7 +7,7 @@ export default class Fire{
         this.camera = camera;
         //create fire mesh
         this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(10.55,10.55));
-        this.mesh.position.set(0, 4.54, 0.75);
+        this.mesh.position.set(0, 4.65, 0.75);
         this.scene = scene;
 
         this.light = new THREE.PointLight(0xccac77, 0.2, 100);

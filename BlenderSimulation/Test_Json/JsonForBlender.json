@@ -1,7 +1,7 @@
 {
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 90,
+  "endFrame": 40,
   "resolutionX": 400,
   "resolutionY": 400,
   "smokeDomainSize": [
@@ -10,6 +10,7 @@
     20
   ],
   "objectType": "Cube",
+  "objectId": 1,
   "scale": [
     1,
     1,
