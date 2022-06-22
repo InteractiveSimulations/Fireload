@@ -29,7 +29,7 @@ export default class UI{
         }      
         let objectController = {
             objectType: 'Cube',
-            objectId: objects.length,
+            objectId: 1, /* todo: dynamic id*/
             activeObject: 'none',
 
             load: function(){
@@ -109,7 +109,7 @@ export default class UI{
             this.hdriFolder.add(hdriController, 'lighting').name('Use for lighting').onChange(function() { Loader.changeHDRI(hdriController, scene) });
         //create object folder       
         this.objectFolder = this.datgui.addFolder('Objects');
-                this.objectFolder.add(objectController, 'objectType', ['none','Cube', 'Sphere', 'Suzanne', 'Table', 'Tv']).name('Object');
+                this.objectFolder.add(objectController, 'objectType', ['none','Cube', 'Sphere', 'Suzanne']).name('Object');
                 this.objectFolder.add(objectController, 'load').name('Add object');
         //create settings folder
         this.settingsFolder = this.datgui.addFolder('Settings');

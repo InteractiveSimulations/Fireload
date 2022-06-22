@@ -58,11 +58,6 @@ function initObjects(){
     floor = new THREE.Mesh(new THREE.BoxGeometry(10, 0.1, 10), new THREE.MeshStandardMaterial());
     scene.add(floor);
     //adding cube
-    let cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
-    cube.name = "cube";
-    cube.position.set(0, 0.5, 0);
-    scene.add(cube);
-    objects.elements.push(cube);
 }
 
 function initLights(){
