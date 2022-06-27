@@ -34,7 +34,7 @@ Please follow this commandments :
 When working on features, it is necessary to work in a subbranch, e.g. :
 
 ```bash
-    git checkout -b feature-xyz main #create a new feature branch from main
+    git checkout -b feature-xyz development #create a new feature branch from main
 ```
 
 The master branch gets merged regularly from the development branch! To update your feature branch when working on bigger features use a **rebase technique** to do so!
