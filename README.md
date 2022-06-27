@@ -43,7 +43,7 @@ The master branch gets merged regularly from the development branch! To update y
     git checkout development
     git pull
     git checkout feature-xyz
-    git rebase master   # merge conflicts may happen. Better do this step in an IDE!
+    git rebase development   # merge conflicts may happen. Better do this step in an IDE!
 ```
 
 When a feature is finished - merge it back into development.
