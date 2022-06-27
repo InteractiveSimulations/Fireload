@@ -23,16 +23,33 @@ Please refer to [this](ThreeClient/README.md#generate-distribution-folder)
 
 
 ## Contribution Policy
+Please follow this commandments :
+
+1. Make **small commits**.
+2. Explain the why, not the what, in your commit message
+3. Create a **new branch** for every task / small feature / bug fix
+4. Do not commit or push directly to the master branch
+5. Do not commit commented-out code
 
 When working on features, it is necessary to work in a subbranch, e.g. :
 
 ```bash
-    git checkout -b <your-dev-branch>
+    git checkout -b feature-xyz main #create a new feature branch from main
 ```
 
-Merge a feature into main when it has been implemented and tested
+The master branch gets merged regularly from the development branch! To update your feature branch when working on bigger features use a **rebase technique** to do so!
 
 ```bash
-    git checkout main #switch to main branch
-    git merge <your-dev-branch> #or consult the docs if unclear
+    git checkout development
+    git pull
+    git checkout feature-xyz
+    git rebase master   # merge conflicts may happen. Better do this step in an IDE!
+```
+
+When a feature is finished - merge it back into development.
+
+```bash
+    git checkout development
+    git pull
+    git merge feature-xyz   # merge conflicts may happen. Better do this step in an IDE!
 ```
