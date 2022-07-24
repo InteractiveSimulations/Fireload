@@ -44,6 +44,26 @@ export default class Fire{
         scene.add(this.mesh);
     }
 
+    // returns index of the perspective that needs to be loaded into the shader
+    getPerspective(){
+        //calculate angle of fire from camera position with pythagoras theorem
+        let angle = Math.atan2(this.camera.position.z - this.mesh.position.z, this.camera.position.x - this.mesh.position.x) + Math.PI;
+        let perspective = -1;
+        if(angle <= Math.PI/4 * 1 | angle >= Math.PI/4 * 7){
+            perspective = 0;
+        }
+        if(angle <= Math.PI/4 * 3 && angle >= Math.PI/4 * 1){
+            perspective = 1;
+        }
+        if(angle <= Math.PI/4 * 5 && angle >= Math.PI/4 * 3){
+            perspective = 2;
+        }
+        if(angle <= Math.PI/4 * 7 && angle >= Math.PI/4 * 5){
+            perspective = 3;
+        }
+        return perspective;
+    }
+
     update(){
         //calculate angle of fire from camera position with pythagoras theorem
         var angle = Math.atan(1/(Math.abs(this.camera.position.z) / Math.abs(this.camera.position.x)));
@@ -59,6 +79,8 @@ export default class Fire{
         //rotating fire around pivot point/parent object
         this.pivot.rotation.y = angle;
         //updating fire texture (only used when the fire is loaded as individual frames)
+
+        console.log("Active perspective: " + this.getPerspective())
         
         this.deltaTime += this.clock.getDelta();
         if(this.deltaTime > (1 / this.frameRate)){
