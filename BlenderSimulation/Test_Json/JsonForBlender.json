@@ -1,29 +1,49 @@
 {
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 40,
+  "endFrame": 120,
   "resolutionX": 400,
   "resolutionY": 400,
+  "fireResolution": 30,
+  "material": "wood",  
+
   "smokeDomainSize": [
-    20,
-    20,
-    20
+    40,
+    40,
+    40
   ],
   "objectType": "Cube",
   "objectId": 1,
   "scale": [
-    1,
-    1,
-    1
+    4,
+    4,
+    4
   ],
   "location": [
     0,
     0,
-    1
+    4
   ],
   "rotation": [
     0,
     0,
+    0
+  ],
+  "forceType": "Wind",
+  "forceId": 1,
+  "forceScale": [
+    2,
+    2,
+    3
+  ],
+  "forceLocation": [
+    10,
+    0,
+    4
+  ],
+  "forceRotation": [
+    0,
+    270,
     0
   ]
 }
