@@ -2,8 +2,8 @@
   "frameRate": 30,
   "startFrame": 1,
   "endFrame": 120,
-  "resolutionX": 400,
-  "resolutionY": 400,
+  "resolutionX": 800,
+  "resolutionY": 800,
   "fireResolution": 30,
   "material": "wood",  
 
