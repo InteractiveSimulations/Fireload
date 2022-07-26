@@ -66,6 +66,8 @@ export default class UI{
                     "endFrame": this.endFrame,
                     "resolutionX": this.resolutionX,
                     "resolutionY": this.resolutionY,
+                    "fireResolution": 30,
+                    "material": "wood",
                     "smokeDomainSize": [
                         this.smokeDomainSizeX,
                         this.smokeDomainSizeY,
@@ -89,6 +91,23 @@ export default class UI{
                         /* todo: get val from active object */
                         0,
                         0,
+                        0
+                    ],
+                    "forceType": "Wind",
+                    "forceId": 1,
+                    "forceScale": [
+                        2,
+                        2,
+                        3
+                    ],
+                    "forceLocation": [
+                        10,
+                        0,
+                        4
+                    ],
+                    "forceRotation": [
+                        0,
+                        270,
                         0
                     ]
                 };

@@ -1,9 +1,12 @@
 {
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 40,
-  "resolutionX": 400,
-  "resolutionY": 400,
+  "endFrame": 120,
+  "resolutionX": 800,
+  "resolutionY": 800,
+  "fireResolution": 30,
+  "material": "wood",  
+
   "smokeDomainSize": [
     20,
     20,
@@ -24,6 +27,23 @@
   "rotation": [
     0,
     0,
+    0
+  ],
+  "forceType": "Wind",
+  "forceId": 0,
+  "forceScale": [
+    2,
+    2,
+    3
+  ],
+  "forceLocation": [
+    10,
+    0,
+    4
+  ],
+  "forceRotation": [
+    0,
+    270,
     0
   ]
 }
