@@ -8,21 +8,21 @@
   "material": "wood",  
 
   "smokeDomainSize": [
-    40,
-    40,
-    40
+    20,
+    20,
+    20
   ],
   "objectType": "Cube",
   "objectId": 1,
   "scale": [
-    4,
-    4,
-    4
+    1,
+    1,
+    1
   ],
   "location": [
     0,
     0,
-    4
+    1
   ],
   "rotation": [
     0,
@@ -30,7 +30,7 @@
     0
   ],
   "forceType": "Wind",
-  "forceId": 1,
+  "forceId": 0,
   "forceScale": [
     2,
     2,
