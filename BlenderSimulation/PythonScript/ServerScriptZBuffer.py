@@ -15,9 +15,9 @@ fileDirectory = os.path.dirname(__file__)               #directory of the Blende
 parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
 parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSimulation
 parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
-parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located 
+#parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located
 
-dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
+dirJson = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
 
 with open(dirJson, 'r') as json_file:
 #with open('c:\\Users\\MaxBe\\Documents\\UNI\\Fireload\\BlenderSimulation\\Test_Json\\JsonForBlender.json', 'r') as json_file:
@@ -58,27 +58,27 @@ bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
 #directorys of the folder
 #Rednder images
 #dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
-dirRenderImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","")
+dirRenderImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","")
 #zBuffer images
-dirZBufferImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","zBuffer","")
+dirZBufferImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","zBuffer","")
 #openvdb Path
-dirOpenVBD = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","FireSimulation","cache_fluid_90784781","data","")
+dirOpenVBD = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","FireSimulation","cache_fluid_90784781","data","")
 
 #create all Nodes for the compositing
-bpy.context.area.ui_type = 'CompositorNodeTree'
+#bpy.context.area.ui_type = 'CompositorNodeTree'
 scene = bpy.context.scene
 nodetree = scene.node_tree
-NodeNormalize = nodetree.nodes.new("CompositorNodeNormalize")
-NodeRLayers = nodetree.nodes.new("CompositorNodeRLayers")
-OutputFile = nodetree.nodes.new("CompositorNodeOutputFile")
+#NodeNormalize = nodetree.nodes.new("CompositorNodeNormalize")
+#NodeRLayers = nodetree.nodes.new("CompositorNodeRLayers")
+#OutputFile = nodetree.nodes.new("CompositorNodeOutputFile")
 #change the output directory of every node
 for scene in bpy.data.scenes:
     for node in scene.node_tree.nodes:
         if node.type == 'OUTPUT_FILE':
             node.base_path = dirZBufferImages
 #conecte the nodes for the Z Buffer images
-nodetree.links.new(NodeRLayers.outputs["Depth"], NodeNormalize.inputs[0])
-nodetree.links.new(NodeNormalize.outputs[0], OutputFile.inputs[0])
+#nodetree.links.new(NodeRLayers.outputs["Depth"], NodeNormalize.inputs[0])
+#nodetree.links.new(NodeNormalize.outputs[0], OutputFile.inputs[0])
 
 
 bpy.data.scenes["Scene"].render.filepath = dirRenderImages          #change the output directory of the renders images
@@ -152,7 +152,7 @@ bpy.ops.object.modifier_add(type='VOLUME_TO_MESH')
 bpy.context.object.modifiers["Volume to Mesh"].object = bpy.data.objects["fluid_data_000"+str(StartFrame)]
 bpy.context.object.modifiers["Volume to Mesh"].threshold = 0.001
 
-bpy.context.area.ui_type = 'TEXT_EDITOR'
+#bpy.context.area.ui_type = 'TEXT_EDITOR'
 
 #start render
 #bpy.ops.render.render(animation=True) 

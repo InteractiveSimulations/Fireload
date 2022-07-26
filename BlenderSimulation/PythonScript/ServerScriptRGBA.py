@@ -15,10 +15,10 @@ fileDirectory = os.path.dirname(__file__)               #directory of the Blende
 parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
 parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSimulation
 parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
-parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located 
+#parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located
 
-dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
-dirJson1 = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","Send.json")
+dirJson = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
+dirJson1 = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","Send.json")
 
 with open(dirJson, 'r') as json_file:
 #with open('c:\\Users\\MaxBe\\Documents\\UNI\\Fireload\\BlenderSimulation\\Test_Json\\JsonForBlender.json', 'r') as json_file:
@@ -59,9 +59,9 @@ bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
 #directorys of the folder
 #Rednder images
 #dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
-dirRenderImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","")
+dirRenderImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","")
 #zBuffer images
-dirZBufferImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","zBuffer","")
+dirZBufferImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","zBuffer","")
 
 #create all Nodes for the compositing
 #bpy.context.area.ui_type = 'CompositorNodeTree'
@@ -87,6 +87,13 @@ bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
 bpy.context.scene.render.image_settings.compression = 100
+
+# render a video with alpha
+#bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  # render mpeg Video
+#bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'  # change container to MPEG4
+#bpy.context.scene.render.ffmpeg.codec = 'QTRLE'  # change video codec to QT
+#bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
+
 
 #Change the Size of an SmokeDomain
 def set_size_SD(name, x, y, z): #läuft nur wenn die SmokeDomain ausgewählt ist
@@ -140,6 +147,7 @@ def set_size_SD(name, x, y, z): #läuft nur wenn die SmokeDomain ausgewählt ist
 
     vertex.clear()
     bpy.context.object.modifiers["Fluid"].domain_settings.resolution_max = fireResolution
+    #bpy.ops.fluid.bake_data()
     bpy.ops.object.mode_set(mode = 'OBJECT')
 
 def set_location(name, x, y, z):
@@ -175,7 +183,7 @@ def add_obj(object):
         bpy.ops.mesh.primitive_monkey_add(enter_editmode=False)
         
     elif object == "Chair":
-        chairPath = os.path.join(parentDirectory4,"Fireload", "BlenderSimulation", "Objects", "chair.gltf")  
+        chairPath = os.path.join(parentDirectory3,"Fireload", "BlenderSimulation", "Objects", "chair.gltf")
         bpy.ops.import_scene.gltf( filepath = chairPath )
         
     bpy.context.object.hide_render = True
@@ -227,29 +235,29 @@ def add_wind(pos,rot,sca):
 def fire_evolve(material):
     #change the fuel in the burning object
     for obj in bpy.data.collections['FireEmitters'].objects:
-        obj.modifiers["Fluid"].flow_settings.fuel_amount = 0.2
+        obj.modifiers["Fluid"].flow_settings.fuel_amount = 0.0
         obj.modifiers["Fluid"].flow_settings.surface_distance = 0
-        obj.modifiers["Fluid"].flow_settings.volume_density = 0.0
+        obj.modifiers["Fluid"].flow_settings.volume_density = 0
         obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.fuel_amount', frame = 1)
         obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.surface_distance', frame = 1)
         obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.volume_density', frame = 1)
         
         
-    bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.flame_smoke
+    #bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.flame_smoke
     #match material:
     #    case "wood":
     if material == "wood":
             bpy.context.scene.frame_set(200)
-            obj.modifiers["Fluid"].flow_settings.fuel_amount = 1
+            obj.modifiers["Fluid"].flow_settings.fuel_amount = 0.1
             obj.modifiers["Fluid"].flow_settings.surface_distance = 0.075
-            obj.modifiers["Fluid"].flow_settings.volume_density = 1
+            obj.modifiers["Fluid"].flow_settings.volume_density = 0.1
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.fuel_amount', frame = 200)
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.surface_distance', frame = 200)
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.volume_density', frame = 200)
             bpy.context.scene.frame_set(1)
     
         
-set_size_SD("SmokeDomain", SmokeDomain_size[0], SmokeDomain_size[1], SmokeDomain_size[2])
+#set_size_SD("SmokeDomain", SmokeDomain_size[0], SmokeDomain_size[1], SmokeDomain_size[2])
 del_all_objects() 
 add_obj(type)
 set_scale(type, scale[0], scale[1], scale[2])
@@ -270,6 +278,7 @@ set_location("Camera_ZB", -cameraDistancePlane+SmokeDomain_size[0]/2,0,SmokeDoma
 #get the view and projection matrix
 def modleViewMatrix(letter):
     modelViewMatrix = bpy.context.scene.objects["Camera_"+letter].matrix_world
+    #print(modelViewMatrix)
     return modelViewMatrix
 
 def projectionMatrix(letter):
@@ -311,11 +320,25 @@ fire_evolve(material)
 
 #refresh the cache (so every Objects is burning)
 bpy.data.objects["SmokeDomain"].select_set(True)
+#bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'REPLAY'
 bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'ALL'
 bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'REPLAY'
 #bpy.ops.ptcache.bake_all(bake=True)
 bpy.data.objects["SmokeDomain"].select_set(False)
 
+set_size_SD("SmokeDomain", SmokeDomain_size[0], SmokeDomain_size[1], SmokeDomain_size[2])
+#bpy.ops.screen.animation_play()
+
+#currentFrame = bpy.data.scenes[0].frame_current
+#print(currentFrame)
+
+bpy.ops.nla.bake(frame_start=StartFrame, frame_end=EndFrame, bake_types={'OBJECT'})
+
+#while currentFrame < 120:
+#    currentFrame = bpy.data.scenes[0].frame_current
+#    print(currentFrame)
+    #bpy.ops.screen.animation_play()
+    
 #starts the render for the RGBA Images
 #bpy.ops.render.render(animation=True) 
 
