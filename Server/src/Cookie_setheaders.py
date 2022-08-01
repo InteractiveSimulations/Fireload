@@ -1,4 +1,4 @@
-#fromhttp import cookies
+#from http import cookies
 #import requests
 
 #url = 'http://192.168.178.20:8080/'
