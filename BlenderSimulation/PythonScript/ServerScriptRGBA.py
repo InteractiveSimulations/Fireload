@@ -65,7 +65,7 @@ dirZBufferImages = os.path.join(parentDirectory3,"Fireload","dist","assets","sim
 
 #create all Nodes for the compositing
 #bpy.context.area.ui_type = 'CompositorNodeTree'
-#scene = bpy.context.scene
+scene = bpy.context.scene
 #nodetree = scene.node_tree
 #NodeNormalize = nodetree.nodes.new("CompositorNodeNormalize")
 #NodeRLayers = nodetree.nodes.new("CompositorNodeRLayers")
