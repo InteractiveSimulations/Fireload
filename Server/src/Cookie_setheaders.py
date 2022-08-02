@@ -18,10 +18,15 @@ from bottle import get, run, view, post, request, response
 @get("/")
 def _():
     #get a value from client um test zu ersetzen
-    response.set_cookie("user", "test")
+    response.set_cookie("user", "test2")
 ####################
 
 
 
 
 run(host="127.0.0.1", port= 3333, debug= True, reloader=True)
+
+# objectController
+# hdriController
+# floorController
+# JSONController
