@@ -246,4 +246,5 @@ function onChangeFire(JSONController){
     //server sending
     //console.log("test");
     cookieFunction(JSONController.resolutionX, "fireResolutionX")
+    cookieFunction(JSONController.resolutionY, "fireResolutionY")
 }
