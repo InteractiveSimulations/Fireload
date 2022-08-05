@@ -247,4 +247,10 @@ function onChangeFire(JSONController){
     //console.log("test");
     cookieFunction(JSONController.resolutionX, "fireResolutionX")
     cookieFunction(JSONController.resolutionY, "fireResolutionY")
+    cookieFunction(JSONController.smokeDomainSizeX, "smokeDomainSizeX")
+    cookieFunction(JSONController.smokeDomainSizeY, "smokeDomainSizeY")
+    cookieFunction(JSONController.smokeDomainSizeZ, "smokeDomainSizeZ")
+    cookieFunction(JSONController.startFrame, "startFrame")
+    cookieFunction(JSONController.endFrame, "endFrame")
+    cookieFunction(JSONController.frameRate, "frameRate")
 }
