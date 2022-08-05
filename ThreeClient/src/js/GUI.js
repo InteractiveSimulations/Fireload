@@ -49,7 +49,7 @@ export default class UI{
             groundColor: 0xffc26e,
             intensity: 0.25
         }
-        this.JSONController = {
+        let JSONController = {
             resolutionX: 400,
             resolutionY: 400,
             smokeDomainSizeX: 20,
@@ -151,20 +151,20 @@ export default class UI{
         this.fireFolder = this.datgui.addFolder('Fire');
             this.#name_controller = this.fireFolder.add(objectController, 'activeObject', ["none"]).name('Select Object');
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
-                //this.resolutionFolder.add(this.JSONController, 'resolutionX', 20, 2000).name('Resolution X').onChange(function() { onChangeFire()});
-                this.resolutionFolder.add(this.JSONController, 'resolutionX', 20, 2000).name('Resolution X');
-                this.resolutionFolder.add(this.JSONController, 'resolutionY', 20, 2000).name('Resolution Y');
+                this.resolutionFolder.add(JSONController, 'resolutionX', 20, 2000).name('Resolution X').onChange(function(value) { onChangeFire(JSONController)});
+                //this.resolutionFolder.add(this.JSONController, 'resolutionX', 20, 2000).name('Resolution X');
+                this.resolutionFolder.add(JSONController, 'resolutionY', 20, 2000).name('Resolution Y');
             this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
-                this.smokeDomainFolder.add(this.JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X');
-                this.smokeDomainFolder.add(this.JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y');
-                this.smokeDomainFolder.add(this.JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z');
+                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X');
+                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y');
+                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z');
             this.framesFolder = this.fireFolder.addFolder('Frames');
-                this.framesFolder.add(this.JSONController, 'startFrame', 1, 1000).name('Start Frame');
-                this.framesFolder.add(this.JSONController, 'endFrame', this.JSONController.startFrame, 1000).name('End Frame');
-                this.framesFolder.add(this.JSONController, 'frameRate', 30, 60).name('Frame Rate');
+                this.framesFolder.add(JSONController, 'startFrame', 1, 1000).name('Start Frame');
+                this.framesFolder.add(JSONController, 'endFrame', JSONController.startFrame, 1000).name('End Frame');
+                this.framesFolder.add(JSONController, 'frameRate', 30, 60).name('Frame Rate');
 
         //simulation folder
-        this.datgui.add(this.JSONController, 'start').name('Start simulation');
+        this.datgui.add(JSONController, 'start').name('Start simulation');
 
         /* init floor */
         Loader.loadFloorMaterial(floorController, floor);
@@ -179,7 +179,7 @@ export default class UI{
     }
 
     getJSONController() {
-        return this.JSONController;
+        return JSONController;
     }
     /* private function that returns a list of all objects in the scene */
     #getObjectNames() {
@@ -192,7 +192,7 @@ export default class UI{
     }
 
 }
-
+// Jonas Max functions for the cookie implementation
 function cookieFunction(data, type){
     const name = type;
     const value = data;
@@ -244,5 +244,6 @@ function onChangeLight(ambientLight, value){
 
 function onChangeFire(JSONController){
     //server sending
+    //console.log("test");
     cookieFunction(JSONController.resolutionX, "fireResolutionX")
 }
