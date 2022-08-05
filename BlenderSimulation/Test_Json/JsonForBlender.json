@@ -1,7 +1,7 @@
 {
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 120,
+  "endFrame": 30,
   "resolutionX": 800,
   "resolutionY": 800,
   "fireResolution": 30,
