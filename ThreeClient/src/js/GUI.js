@@ -10,23 +10,36 @@ export default class UI{
     #objects;
     #name_controller;
     constructor(scene, objects, floor, camera, ambientLight, renderer){
-
+    checkCookie();
         this.datgui = new GUI();
         this.#objects = objects;
         let that = this;
 
         let floorController = {
-            texture: 'wood',
+            texture: 'wood,',
             resolution: '1k',
             filtering: 1,
             repeat: 1
         }
+        /*
+        cookieFunction('wood', "floorTexture")
+        cookieFunction('1k', "floorRepeat")
+        cookieFunction(1, "floorResolution")
+        cookieFunction(1, "floorFiltering")
+        */
         let hdriController = {
             texture: 'field 3 [sunset][sunny]',
             resolution: '1k',
             background: true,
             lighting: true
-        }      
+        }
+        /*
+        cookieFunction('field 3 [sunset][sunny]', "HDRITexture")
+        cookieFunction('1k', "HDRIBackground")
+        cookieFunction(true, "HDRILighting")
+        cookieFunction(true, "HDRIResolution")
+        */
+
         let objectController = {
             objectType: 'Cube',
             objectId: 1, /* todo: dynamic id*/
@@ -44,11 +57,19 @@ export default class UI{
                 that.#name_controller = that.#name_controller.options(list);
             }
         }
+        /*
+        cookieFunction('Cube', "objectType")
+        cookieFunction(60, "cameraFov")
+         */
         let ambientLightController = {
             skyColor: 0xe0f3ff,
             groundColor: 0xffc26e,
             intensity: 0.25
         }
+        /*
+        cookieFunction(0.25, "lightIntensity")
+         */
+
         let JSONController = {
             resolutionX: 400,
             resolutionY: 400,
@@ -114,6 +135,16 @@ export default class UI{
                 WEBSOCKET.requestSimulation(data);
             }
         }
+        /*
+        cookieFunction(400, "fireResolutionX")
+        cookieFunction(400, "fireResolutionY")
+        cookieFunction(20, "smokeDomainSizeX")
+        cookieFunction(20, "smokeDomainSizeY")
+        cookieFunction(20, "smokeDomainSizeZ")
+        cookieFunction(1, "startFrame")
+        cookieFunction(180, "endFrame")
+        cookieFunction(30, "frameRate")
+         */
 
 
         //create floor folder
@@ -193,12 +224,50 @@ export default class UI{
 
 }
 // Jonas Max functions for the cookie implementation
-function cookieFunction(data, type){
+
+/*function cookieFunction(data, type){
     const name = type;
     const value = data;
     const dictValues = {name, value}
     const s = JSON.stringify(dictValues);
     console.log(s)
+}
+*/
+
+function cookieFunction(data, type) {
+    const d = new Date();
+    d.setTime(d.getTime() + (20000*24*60*60*1000));
+    let expires = "expires="+ d.toUTCString();
+    document.cookie = type + "=" + data + ";" + expires + ";path=/";
+}
+
+function getCookie(data) {
+    let name = data + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function checkCookie() {
+    let username = getCookie("objectType");
+    if (username != "") {
+        //alert("Welcome again " + username);
+        //change the objecttype in objectcontroller
+    } else {
+        username = prompt("Please enter your name:", "");
+        if (username != "" && username != null) {
+            setCookie("username", username, 365);
+        }
+    }
 }
 function onChangeFloor(floorController, floor){
     //loader function
@@ -226,11 +295,6 @@ function onChangeObject(objectController){
 }
 
 function onChangeCameraSetting(camera){
-    //server sending
-    cookieFunction(camera.fov, "cameraFov")
-}
-
-function onChangeGraphicsSetting(camera){
     //server sending
     cookieFunction(camera.fov, "cameraFov")
 }
