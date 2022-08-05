@@ -1,9 +1,15 @@
 {
   "frameRate": 30,
   "startFrame": 1,
+<<<<<<< HEAD
   "endFrame": 10,
   "resolutionX": 400,
   "resolutionY": 400,
+=======
+  "endFrame": 30,
+  "resolutionX": 800,
+  "resolutionY": 800,
+>>>>>>> 54544a3d70d5f5bdb99b1b0061d86a451d5108e8
   "fireResolution": 30,
   "material": "wood",
   "smokeDomainSize": [
