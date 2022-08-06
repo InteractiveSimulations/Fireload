@@ -10,67 +10,79 @@ export default class UI{
     #objects;
     #name_controller;
     constructor(scene, objects, floor, camera, ambientLight, renderer){
-    checkCookie();
+        if (document.cookie.length == 0){
+            console.log("create first cookies")
+            setCookie('wood', "floorTexture")
+            setCookie(1, "floorRepeat")
+            console.log(getCookie("floorTexture"))
+            setCookie("1k", "floorResolution")
+            setCookie(1, "floorFiltering")
+
+            setCookie('field 3 [sunset][sunny]', "HDRITexture")
+            setCookie(true, "HDRIBackground")
+            setCookie(true, "HDRILighting")
+            setCookie('1k', "HDRIResolution")
+
+            setCookie('Cube', "objectType")
+            setCookie(60, "cameraFov")
+
+            setCookie(0.25, "lightIntensity")
+
+            setCookie(400, "fireResolutionX")
+            setCookie(400, "fireResolutionY")
+            setCookie(20, "smokeDomainSizeX")
+            setCookie(20, "smokeDomainSizeY")
+            setCookie(20, "smokeDomainSizeZ")
+            setCookie(1, "startFrame")
+            setCookie(180, "endFrame")
+            setCookie(30, "frameRate")
+        }
         this.datgui = new GUI();
         this.#objects = objects;
         let that = this;
 
         let floorController = {
-            texture: 'wood,',
-            resolution: '1k',
-            filtering: 1,
-            repeat: 1
+            texture: getCookie("floorTexture").toString(),
+            resolution: getCookie("floorResolution").toString(),
+            filtering: parseInt(getCookie("floorFiltering")),
+            repeat: parseInt(getCookie("floorRepeat"))
         }
-        /*
-        cookieFunction('wood', "floorTexture")
-        cookieFunction('1k', "floorRepeat")
-        cookieFunction(1, "floorResolution")
-        cookieFunction(1, "floorFiltering")
-        */
+
         let hdriController = {
-            texture: 'field 3 [sunset][sunny]',
-            resolution: '1k',
-            background: true,
-            lighting: true
+            texture: getCookie("HDRITexture").toString(),
+            resolution: getCookie("HDRIResolution").toString().toString(),
+            background: (getCookie("HDRIBackground") === 'true'),
+            lighting: (getCookie("HDRILighting") === 'true')
+
         }
-        /*
-        cookieFunction('field 3 [sunset][sunny]', "HDRITexture")
-        cookieFunction('1k', "HDRIBackground")
-        cookieFunction(true, "HDRILighting")
-        cookieFunction(true, "HDRIResolution")
-        */
 
         let objectController = {
-            objectType: 'Cube',
+            objectType: getCookie("objectType").toString(),
+            //objectType: "Cube",
             objectId: 1, /* todo: dynamic id*/
             activeObject: 'none',
 
-            load: function(){
+             load: function () {
                 Loader.loadObjectAsOnly(objectController, scene, objects);
                 //Loader.loadObject(objectController, scene, that.#objects); //uncomment when loading multiple obj
-                /* this adds the loaded item to the gui list for selection! */
-                let list = [];
-                that.#objects.elements.forEach(function (item) {
-                    list.push(item.name);
-                })
-                list.push(this.objectType);
-                that.#name_controller = that.#name_controller.options(list);
+                 /* this adds the loaded item to the gui list for selection! */
+                 let list = [];
+                 that.#objects.elements.forEach(function (item) {
+                     list.push(item.name);
+                 })
+                 list.push(this.objectType);
+                 that.#name_controller = that.#name_controller.options(list);
             }
         }
-        /*
-        cookieFunction('Cube', "objectType")
-        cookieFunction(60, "cameraFov")
-         */
+
         let ambientLightController = {
             skyColor: 0xe0f3ff,
             groundColor: 0xffc26e,
-            intensity: 0.25
+            intensity: parseFloat(getCookie("lightIntensity"))
         }
-        /*
-        cookieFunction(0.25, "lightIntensity")
-         */
 
         let JSONController = {
+            /*
             resolutionX: 400,
             resolutionY: 400,
             smokeDomainSizeX: 20,
@@ -79,6 +91,15 @@ export default class UI{
             frameRate: 30,
             startFrame: 1,
             endFrame: 180,
+            */
+            resolutionX: parseInt(getCookie("fireResolutionX")),
+            resolutionY: parseInt(getCookie("fireResolutionY")),
+            smokeDomainSizeX: parseInt(getCookie("smokeDomainSizeX")),
+            smokeDomainSizeY: parseInt(getCookie("smokeDomainSizeY")),
+            smokeDomainSizeZ: parseInt(getCookie("smokeDomainSizeZ")),
+            frameRate: parseInt(getCookie("frameRate")),
+            startFrame: parseInt(getCookie("startFrame")),
+            endFrame: parseInt(getCookie("endFrame")),
 
             start: function(){
                 let data = {
@@ -135,16 +156,6 @@ export default class UI{
                 WEBSOCKET.requestSimulation(data);
             }
         }
-        /*
-        cookieFunction(400, "fireResolutionX")
-        cookieFunction(400, "fireResolutionY")
-        cookieFunction(20, "smokeDomainSizeX")
-        cookieFunction(20, "smokeDomainSizeY")
-        cookieFunction(20, "smokeDomainSizeZ")
-        cookieFunction(1, "startFrame")
-        cookieFunction(180, "endFrame")
-        cookieFunction(30, "frameRate")
-         */
 
 
         //create floor folder
@@ -200,7 +211,11 @@ export default class UI{
         /* init floor */
         Loader.loadFloorMaterial(floorController, floor);
         Loader.loadHDRI(hdriController, scene);
+
+        //checkCookie()
+
     }
+
 
     hide(){
         GUI.toggleHide();
@@ -212,6 +227,17 @@ export default class UI{
     getJSONController() {
         return JSONController;
     }
+
+    setJSONController(JSONController) {
+        UI.JSONController = JSONController
+
+
+    }
+
+    setObjectController(objectController) {
+        this.objectController = objectController;
+    }
+
     /* private function that returns a list of all objects in the scene */
     #getObjectNames() {
         let list = [];
@@ -222,23 +248,20 @@ export default class UI{
         return list;
     }
 
+
+
+
 }
 // Jonas Max functions for the cookie implementation
 
-/*function cookieFunction(data, type){
-    const name = type;
-    const value = data;
-    const dictValues = {name, value}
-    const s = JSON.stringify(dictValues);
-    console.log(s)
-}
-*/
 
-function cookieFunction(data, type) {
+
+function setCookie(data, type) {
     const d = new Date();
     d.setTime(d.getTime() + (20000*24*60*60*1000));
     let expires = "expires="+ d.toUTCString();
     document.cookie = type + "=" + data + ";" + expires + ";path=/";
+
 }
 
 function getCookie(data) {
@@ -262,59 +285,74 @@ function checkCookie() {
     if (username != "") {
         //alert("Welcome again " + username);
         //change the objecttype in objectcontroller
-    } else {
-        username = prompt("Please enter your name:", "");
-        if (username != "" && username != null) {
-            setCookie("username", username, 365);
+        /*let JSONController = {
+            resolutionX: getCookie("fireResolutionX"),
+            resolutionY: getCookie("fireResolutionY"),
+            smokeDomainSizeX: getCookie("smokeDomainSizeX"),
+            smokeDomainSizeY: getCookie("smokeDomainSizeY"),
+            smokeDomainSizeZ: getCookie("smokeDomainSizeZ"),
+            frameRate: getCookie("frameRate"),
+            startFrame: getCookie("startFrame"),
+            endFrame: getCookie("endFrame"),
         }
+        console.log(getCookie("fireResolutionX"))
+        UI.prototype.changeJSONController(JSONController)
+         */
+        let objectController = {
+            objectType: getCookie("objectType"),
+        }
+        console.log(objectController)
+        UI.prototype.setObjectController(objectController)
+
     }
 }
+
 function onChangeFloor(floorController, floor){
     //loader function
     Loader.loadFloorMaterial(floorController, floor)
     //server sending
-    cookieFunction(floorController.texture, "floorTexture")
-    cookieFunction(floorController.repeat, "floorRepeat")
-    cookieFunction(floorController.resolution, "floorResolution")
-    cookieFunction(floorController.filtering, "floorFiltering")
+    setCookie(floorController.texture, "floorTexture")
+    setCookie(floorController.repeat, "floorRepeat")
+    setCookie(floorController.resolution, "floorResolution")
+    setCookie(floorController.filtering, "floorFiltering")
 }
 
 function onChangeHDRI(hdriController, scene){
     //loader function
     Loader.loadHDRI(hdriController, scene)
     //server sending
-    cookieFunction(hdriController.texture, "HDRITexture")
-    cookieFunction(hdriController.background, "HDRIBackground")
-    cookieFunction(hdriController.lighting, "HDRILighting")
-    cookieFunction(hdriController.resolution, "HDRIResolution")
+    setCookie(hdriController.texture, "HDRITexture")
+    setCookie(hdriController.background, "HDRIBackground")
+    setCookie(hdriController.lighting, "HDRILighting")
+    setCookie(hdriController.resolution, "HDRIResolution")
 }
 function onChangeObject(objectController){
     //server sending
-    cookieFunction(objectController.objectType, "objectType")
+    setCookie(objectController.objectType, "objectType")
 
 }
 
 function onChangeCameraSetting(camera){
     //server sending
-    cookieFunction(camera.fov, "cameraFov")
+    setCookie(camera.fov, "cameraFov")
 }
 
 function onChangeLight(ambientLight, value){
     // loader Function
     ambientLight.intensity = value;
     //server sending
-    cookieFunction(ambientLight.intensity, "lightIntensity")
+    setCookie(ambientLight.intensity, "lightIntensity")
 }
 
 function onChangeFire(JSONController){
     //server sending
     //console.log("test");
-    cookieFunction(JSONController.resolutionX, "fireResolutionX")
-    cookieFunction(JSONController.resolutionY, "fireResolutionY")
-    cookieFunction(JSONController.smokeDomainSizeX, "smokeDomainSizeX")
-    cookieFunction(JSONController.smokeDomainSizeY, "smokeDomainSizeY")
-    cookieFunction(JSONController.smokeDomainSizeZ, "smokeDomainSizeZ")
-    cookieFunction(JSONController.startFrame, "startFrame")
-    cookieFunction(JSONController.endFrame, "endFrame")
-    cookieFunction(JSONController.frameRate, "frameRate")
+    setCookie(JSONController.resolutionX, "fireResolutionX")
+    setCookie(JSONController.resolutionY, "fireResolutionY")
+    setCookie(JSONController.smokeDomainSizeX, "smokeDomainSizeX")
+    setCookie(JSONController.smokeDomainSizeY, "smokeDomainSizeY")
+    setCookie(JSONController.smokeDomainSizeZ, "smokeDomainSizeZ")
+    setCookie(JSONController.startFrame, "startFrame")
+    setCookie(JSONController.endFrame, "endFrame")
+    setCookie(JSONController.frameRate, "frameRate")
 }
