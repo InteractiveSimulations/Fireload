@@ -14,14 +14,14 @@
   "objectType": "Cube",
   "objectId": 1,
   "scale": [
-    1,
-    1,
-    1
+    2,
+    2,
+    2
   ],
   "location": [
     0,
     0,
-    1
+    2
   ],
   "rotation": [
     0,
@@ -29,7 +29,7 @@
     0
   ],
   "forceType": "Wind",
-  "forceId": 1,
+  "forceId": 0,
   "forceScale": [
     2,
     2,
