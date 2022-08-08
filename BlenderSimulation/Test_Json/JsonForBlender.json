@@ -1,7 +1,7 @@
 {
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 180,
+  "endFrame": 200,
   "resolutionX": 400,
   "resolutionY": 400,
   "fireResolution": 30,
@@ -14,14 +14,14 @@
   "objectType": "Cube",
   "objectId": 1,
   "scale": [
-    2,
-    2,
-    2
+    4,
+    4,
+    4
   ],
   "location": [
     0,
     0,
-    2
+    4
   ],
   "rotation": [
     0,
