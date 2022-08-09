@@ -15,10 +15,12 @@ fileDirectory = os.path.dirname(__file__)               #directory of the Blende
 parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
 parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSimulation
 parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
+parentDirectory4 = os.path.dirname(parentDirectory2)    #directory --> Folder where the Fireload project is located
 #parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located
 
-dirJson = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
-dirJson1 = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","Send.json")
+
+dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
+dirJson1 = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","Send.json")
 
 with open(dirJson, 'r') as json_file:
 #with open('c:\\Users\\MaxBe\\Documents\\UNI\\Fireload\\BlenderSimulation\\Test_Json\\JsonForBlender.json', 'r') as json_file:
@@ -59,9 +61,9 @@ bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
 #directorys of the folder
 #Rednder images
 #dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
-dirRenderImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","")
+dirRenderImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","")
 #zBuffer images
-dirZBufferImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","zBuffer","")
+dirZBufferImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","zBuffer","")
 
 #create all Nodes for the compositing
 #bpy.context.area.ui_type = 'CompositorNodeTree'
@@ -88,16 +90,16 @@ bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
 bpy.context.scene.render.image_settings.compression = 100
 
-# render a video with alpha
-#bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  # render mpeg Video
-#bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'  # change container to MPEG4
-#bpy.context.scene.render.ffmpeg.codec = 'QTRLE'  # change video codec to QT
+#render a video with alpha
+#bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video
+#bpy.context.scene.render.ffmpeg.format = 'QUICKTIME'                   #change container to MPEG4
+#bpy.context.scene.render.ffmpeg.codec = 'QTRLE'                        #change video codec to QT 
 #bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
-
+    
 
 #Change the Size of an SmokeDomain
 def set_size_SD(name, x, y, z): #läuft nur wenn die SmokeDomain ausgewählt ist
-
+    
     obj = bpy.context.scene.objects[name]
     me = obj.data
     
@@ -142,7 +144,7 @@ def set_size_SD(name, x, y, z): #läuft nur wenn die SmokeDomain ausgewählt ist
     vertex[7].co.y = y/2
     
     bmesh.update_edit_mesh(me, loop_triangles=True)
-    bpy.context.object.modifiers["Fluid"].domain_settings.cache_frame_end = EndFrame
+    #bpy.context.object.modifiers["Fluid"].domain_settings.cache_frame_end = EndFrame
     #bpy.context.object.modifiers["Fluid"].domain_settings.use_adaptive_domain = True #SD change with firesize
 
     vertex.clear()
@@ -155,11 +157,12 @@ def set_location(name, x, y, z):
     obj.location[0]=x 
     obj.location[1]=y
     obj.location[2]=z
-    
+    bpy.ops.object.transform_apply(location=True)
     
 def set_scale(name, x, y, z):
     obj = bpy.context.scene.objects[name]
     obj.scale = (x, y, z)
+    bpy.ops.object.transform_apply(scale=True)
     
 def set_rotation(name, x, y, z):
     obj = bpy.context.scene.objects[name]
@@ -169,7 +172,8 @@ def set_rotation(name, x, y, z):
     z= math.radians(z)
    
     obj.rotation_euler = (x,y,z)
-
+    bpy.ops.object.transform_apply(rotation=True)
+    
 # add a burning object
 def add_obj(object):
 
@@ -183,7 +187,7 @@ def add_obj(object):
         bpy.ops.mesh.primitive_monkey_add(enter_editmode=False)
         
     elif object == "Chair":
-        chairPath = os.path.join(parentDirectory3,"Fireload", "BlenderSimulation", "Objects", "chair.gltf")
+        chairPath = os.path.join(parentDirectory4,"Fireload", "BlenderSimulation", "Objects", "chair.gltf")  
         bpy.ops.import_scene.gltf( filepath = chairPath )
         
     bpy.context.object.hide_render = True
@@ -191,19 +195,19 @@ def add_obj(object):
     bpy.context.object.modifiers["Fluid"].fluid_type = 'FLOW'
     bpy.context.object.modifiers["Fluid"].flow_settings.flow_type = 'BOTH' 
     bpy.context.object.modifiers["Fluid"].flow_settings.flow_behavior = 'INFLOW'
-    bpy.context.object.modifiers["Fluid"].flow_settings.fuel_amount = 1  
+    bpy.context.object.modifiers["Fluid"].flow_settings.fuel_amount = 0.25  
     #bpy.context.object.modifiers["Fluid"].flow_settings.surface_distance = 0.01     #wert ist zu klein für andere als den Cube mit scale 1,1,1
-    bpy.context.object.modifiers["Fluid"].flow_settings.surface_distance = 1      #distance between fire and the burning objekt
+    bpy.context.object.modifiers["Fluid"].flow_settings.surface_distance = 1   #distance between fire and the burning objekt
     bpy.context.object.modifiers["Fluid"].flow_settings.use_plane_init = True
     bpy.context.object.modifiers["Fluid"].flow_settings.use_initial_velocity = True
     bpy.context.object.modifiers["Fluid"].flow_settings.velocity_coord[2] = 60
-    
+
     bpy.ops.object.mode_set(mode = 'OBJECT')
     bpy.data.collections['FireEmitters'].objects.link(bpy.context.object)
     #bpy.data.collections['Collection'].objects.unlink(bpy.context.object)
 
 
-def del_obj(object):        #deletes a Object by name(Stirng)
+def del_obj(object):                                            #deletes a Object by name(Stirng)
     objs = bpy.data.objects
     objs.remove(objs[object], do_unlink=True)
     
@@ -235,27 +239,32 @@ def add_wind(pos,rot,sca):
 def fire_evolve(material):
     #change the fuel in the burning object
     for obj in bpy.data.collections['FireEmitters'].objects:
+        bpy.context.scene.frame_set(1)
         obj.modifiers["Fluid"].flow_settings.fuel_amount = 0.0
-        obj.modifiers["Fluid"].flow_settings.surface_distance = 0
         obj.modifiers["Fluid"].flow_settings.volume_density = 0
-        obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.fuel_amount', frame = 1)
+        obj.modifiers["Fluid"].flow_settings.surface_distance = 0.5 
         obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.surface_distance', frame = 1)
+        obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.fuel_amount', frame = 1)
         obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.volume_density', frame = 1)
         
-        
-    #bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.flame_smoke
-    #match material:
-    #    case "wood":
-    if material == "wood":
+        bpy.data.collections['Collection'].objects["SmokeDomain"].modifiers["Fluid"].domain_settings.dissolve_speed = 2
+        bpy.data.collections['Collection'].objects["SmokeDomain"].keyframe_insert(data_path = 'modifiers["Fluid"].domain_settings.dissolve_speed', frame = 1)
+
+        if material == "wood":
+            bpy.context.scene.frame_set(120)
+            obj.modifiers["Fluid"].flow_settings.surface_distance = 1 
+            obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.surface_distance', frame = 100)
+
             bpy.context.scene.frame_set(200)
-            obj.modifiers["Fluid"].flow_settings.fuel_amount = 0.1
-            obj.modifiers["Fluid"].flow_settings.surface_distance = 0.075
+            obj.modifiers["Fluid"].flow_settings.fuel_amount = 0.25
             obj.modifiers["Fluid"].flow_settings.volume_density = 0.1
+            #obj.modifiers["Fluid"].flow_settings.surface_distance = 1
+            #obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.surface_distance', frame = 200)
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.fuel_amount', frame = 200)
-            obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.surface_distance', frame = 200)
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.volume_density', frame = 200)
-            bpy.context.scene.frame_set(1)
-    
+            
+            bpy.data.collections['Collection'].objects["SmokeDomain"].modifiers["Fluid"].domain_settings.dissolve_speed = 7
+            bpy.data.collections['Collection'].objects["SmokeDomain"].keyframe_insert(data_path = 'modifiers["Fluid"].domain_settings.dissolve_speed', frame = 200)
         
 #set_size_SD("SmokeDomain", SmokeDomain_size[0], SmokeDomain_size[1], SmokeDomain_size[2])
 del_all_objects() 
@@ -319,12 +328,10 @@ fire_evolve(material)
 #Wenn das Script läuft immer in einem EXTRA Ordner speichern!!!
 
 #refresh the cache (so every Objects is burning)
-bpy.data.objects["SmokeDomain"].select_set(True)
+#bpy.data.objects["SmokeDomain"].select_set(True)
+#bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'ALL'
 #bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'REPLAY'
-bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'ALL'
-bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'REPLAY'
-#bpy.ops.ptcache.bake_all(bake=True)
-bpy.data.objects["SmokeDomain"].select_set(False)
+#bpy.data.objects["SmokeDomain"].select_set(False)
 
 set_size_SD("SmokeDomain", SmokeDomain_size[0], SmokeDomain_size[1], SmokeDomain_size[2])
 #bpy.ops.screen.animation_play()
@@ -332,6 +339,7 @@ set_size_SD("SmokeDomain", SmokeDomain_size[0], SmokeDomain_size[1], SmokeDomain
 #currentFrame = bpy.data.scenes[0].frame_current
 #print(currentFrame)
 
+#baking the scene
 bpy.ops.nla.bake(frame_start=StartFrame, frame_end=EndFrame, bake_types={'OBJECT'})
 
 #while currentFrame < 120:
