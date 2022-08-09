@@ -15,9 +15,11 @@ fileDirectory = os.path.dirname(__file__)               #directory of the Blende
 parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
 parentDirectory2 = os.path.dirname(parentDirectory1)    #directory --> BlenderSimulation
 parentDirectory3 = os.path.dirname(parentDirectory2)    #directory --> Fireload
+parentDirectory4 = os.path.dirname(parentDirectory2)    #directory --> Folder where the Fireload project is located
 #parentDirectory4 = os.path.dirname(parentDirectory3)    #directory --> Folder where the Fireload project is located
 
-dirJson = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
+
+dirJson = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","Test_Json","JsonForBlender.json")
 
 with open(dirJson, 'r') as json_file:
 #with open('c:\\Users\\MaxBe\\Documents\\UNI\\Fireload\\BlenderSimulation\\Test_Json\\JsonForBlender.json', 'r') as json_file:
@@ -58,11 +60,11 @@ bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
 #directorys of the folder
 #Rednder images
 #dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
-dirRenderImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","")
+dirRenderImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","")
 #zBuffer images
-dirZBufferImages = os.path.join(parentDirectory3,"Fireload","dist","assets","simulations","zBuffer","")
+dirZBufferImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","zBuffer","")
 #openvdb Path
-dirOpenVBD = os.path.join(parentDirectory3,"Fireload","BlenderSimulation","FireSimulation","cache_fluid_90784781","data","")
+dirOpenVBD = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","FireSimulation","cache_fluid_90784781","data","")
 
 #create all Nodes for the compositing
 #bpy.context.area.ui_type = 'CompositorNodeTree'
@@ -82,11 +84,12 @@ for scene in bpy.data.scenes:
 
 
 bpy.data.scenes["Scene"].render.filepath = dirRenderImages          #change the output directory of the renders images
-bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
-bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
+bpy.data.scenes["Scene"].render.image_settings.file_format = 'JPEG'
+bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGB'
 bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
-bpy.context.scene.render.image_settings.compression = 100
+#bpy.context.scene.render.image_settings.compression = 100
+bpy.context.scene.render.image_settings.quality = 45
 
 
 def set_location(name, x, y, z):
@@ -150,7 +153,8 @@ context.view_layer.objects.active = obj
 
 bpy.ops.object.modifier_add(type='VOLUME_TO_MESH')
 bpy.context.object.modifiers["Volume to Mesh"].object = bpy.data.objects["fluid_data_000"+str(StartFrame)]
-bpy.context.object.modifiers["Volume to Mesh"].threshold = 0.001
+bpy.context.object.modifiers["Volume to Mesh"].threshold = 0.483
+bpy.context.object.modifiers["Volume to Mesh"].adaptivity = 1
 
 #bpy.context.area.ui_type = 'TEXT_EDITOR'
 
