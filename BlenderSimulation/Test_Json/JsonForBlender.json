@@ -1,12 +1,11 @@
 {
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 120,
-  "resolutionX": 800,
-  "resolutionY": 800,
+  "endFrame": 200,
+  "resolutionX": 400,
+  "resolutionY": 400,
   "fireResolution": 30,
-  "material": "wood",  
-
+  "material": "wood",
   "smokeDomainSize": [
     20,
     20,
@@ -15,14 +14,14 @@
   "objectType": "Cube",
   "objectId": 1,
   "scale": [
-    1,
-    1,
-    1
+    4,
+    4,
+    4
   ],
   "location": [
     0,
     0,
-    1
+    4
   ],
   "rotation": [
     0,
