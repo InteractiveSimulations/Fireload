@@ -285,7 +285,7 @@ set_location("Camera_ZR", 0,-cameraDistancePlane+SmokeDomain_size[1]/2,SmokeDoma
 set_location("Camera_ZB", -cameraDistancePlane+SmokeDomain_size[0]/2,0,SmokeDomain_size[2]/2)
 
 #get the view and projection matrix
-def modleViewMatrix(letter):
+def modelViewMatrix(letter):
     modelViewMatrix = bpy.context.scene.objects["Camera_"+letter].matrix_world
     #print(modelViewMatrix)
     return modelViewMatrix
@@ -301,23 +301,33 @@ def projectionMatrix(letter):
     return projectionMatrix
 
 #create the json for the client 
-cameraName = 'FLRB'
+cameraName = 'FRBL'
 filename = dirJson1
 # 1. Read file contents
-with open(filename, "r") as file:
+#with open(filename, "x") as file:
     #data = json.load(file)
-    data = {}
+data = {
+    'modelViewMat':  [],
+    'projectionMat': []
+}
 # 2. Update json object
-for i,letter in enumerate(cameraName):
-    data['modelview_matrix_'+ letter ] = {"[0][0]": modleViewMatrix(letter)[0][0], "[1][0]": modleViewMatrix(letter)[1][0], "[2][0]": modleViewMatrix(letter)[2][0]
-    , "[0][1]": modleViewMatrix(letter)[0][1], "[1][1]": modleViewMatrix(letter)[1][1], "[2][1]": modleViewMatrix(letter)[2][1]
-    , "[0][2]": modleViewMatrix(letter)[0][2], "[1][2]": modleViewMatrix(letter)[1][2], "[2][2]": modleViewMatrix(letter)[2][2] } 
-    data['projection_matrix_' + letter] = {"[0][0]": projectionMatrix(letter)[0][0], "[1][0]": projectionMatrix(letter)[1][0], "[2][0]": projectionMatrix(letter)[2][0]
-    , "[0][1]": projectionMatrix(letter)[0][1], "[1][1]": projectionMatrix(letter)[1][1], "[2][1]": projectionMatrix(letter)[2][1]
-    , "[0][2]": projectionMatrix(letter)[0][2], "[1][2]": projectionMatrix(letter)[1][2], "[2][2]": projectionMatrix(letter)[2][2] }
+for p, letter in enumerate(cameraName):
+    data['modelViewMat'].append([])
+    data['projectionMat'].append([])
+    for i in range(3):
+        for j in range(3):
+            data['modelViewMat'][p].append( modelViewMatrix(letter)[i][j] )
+            data['projectionMat'][p].append( projectionMatrix(letter)[i][j] )
+#for i,letter in enumerate(cameraName):
+    # data['modelview_matrix_'+ letter ] = {"[0][0]": modleViewMatrix(letter)[0][0], "[1][0]": modleViewMatrix(letter)[1][0], "[2][0]": modleViewMatrix(letter)[2][0]
+    # , "[0][1]": modleViewMatrix(letter)[0][1], "[1][1]": modleViewMatrix(letter)[1][1], "[2][1]": modleViewMatrix(letter)[2][1]
+    # , "[0][2]": modleViewMatrix(letter)[0][2], "[1][2]": modleViewMatrix(letter)[1][2], "[2][2]": modleViewMatrix(letter)[2][2] }
+    # data['projection_matrix_' + letter] = {"[0][0]": projectionMatrix(letter)[0][0], "[1][0]": projectionMatrix(letter)[1][0], "[2][0]": projectionMatrix(letter)[2][0]
+    # , "[0][1]": projectionMatrix(letter)[0][1], "[1][1]": projectionMatrix(letter)[1][1], "[2][1]": projectionMatrix(letter)[2][1]
+    # , "[0][2]": projectionMatrix(letter)[0][2], "[1][2]": projectionMatrix(letter)[1][2], "[2][2]": projectionMatrix(letter)[2][2] }
 # 3. Write json file
 with open(filename, "w") as file:
-    json.dump(data, file)
+    json.dump(data, file, indent=4, sort_keys=True)
 #data.close()
 
 if forceId > 0:

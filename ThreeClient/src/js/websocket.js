@@ -11,7 +11,8 @@ function receiveSimulationStatus( message ) {
 
     const json = JSON.parse(message.data);
     console.log(message.data);
-    console.log( json.simStatus );
+    console.log( json.modelViewMat  );
+    console.log( json.projectionMat );
 }
 
 /**

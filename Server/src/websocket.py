@@ -35,8 +35,9 @@ async def handler(websocket):
         simulation = {
             "simStatus": "READY"
         }
-
-        await websocket.send(json.dumps(simulation))
+        with open('../../BlenderSimulation/Test_Json/Send.json', "r") as matrices:
+            data = json.load(matrices)
+            await websocket.send(json.dumps(data))
 
 
 # coroutine which waits for a client to connect.
