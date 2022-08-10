@@ -262,7 +262,7 @@ def fire_evolve(material):
             #obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.surface_distance', frame = 200)
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.fuel_amount', frame = 200)
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.volume_density', frame = 200)
-            
+
             bpy.data.collections['Collection'].objects["SmokeDomain"].modifiers["Fluid"].domain_settings.dissolve_speed = 7
             bpy.data.collections['Collection'].objects["SmokeDomain"].keyframe_insert(data_path = 'modifiers["Fluid"].domain_settings.dissolve_speed', frame = 200)
         
@@ -307,17 +307,20 @@ filename = dirJson1
 #with open(filename, "x") as file:
     #data = json.load(file)
 data = {
-    'modelViewMat':  [],
-    'projectionMat': []
+    'modelViewMats':  [],
+    'projectionMats': []
 }
 # 2. Update json object
 for p, letter in enumerate(cameraName):
-    data['modelViewMat'].append([])
-    data['projectionMat'].append([])
-    for i in range(3):
-        for j in range(3):
-            data['modelViewMat'][p].append( modelViewMatrix(letter)[i][j] )
-            data['projectionMat'][p].append( projectionMatrix(letter)[i][j] )
+    data['modelViewMats'].append([])
+    data['projectionMats'].append([])
+    for i in range(4):
+        for j in range(4):
+            data['modelViewMats'][p].append( modelViewMatrix(letter)[i][j] )
+            data['projectionMats'][p].append( projectionMatrix(letter)[i][j] )
+        #for j in range(3):
+            #data['modelViewMat'][p].append( modelViewMatrix(letter)[i][j] )
+            #data['projectionMat'][p].append( projectionMatrix(letter)[i][j] )
 #for i,letter in enumerate(cameraName):
     # data['modelview_matrix_'+ letter ] = {"[0][0]": modleViewMatrix(letter)[0][0], "[1][0]": modleViewMatrix(letter)[1][0], "[2][0]": modleViewMatrix(letter)[2][0]
     # , "[0][1]": modleViewMatrix(letter)[0][1], "[1][1]": modleViewMatrix(letter)[1][1], "[2][1]": modleViewMatrix(letter)[2][1]

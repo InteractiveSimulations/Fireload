@@ -27,6 +27,9 @@ let objects = {
 };
 let selected;
 
+let modelViewMats = [ new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4()];
+let projectionMats = [ new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4()];
+
 //create performance stats
 const stats = Stats();
 document.body.appendChild(stats.dom);
@@ -84,7 +87,7 @@ function switchToFPControls(){
         controller.destroy();
         gui.hide();
         controller = new FirstPersonController(camera, document);
-        fire = new Fire(gui.getJSONController(), null, camera, scene);
+        fire = new Fire(gui.getJSONController(), null, camera, scene, modelViewMats, projectionMats);
     }
 }
 
@@ -153,6 +156,19 @@ function onKeyDown(event){
 
 function onKeyUp(event){
     controller.onKeyUp(event);
+}
+
+export function setMatrices( modelViews, projections ){
+
+    for ( let p = 0; p < 4; p++ ) {
+        modelViewMats[p].fromArray(modelViews[p])
+        projectionMats[p].fromArray(projections[p])
+    }
+
+    console.log('script.js')
+    console.log(modelViewMats)
+    console.log(projectionMats)
+
 }
 
 init();
