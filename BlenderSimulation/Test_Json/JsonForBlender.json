@@ -1,7 +1,7 @@
 {
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 200,
+  "endFrame": 2,
   "resolutionX": 400,
   "resolutionY": 400,
   "fireResolution": 30,
@@ -11,7 +11,7 @@
     20,
     20
   ],
-  "objectType": "Cube",
+  "objectType": "none",
   "objectId": 1,
   "scale": [
     1,
@@ -29,7 +29,7 @@
     0
   ],
   "forceType": "Wind",
-  "forceId": 0,
+  "forceId": 1,
   "forceScale": [
     2,
     2,
