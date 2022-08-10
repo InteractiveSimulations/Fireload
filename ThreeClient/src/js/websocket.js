@@ -1,5 +1,6 @@
 export let websocket;
 export let simStatus;
+import * as SCRIPT from './script'
 
 
 function showMessage(message) {
@@ -10,9 +11,11 @@ function showMessage(message) {
 function receiveSimulationStatus( message ) {
 
     const json = JSON.parse(message.data);
-    console.log(message.data);
-    console.log( json.modelViewMat  );
-    console.log( json.projectionMat );
+    console.log('websocket.js');
+    console.log( json.modelViewMats  );
+    console.log( json.projectionMats );
+    SCRIPT.setMatrices( json.modelViewMats, json.projectionMats )
+
 }
 
 /**
