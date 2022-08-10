@@ -81,7 +81,7 @@ export default class UI{
             intensity: parseFloat(getCookie("lightIntensity"))
         }
 
-        let JSONController = {
+        this.JSONController = {
             /*
             resolutionX: 400,
             resolutionY: 400,
@@ -92,6 +92,7 @@ export default class UI{
             startFrame: 1,
             endFrame: 180,
             */
+
             resolutionX: parseInt(getCookie("fireResolutionX")),
             resolutionY: parseInt(getCookie("fireResolutionY")),
             smokeDomainSizeX: parseInt(getCookie("smokeDomainSizeX")),
@@ -193,20 +194,20 @@ export default class UI{
         this.fireFolder = this.datgui.addFolder('Fire');
             this.#name_controller = this.fireFolder.add(objectController, 'activeObject', ["none"]).name('Select Object');
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
-                this.resolutionFolder.add(JSONController, 'resolutionX', 20, 2000).name('Resolution X').onChange(function(value) { onChangeFire(JSONController)});
+                this.resolutionFolder.add(this.getJSONController(), 'resolutionX', 20, 2000).name('Resolution X')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
                 //this.resolutionFolder.add(this.JSONController, 'resolutionX', 20, 2000).name('Resolution X');
-                this.resolutionFolder.add(JSONController, 'resolutionY', 20, 2000).name('Resolution Y').onChange(function(value) { onChangeFire(JSONController)});
+                this.resolutionFolder.add(this.getJSONController(), 'resolutionY', 20, 2000).name('Resolution Y')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
             this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
-                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X').onChange(function(value) { onChangeFire(JSONController)});
-                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y').onChange(function(value) { onChangeFire(JSONController)});
-                this.smokeDomainFolder.add(JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z').onChange(function(value) { onChangeFire(JSONController)});
+                this.smokeDomainFolder.add(this.getJSONController(), 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
+                this.smokeDomainFolder.add(this.getJSONController(), 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
+                this.smokeDomainFolder.add(this.getJSONController(), 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
             this.framesFolder = this.fireFolder.addFolder('Frames');
-                this.framesFolder.add(JSONController, 'startFrame', 1, 1000).name('Start Frame').onChange(function(value) { onChangeFire(JSONController)});
-                this.framesFolder.add(JSONController, 'endFrame', JSONController.startFrame, 1000).name('End Frame').onChange(function(value) { onChangeFire(JSONController)});
-                this.framesFolder.add(JSONController, 'frameRate', 30, 60).name('Frame Rate').onChange(function(value) { onChangeFire(JSONController)});
+                this.framesFolder.add(this.getJSONController(), 'startFrame', 1, 1000).name('Start Frame')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
+                this.framesFolder.add(this.getJSONController(), 'endFrame', this.getJSONController().startFrame, 1000).name('End Frame')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
+                this.framesFolder.add(this.getJSONController(), 'frameRate', 30, 60).name('Frame Rate')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
 
         //simulation folder
-        this.datgui.add(JSONController, 'start').name('Start simulation');
+        this.datgui.add(this.JSONController, 'start').name('Start simulation');
 
         /* init floor */
         Loader.loadFloorMaterial(floorController, floor);
@@ -225,7 +226,7 @@ export default class UI{
     }
 
     getJSONController() {
-        return JSONController;
+        return this.JSONController;
     }
 
     setJSONController(JSONController) {
@@ -319,7 +320,8 @@ function onChangeLight(ambientLight, value){
 
 function onChangeFire(JSONController){
     //server sending
-    //console.log("test");
+    console.log("test");
+    /*
     setCookie(JSONController.resolutionX, "fireResolutionX")
     setCookie(JSONController.resolutionY, "fireResolutionY")
     setCookie(JSONController.smokeDomainSizeX, "smokeDomainSizeX")
@@ -328,4 +330,5 @@ function onChangeFire(JSONController){
     setCookie(JSONController.startFrame, "startFrame")
     setCookie(JSONController.endFrame, "endFrame")
     setCookie(JSONController.frameRate, "frameRate")
+    */
 }
