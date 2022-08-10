@@ -16,25 +16,14 @@ async def handler(websocket):
 
     async for message in websocket:
 
-        # 'Okay' vom Client, die Simulation zu beginnen -> Szene ist final
-
-        # JSON 'Drehbuch' abfangen
-        # Prototype: Nur Startposition des Feuers
-        # sceneInformation has JSONFile as String
-        # sceneInformation = json.loads(message)
-
         print(message)
 
-        # @Todo throws an exception for a second request:
         #  FileNotFoundError: [Errno 2] No such file or directory: '../../BlenderSimulation/Test_Json/Test.json'
         with open('../../BlenderSimulation/Test_Json/JsonForBlender.json', 'w') as outfile:
             outfile.write(message)
 
         blender.startBlender()
 
-        simulation = {
-            "simStatus": "READY"
-        }
         with open('../../BlenderSimulation/Test_Json/Send.json', "r") as matrices:
             data = json.load(matrices)
             await websocket.send(json.dumps(data))

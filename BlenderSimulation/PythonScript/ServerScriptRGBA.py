@@ -300,17 +300,17 @@ def projectionMatrix(letter):
         )
     return projectionMatrix
 
-#create the json for the client 
+
+# START creating json for matrix transfer
+
 cameraName = 'FRBL'
 filename = dirJson1
-# 1. Read file contents
-#with open(filename, "x") as file:
-    #data = json.load(file)
+
 data = {
     'modelViewMats':  [],
     'projectionMats': []
 }
-# 2. Update json object
+
 for p, letter in enumerate(cameraName):
     data['modelViewMats'].append([])
     data['projectionMats'].append([])
@@ -318,20 +318,12 @@ for p, letter in enumerate(cameraName):
         for j in range(4):
             data['modelViewMats'][p].append( modelViewMatrix(letter)[i][j] )
             data['projectionMats'][p].append( projectionMatrix(letter)[i][j] )
-        #for j in range(3):
-            #data['modelViewMat'][p].append( modelViewMatrix(letter)[i][j] )
-            #data['projectionMat'][p].append( projectionMatrix(letter)[i][j] )
-#for i,letter in enumerate(cameraName):
-    # data['modelview_matrix_'+ letter ] = {"[0][0]": modleViewMatrix(letter)[0][0], "[1][0]": modleViewMatrix(letter)[1][0], "[2][0]": modleViewMatrix(letter)[2][0]
-    # , "[0][1]": modleViewMatrix(letter)[0][1], "[1][1]": modleViewMatrix(letter)[1][1], "[2][1]": modleViewMatrix(letter)[2][1]
-    # , "[0][2]": modleViewMatrix(letter)[0][2], "[1][2]": modleViewMatrix(letter)[1][2], "[2][2]": modleViewMatrix(letter)[2][2] }
-    # data['projection_matrix_' + letter] = {"[0][0]": projectionMatrix(letter)[0][0], "[1][0]": projectionMatrix(letter)[1][0], "[2][0]": projectionMatrix(letter)[2][0]
-    # , "[0][1]": projectionMatrix(letter)[0][1], "[1][1]": projectionMatrix(letter)[1][1], "[2][1]": projectionMatrix(letter)[2][1]
-    # , "[0][2]": projectionMatrix(letter)[0][2], "[1][2]": projectionMatrix(letter)[1][2], "[2][2]": projectionMatrix(letter)[2][2] }
-# 3. Write json file
+
 with open(filename, "w") as file:
     json.dump(data, file, indent=4, sort_keys=True)
-#data.close()
+
+# END creating json for matrix transfer
+
 
 if forceId > 0:
     add_wind(forceLocation,forceRotation,forceScale)

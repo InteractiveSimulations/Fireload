@@ -29,11 +29,10 @@ export default class Fire{
         this.deltaTime = 0;
         this.frameRate = JSONController.frameRate;
         this.numberOfFrames = JSONController.endFrame - JSONController.startFrame;
+
+        // matrix4 arrays with size 4 for each perspective: F = 0, R = 1, B = 2, L = 3
         this.modelViewMats = modelViewMats;
         this.projectionMats = projectionMats;
-        console.log('fire.js')
-        console.log(modelViewMats)
-        console.log(projectionMats)
     }
 
     destroy(){
