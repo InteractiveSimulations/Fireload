@@ -10,6 +10,7 @@ function showMessage(message) {
 function receiveSimulationStatus( message ) {
 
     const json = JSON.parse(message.data);
+
     SCRIPT.setMatrices( json.modelViewMats, json.projectionMats )
 
 }

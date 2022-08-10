@@ -33,6 +33,7 @@ export default class Fire{
         // matrix4 arrays with size 4 for each perspective: F = 0, R = 1, B = 2, L = 3
         this.modelViewMats = modelViewMats;
         this.projectionMats = projectionMats;
+
     }
 
     destroy(){
