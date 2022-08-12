@@ -3,6 +3,7 @@
 import websockets
 import json
 import blender
+import atlasing
 import asyncio
 
 
@@ -23,6 +24,7 @@ async def handler(websocket):
             outfile.write(message)
 
         blender.startBlender()
+        atlasing.startAtlasing()
 
         with open('../../BlenderSimulation/Test_Json/Send.json', "r") as matrices:
             data = json.load(matrices)

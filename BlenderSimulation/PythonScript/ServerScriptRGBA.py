@@ -88,7 +88,7 @@ bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
 bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
-bpy.context.scene.render.image_settings.compression = 100
+bpy.context.scene.render.image_settings.compression = 0
 
 #render a video with alpha
 #bpy.data.scenes["Scene"].render.image_settings.file_format = 'FFMPEG'  #render mpeg Video

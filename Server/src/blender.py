@@ -31,7 +31,7 @@ def startBlender():
     subprocess.run(['blender', '-b', version_rgba, '--python', script_rgba, '-a'])
 
     # ZBuffer Frames Rendering
-    #subprocess.run(['blender', '-b', version_z, '--python', script_z, '-a'])
+    subprocess.run(['blender', '-b', version_z, '--python', script_z, '-a'])
 
 if __name__ == "__main__":
     startBlender()
