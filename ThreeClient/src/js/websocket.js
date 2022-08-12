@@ -1,17 +1,18 @@
 export let websocket;
 export let simStatus;
+import * as SCRIPT from './script'
 
 
 function showMessage(message) {
     window.setTimeout(() => window.alert(message), 50);
 }
 
-// @Todo the client probably only receives a message that the simulation ist ready to download and the download link
 function receiveSimulationStatus( message ) {
 
     const json = JSON.parse(message.data);
-    console.log(message.data);
-    console.log( json.simStatus );
+
+    SCRIPT.setMatrices( json.modelViewMats, json.projectionMats )
+
 }
 
 /**

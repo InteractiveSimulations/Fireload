@@ -262,7 +262,7 @@ def fire_evolve(material):
             #obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.surface_distance', frame = 200)
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.fuel_amount', frame = 200)
             obj.keyframe_insert(data_path = 'modifiers["Fluid"].flow_settings.volume_density', frame = 200)
-            
+
             bpy.data.collections['Collection'].objects["SmokeDomain"].modifiers["Fluid"].domain_settings.dissolve_speed = 7
             bpy.data.collections['Collection'].objects["SmokeDomain"].keyframe_insert(data_path = 'modifiers["Fluid"].domain_settings.dissolve_speed', frame = 200)
         
@@ -285,7 +285,7 @@ set_location("Camera_ZR", 0,-cameraDistancePlane+SmokeDomain_size[1]/2,SmokeDoma
 set_location("Camera_ZB", -cameraDistancePlane+SmokeDomain_size[0]/2,0,SmokeDomain_size[2]/2)
 
 #get the view and projection matrix
-def modleViewMatrix(letter):
+def modelViewMatrix(letter):
     modelViewMatrix = bpy.context.scene.objects["Camera_"+letter].matrix_world
     #print(modelViewMatrix)
     return modelViewMatrix
@@ -300,25 +300,30 @@ def projectionMatrix(letter):
         )
     return projectionMatrix
 
-#create the json for the client 
-cameraName = 'FLRB'
+
+# START creating json for matrix transfer
+
+cameraName = 'FRBL'
 filename = dirJson1
-# 1. Read file contents
-with open(filename, "r") as file:
-    #data = json.load(file)
-    data = {}
-# 2. Update json object
-for i,letter in enumerate(cameraName):
-    data['modelview_matrix_'+ letter ] = {"[0][0]": modleViewMatrix(letter)[0][0], "[1][0]": modleViewMatrix(letter)[1][0], "[2][0]": modleViewMatrix(letter)[2][0]
-    , "[0][1]": modleViewMatrix(letter)[0][1], "[1][1]": modleViewMatrix(letter)[1][1], "[2][1]": modleViewMatrix(letter)[2][1]
-    , "[0][2]": modleViewMatrix(letter)[0][2], "[1][2]": modleViewMatrix(letter)[1][2], "[2][2]": modleViewMatrix(letter)[2][2] } 
-    data['projection_matrix_' + letter] = {"[0][0]": projectionMatrix(letter)[0][0], "[1][0]": projectionMatrix(letter)[1][0], "[2][0]": projectionMatrix(letter)[2][0]
-    , "[0][1]": projectionMatrix(letter)[0][1], "[1][1]": projectionMatrix(letter)[1][1], "[2][1]": projectionMatrix(letter)[2][1]
-    , "[0][2]": projectionMatrix(letter)[0][2], "[1][2]": projectionMatrix(letter)[1][2], "[2][2]": projectionMatrix(letter)[2][2] }
-# 3. Write json file
+
+data = {
+    'modelViewMats':  [],
+    'projectionMats': []
+}
+
+for p, letter in enumerate(cameraName):
+    data['modelViewMats'].append([])
+    data['projectionMats'].append([])
+    for i in range(4):
+        for j in range(4):
+            data['modelViewMats'][p].append( modelViewMatrix(letter)[i][j] )
+            data['projectionMats'][p].append( projectionMatrix(letter)[i][j] )
+
 with open(filename, "w") as file:
-    json.dump(data, file)
-#data.close()
+    json.dump(data, file, indent=4, sort_keys=True)
+
+# END creating json for matrix transfer
+
 
 if forceId > 0:
     add_wind(forceLocation,forceRotation,forceScale)

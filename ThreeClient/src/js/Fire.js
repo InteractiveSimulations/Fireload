@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as Loader from './Loader.js';
 
 export default class Fire{
-    constructor(JSONController, parent, camera, scene){
+    constructor(JSONController, parent, camera, scene, modelViewMats, projectionMats){
         this.parent = parent;
         this.camera = camera;
         //create fire mesh
@@ -29,6 +29,11 @@ export default class Fire{
         this.deltaTime = 0;
         this.frameRate = JSONController.frameRate;
         this.numberOfFrames = JSONController.endFrame - JSONController.startFrame;
+
+        // matrix4 arrays with size 4 for each perspective: F = 0, R = 1, B = 2, L = 3
+        this.modelViewMats = modelViewMats;
+        this.projectionMats = projectionMats;
+
     }
 
     destroy(){
