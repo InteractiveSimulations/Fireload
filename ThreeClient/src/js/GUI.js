@@ -194,7 +194,7 @@ export default class UI{
         this.fireFolder = this.datgui.addFolder('Fire');
             this.#name_controller = this.fireFolder.add(objectController, 'activeObject', ["none"]).name('Select Object');
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
-                this.resolutionFolder.add(this.getJSONController(), 'resolutionX', 20, 2000).name('Resolution X')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
+                this.resolutionFolder.add(this.getJSONController(), 'resolutionX', 20, 2000).name('Resolution X').onChange(function(value) { onChangeFire(this.JSONController())});
                 //this.resolutionFolder.add(this.JSONController, 'resolutionX', 20, 2000).name('Resolution X');
                 this.resolutionFolder.add(this.getJSONController(), 'resolutionY', 20, 2000).name('Resolution Y')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
             this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
@@ -233,10 +233,6 @@ export default class UI{
         UI.JSONController = JSONController
 
 
-    }
-
-    setObjectController(objectController) {
-        this.objectController = objectController;
     }
 
     /* private function that returns a list of all objects in the scene */
