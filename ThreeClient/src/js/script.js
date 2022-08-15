@@ -5,6 +5,7 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 import FirstPersonController from './FirstPersonController';
 import OrbitController from './OrbitController.js';
 import Fire from './Fire';
+import {FontLoader, TextGeometry} from "three";
 
 window.addEventListener('resize', onWindowResize, false);
 window.addEventListener('pointerdown', onMouseDown, false);
@@ -27,6 +28,8 @@ let objects = {
 };
 let selected;
 
+let notifications = false;
+
 let modelViewMats = [ new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4()];
 let projectionMats = [ new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4()];
 
@@ -43,6 +46,40 @@ function init() {
     gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
 
+    /* call this function when all files are received */
+    createTextAnimation();
+
+}
+
+function createTextAnimation() {
+    const loader = new FontLoader();
+    loader.load("/fonts/JB_Mono.json", function (font) {
+        const geometry = new TextGeometry("Simulation Finished\nPress 'F' to enter", {
+            font: font,
+            size: 12,
+            height: 0,
+            bevelEnabled: true,
+            bevelThickness: 2,
+            bevelSize: 0.75,
+            anchor: {x: 0.5, y: 0.0, z: 0.5}
+        });
+        geometry.computeBoundingBox();
+        geometry.center();
+        const material = new THREE.MeshBasicMaterial({
+            color: '#6b2678',
+            reflectivity: 0.5,
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        //enable shadows
+        mesh.castShadow = true;
+        mesh.name = "notification"
+
+        mesh.position.x -= 0;
+        mesh.position.y += 3
+        mesh.scale.set(0.05,0.05,0.05)
+        notifications = true;
+        scene.add(mesh);
+    });
 }
 
 function initScene(){
@@ -60,6 +97,7 @@ function initObjects(){
     //create floor
     floor = new THREE.Mesh(new THREE.BoxGeometry(10, 0.1, 10), new THREE.MeshStandardMaterial());
     scene.add(floor);
+
     //adding cube
 }
 
@@ -78,7 +116,7 @@ function initRendering(){
     renderer.toneMappingExposure = 1;
     renderer.shadowMap.enabled = true;
     renderer.outputEncoding = THREE.sRGBEncoding;
-    //appending renderer to dom
+    //enable shadows
     document.body.appendChild(renderer.domElement);
 }
 
@@ -88,6 +126,10 @@ function switchToFPControls(){
         gui.hide();
         controller = new FirstPersonController(camera, document);
         fire = new Fire(gui.getJSONController(), null, camera, scene, modelViewMats, projectionMats);
+
+        notifications = false;
+        let notification = scene.getObjectByName("notification");
+        scene.remove(notification);
     }
 }
 
@@ -113,6 +155,13 @@ function update() {
     requestAnimationFrame(update);
     if(fire != null && fire != 'undefined'){
         fire.update();
+    }
+    if (notifications){
+        let notification = scene.getObjectByName("notification");
+
+        if(notification != null){
+            notification.rotation.y += 0.008;
+        }
     }
 }
 
@@ -172,4 +221,3 @@ export function setMatrices( modelViews, projections ){
 }
 
 init();
-
