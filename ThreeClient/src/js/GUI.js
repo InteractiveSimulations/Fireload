@@ -194,17 +194,16 @@ export default class UI{
         this.fireFolder = this.datgui.addFolder('Fire');
             this.#name_controller = this.fireFolder.add(objectController, 'activeObject', ["none"]).name('Select Object');
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
-                this.resolutionFolder.add(this.getJSONController(), 'resolutionX', 20, 2000).name('Resolution X').onChange(function(value) { onChangeFire(this.JSONController())});
-                //this.resolutionFolder.add(this.JSONController, 'resolutionX', 20, 2000).name('Resolution X');
-                this.resolutionFolder.add(this.getJSONController(), 'resolutionY', 20, 2000).name('Resolution Y')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
+                this.resolutionFolder.add(that.JSONController, 'resolutionX', 20, 2000).name('Resolution X').onChange(function() { onChangeFire(that.JSONController)});
+                this.resolutionFolder.add(that.JSONController, 'resolutionY', 20, 2000).name('Resolution Y').onChange(function() { onChangeFire(that.JSONController)});
             this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
-                this.smokeDomainFolder.add(this.getJSONController(), 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
-                this.smokeDomainFolder.add(this.getJSONController(), 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
-                this.smokeDomainFolder.add(this.getJSONController(), 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
+                this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X').onChange(function() { onChangeFire(that.JSONController)});
+                this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y').onChange(function() { onChangeFire(that.JSONController)});
+                this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z').onChange(function() { onChangeFire(that.JSONController)});
             this.framesFolder = this.fireFolder.addFolder('Frames');
-                this.framesFolder.add(this.getJSONController(), 'startFrame', 1, 1000).name('Start Frame')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
-                this.framesFolder.add(this.getJSONController(), 'endFrame', this.getJSONController().startFrame, 1000).name('End Frame')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
-                this.framesFolder.add(this.getJSONController(), 'frameRate', 30, 60).name('Frame Rate')/*.onChange(function(value) { onChangeFire(this.getJSONController())});*/
+                this.framesFolder.add(that.JSONController, 'startFrame', 1, 1000).name('Start Frame').onChange(function() { onChangeFire(that.JSONController)});
+                this.framesFolder.add(that.JSONController, 'endFrame', this.getJSONController().startFrame, 1000).name('End Frame').onChange(function() { onChangeFire(that.JSONController)});
+                this.framesFolder.add(that.JSONController, 'frameRate', 30, 60).name('Frame Rate').onChange(function() { onChangeFire(that.JSONController)});
 
         //simulation folder
         this.datgui.add(this.JSONController, 'start').name('Start simulation');
@@ -316,8 +315,6 @@ function onChangeLight(ambientLight, value){
 
 function onChangeFire(JSONController){
     //server sending
-    console.log("test");
-    /*
     setCookie(JSONController.resolutionX, "fireResolutionX")
     setCookie(JSONController.resolutionY, "fireResolutionY")
     setCookie(JSONController.smokeDomainSizeX, "smokeDomainSizeX")
@@ -326,5 +323,4 @@ function onChangeFire(JSONController){
     setCookie(JSONController.startFrame, "startFrame")
     setCookie(JSONController.endFrame, "endFrame")
     setCookie(JSONController.frameRate, "frameRate")
-    */
 }
