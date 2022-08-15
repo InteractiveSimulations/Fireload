@@ -45,13 +45,9 @@ function init() {
     //create gui
     gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
-
-    /* call this function when all files are received */
-    createTextAnimation();
-
 }
 
-function createTextAnimation() {
+export function createTextAnimation() {
     const loader = new FontLoader();
     loader.load("/fonts/JB_Mono.json", function (font) {
         const geometry = new TextGeometry("Simulation Finished\nPress 'F' to enter", {
