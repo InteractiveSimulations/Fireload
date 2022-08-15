@@ -70,6 +70,15 @@ export function loadFloorMaterial(floorController, floor){
     }
 }
 
+export function loadParallaxFireTextures(){
+    var textures = [];
+    var textureLoader = new THREE.TextureLoader();
+    textureLoader.setPath('assets/dummy/');
+    textures.push(textureLoader.load('suzanne_radiance_front.png'));
+    textures.push(textureLoader.load('suzanne_heightfield_front.png'));
+    return textures;
+}
+
 export function loadFireFromFrames(JSONController){
     var materials = [];
     var textureLoader = new THREE.TextureLoader();

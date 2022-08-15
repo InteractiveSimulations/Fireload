@@ -1,3 +1,4 @@
+
 import '../style.css';
 import * as THREE from 'three';
 import UI  from './GUI.js';
@@ -5,6 +6,7 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 import FirstPersonController from './FirstPersonController';
 import OrbitController from './OrbitController.js';
 import Fire from './Fire';
+import ParallaxFireMaterial from './ParallaxFireMaterial';
 
 window.addEventListener('resize', onWindowResize, false);
 window.addEventListener('pointerdown', onMouseDown, false);
@@ -13,11 +15,17 @@ window.addEventListener('keydown', onKeyDown, false);
 window.addEventListener('keyup', onKeyUp, false);
 window.addEventListener('mousemove', onMouseMove, false);
 
-let renderer, scene, camera;
+
+
+//global variables
+let renderer;
+
+let scene, camera;
 let controller;
 let gui;
 
 let floor;
+let cube;
 let ambientLight;
 
 let fire = null;
@@ -27,19 +35,22 @@ let objects = {
 };
 let selected;
 
+
+
+
 //create performance stats
 const stats = Stats();
 document.body.appendChild(stats.dom);
 
 //initialising
 function init() {
+
     initScene();
     initRendering();
     controller = new OrbitController(camera, renderer.domElement, scene, objects, selected);
     //create gui
     gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
-
 }
 
 function initScene(){
@@ -57,7 +68,6 @@ function initObjects(){
     //create floor
     floor = new THREE.Mesh(new THREE.BoxGeometry(10, 0.1, 10), new THREE.MeshStandardMaterial());
     scene.add(floor);
-    //adding cube
 }
 
 function initLights(){
@@ -75,6 +85,8 @@ function initRendering(){
     renderer.toneMappingExposure = 1;
     renderer.shadowMap.enabled = true;
     renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.capabilities.precision = "highp";
+    //renderer.getContext().getExtension('GL_EXT_shader_texture_lod')
     //appending renderer to dom
     document.body.appendChild(renderer.domElement);
 }
@@ -84,7 +96,8 @@ function switchToFPControls(){
         controller.destroy();
         gui.hide();
         controller = new FirstPersonController(camera, document);
-        fire = new Fire(gui.getJSONController(), null, camera, scene);
+        fire = new Fire(gui.getJSONController(), null, null, camera, scene);
+        gui.ambientLightController;
     }
 }
 
@@ -109,7 +122,7 @@ function update() {
     render();
     requestAnimationFrame(update);
     if(fire != null && fire != 'undefined'){
-        fire.update();
+        fire.update(camera);
     }
 }
 
