@@ -26,3 +26,6 @@ line 19: parentDirectory4 = os.path.dirname(parentDirectory3)
 how you have to change it:
 line 18: parentDirectory4 = os.path.dirname(parentDirectory2)    
 line 19: #parentDirectory4 = os.path.dirname(parentDirectory3)    
+
+###"Send.JSON"
+sometimes you have to create the Send.JSON file in the Test_Json folder after pulling
