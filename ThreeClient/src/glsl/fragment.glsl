@@ -16,11 +16,11 @@ varying vec2 vTexCoord;
 
 ///////////////////////////////////
 
-float maxComponent (vec3 v) { 
-    return max (max (v.x, v.y), v.z); 
+float maxComponent(vec3 v) {
+    return max( max(v.x, v.y), v.z );
 }
-float minComponent (vec3 v) { 
-    return min (min (v.x, v.y), v.z); 
+float minComponent(vec3 v) {
+    return min( min(v.x, v.y), v.z );
 }
 float safeInverse(float x) { 
     return (x == 0.0) ? 1000000000000.0 : (1.0 / x); 
@@ -32,8 +32,29 @@ vec3  safeInverse(vec3 v) {
 // Converts a position in camera space into a position in texture space [0,1]
 vec3 Cam2Ts(vec3 camPos, mat4 projMat)
 {
-    vec4 pos_ndc = projMat * vec4(camPos, 1.0f);
-    vec3 pos_ts  = (pos_ndc.xyz/pos_ndc.w) * 0.5f + vec3(0.5f);
+    vec4 pos_ndc = projMat * vec4(camPos, 1.0);
+    vec3 pos_ts  = vec3(pos_ndc.xyz);
+    pos_ts      /= pos_ndc.w;
+    pos_ts      *= 0.5;
+    pos_ts      += 0.5;
+    //vec3 pos_ts  = (pos_ndc.xyz/pos_ndc.w) * 0.5 + vec3(0.5);
+
+    //if ( all(greaterThanEqual(vTexCoord.xy, vec2(0.0))) && all(lessThanEqual(vTexCoord.xy, vec2(1.0))) )
+    //if ( pos_ts.x >= 0.0 || pos_ts.y >= 0.0 || pos_ts.z >= 0.0 || pos_ts.x <= 0.0 || pos_ts.y <= 0.0 || pos_ts.z <= 0.0 )
+//    if ( !(pos_ndc.w == 0.0) )
+//    {
+//        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
+//            //        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+//            //
+//            //
+//            //        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+//            //        hit_ndc     /= hit_ndc.w;
+//            //        hit_ndc      = (hit_ndc + 1.0)*0.5;
+//            //        gl_FragDepth = hit_ndc.z;
+//    } else {
+//        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+//    }
+
     return pos_ts;
 }
 
@@ -72,8 +93,8 @@ bool ailaWaldHitAABox(vec3 boxCenter, vec3 boxRadius, vec3 rayOrigin, vec3 rayDi
 
 vec3 intersectBBox(vec3 start, vec3 direction)
 {
-    vec3 bbCenter   = (bboxMin.xyz + bboxMax.xyz) * 0.5f;
-    vec3 bbRadius   = vec3(abs(bboxMax.x - bboxMin.x)*0.5f, abs(bboxMax.y - bboxMin.y)*0.5f, abs(bboxMax.z - bboxMin.z)*0.5f);
+    vec3 bbCenter   = (bboxMin.xyz + bboxMax.xyz) * 0.5;
+    vec3 bbRadius   = vec3(abs(bboxMax.x - bboxMin.x)*0.5, abs(bboxMax.y - bboxMin.y)*0.5, abs(bboxMax.z - bboxMin.z)*0.5);
     vec3 E_w        = vec3(0.0, 0.0, 0.0);
     ailaWaldHitAABox(bbCenter, bbRadius, start + direction*EPSILON, direction, E_w);
 
@@ -86,41 +107,105 @@ vec2 RaymarchHeightfieldSimple(inout vec3 hitpoint_ws, vec3 Start_w, vec3 End_w,
     
     vec3 Start_c              = (viewMat * vec4(Start_w, 1.0)).xyz;
     vec3 End_c                = (viewMat * vec4(End_w, 1.0)).xyz;
+
+
+//    if ( Start_c.x == 0.0 && Start_c.y == 0.0 && Start_c.z == 0.0 && Start_c.x == 0.0 && Start_c.y == 0.0 && Start_c.z <= 0.0 )
+//    {
+//        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
+//                //        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+//                //
+//                //
+//                //        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+//                //        hit_ndc     /= hit_ndc.w;
+//                //        hit_ndc      = (hit_ndc + 1.0)*0.5;
+//                //        gl_FragDepth = hit_ndc.z;
+//    } else {
+//        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+//    }
+
+    mat4 test_projMat = mat4(   6.9395, 0.0, 0.0, 0.0,
+                                0.0, 6.9395, 0.0, 0.0,
+                                0.0, 1.0, -1.001, -0.1001,
+                                0.0, 0.0, -1.0, 0.0 );
     
-    vec3 Start_ts             = Cam2Ts(Start_c, projMat);
-    vec3 End_ts               = Cam2Ts(End_c, projMat);
+    vec3 Start_ts             = Cam2Ts(Start_c, test_projMat);
+    vec3 End_ts               = Cam2Ts(End_c, test_projMat);
     vec3 d_ts                 = End_ts - Start_ts;
-    float alpha               = 1.0;
+    float alpha               = 0.0;
     
-        //Raaaaaay....MARCH!
-        hit = false;
-        int   currentStep          = 0;
-        vec3  currentTexCoord      = Start_ts + alpha*d_ts; //currentTexCoord.z = ray depth in [0,1]
-        float currentTextureDepth  = texture2D(heightfield, currentTexCoord.xy, 0.0).r;
+    //Raaaaaay....MARCH!
+    hit = false;
+    int   currentStep          = 0;
+    vec3  currentTexCoord      = Start_ts + alpha*d_ts; //currentTexCoord.z = ray depth in [0,1]
+    float currentTextureDepth  = texture2D(heightfield, currentTexCoord.xy).r;
+
+//    if ( Start_ts.x >= 0.0 || Start_ts.y >= 0.0 || Start_ts.x <= 0.0 || Start_ts.y <= 0.0 )
+//    {
+//        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
+//        //        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+//        //
+//        //
+//        //        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+//        //        hit_ndc     /= hit_ndc.w;
+//        //        hit_ndc      = (hit_ndc + 1.0)*0.5;
+//        //        gl_FragDepth = hit_ndc.z;
+//    } else {
+//        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+//    }
+
+//    //if ( all(greaterThanEqual(vTexCoord.xy, vec2(0.0))) && all(lessThanEqual(vTexCoord.xy, vec2(1.0))) )
+//    if ( any(greaterThanEqual(Start_c, vec3(0.0))) || any(lessThanEqual(Start_c, vec3(0.0))) )
+//    {
+//        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
+//        //        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+//        //
+//        //
+//        //        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+//        //        hit_ndc     /= hit_ndc.w;
+//        //        hit_ndc      = (hit_ndc + 1.0)*0.5;
+//        //        gl_FragDepth = hit_ndc.z;
+//    } else {
+//        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+//    }
         
-        while( currentStep < steps )
+    while( currentStep < steps )
+    {
+        // Terminate if ray is bellow the heightfield -> We found and intersection!
+        if(alpha >= currentTextureDepth)
         {
-            // Terminate if ray is bellow the heightfield -> We found and intersection!
-            if(currentTexCoord.z >= currentTextureDepth)
-            {
-                hit = true;
-                break;
-            }
-            // Casting is not possible in WebGL
-            alpha               += 1.0/float(steps);
-            currentTexCoord      = Start_ts + alpha*d_ts;
-            currentTextureDepth  = texture2D(heightfield, currentTexCoord.xy, 0.0).r;
-            currentStep++;
-        }
-        if((currentTexCoord.z >= currentTextureDepth))
             hit = true;
+            break;
+        }
+        // Casting is not possible in WebGL
+        float steps_float    = float(steps);
+        alpha               += 1.0/steps_float;
+        currentTexCoord      = Start_ts + alpha*d_ts;
+        currentTextureDepth  = texture2D(heightfield, currentTexCoord.xy).r;
+        currentStep++;
+    }
+
+//    if ( any(lessThanEqual(currentTexCoord, vec3(0.0))) || any(greaterThanEqual(currentTexCoord, vec3(0.0))) )
+//    {
+//        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
+//        //        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+//        //
+//        //
+//        //        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+//        //        hit_ndc     /= hit_ndc.w;
+//        //        hit_ndc      = (hit_ndc + 1.0)*0.5;
+//        //        gl_FragDepth = hit_ndc.z;
+//    } else {
+//        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+//    }
 
     if(hit)
     {
-        vec3 result_ts    = Start_ts + alpha*d_ts;
-        vec3 hitCoords_cs = Ts2Cam(result_ts, inverse(projMat));
-        hitpoint_ws       = Cam2Ws(hitCoords_cs, inverse(viewMat));
-        return result_ts.xy;
+//        vec3 result_ts    = Start_ts + alpha*d_ts;
+//        vec3 hitCoords_cs = Ts2Cam(result_ts, inverse(projMat));
+//        hitpoint_ws       = Cam2Ws(hitCoords_cs, inverse(viewMat));
+//
+//        return result_ts.xy;
+        return currentTexCoord.xy;
     }
     else
     {
@@ -142,33 +227,76 @@ void main(void){
     // Step2: Intersect T_w with the impostor bounding box. This results in S_w and E_w (start & endpoint in worldspace)
     vec3 S_w                 = intersectBBox(ray_start_world.xyz, T_w);
     vec3 E_w                 = intersectBBox(S_w + T_w*float(LARGE_FLOAT), -T_w);
+    //vec3 E_w                 = intersectBBox(S_w + T_w*1000000000000.0, -T_w);
+
+//    if ( E_w.x == 0.0 && E_w.y == 0.0 && E_w.z == 0.0 && E_w.x == 0.0 && E_w.y == 0.0 && E_w.z <= 0.0 )
+//    {
+//        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
+//        //        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+//        //
+//        //
+//        //        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+//        //        hit_ndc     /= hit_ndc.w;
+//        //        hit_ndc      = (hit_ndc + 1.0)*0.5;
+//        //        gl_FragDepth = hit_ndc.z;
+//    } else {
+//        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+//    }
+
+    //if ( E_w.x == 0.0 && E_w.y == 0.0 && E_w.z == 0.0 && E_w.x == 0.0 && E_w.y == 0.0 && E_w.z <= 0.0 )
+//    if( any(lessThanEqual(S_w, vec3(0.0))) || any(greaterThanEqual(S_w, vec3(0.0))) )
+//    {
+//        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
+//        //        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+//        //
+//        //
+//        //        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+//        //        hit_ndc     /= hit_ndc.w;
+//        //        hit_ndc      = (hit_ndc + 1.0)*0.5;
+//        //        gl_FragDepth = hit_ndc.z;
+//    } else {
+//        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+//    }
 
     // Step3: Check if heightfield is intersected "hit", and compute the intersected
     // texture coordinate "newTexCoords", as well as the corresponding world position "hitpoint_ws"
     // Increasing "steps" improves the precision of the result but also uses more computing power. Recommended values [16 - 128]
-    int steps                = 64;
+    int steps                = 128;
     vec2 newTexCoords        = vec2(vTexCoord.xy);
     vec3 hitpoint_ws         = vec3(0.0);
     bool hit                 = false;
-    newTexCoords             = RaymarchHeightfieldSimple(hitpoint_ws, S_w, E_w, uCaptureViewMat, uCaptureProjMat, uHeightfieldTex, steps, hit);
+    newTexCoords        = RaymarchHeightfieldSimple(hitpoint_ws, S_w, E_w, uCaptureViewMat, uCaptureProjMat, uHeightfieldTex, steps, hit);
 
     // Step4: If the heightfield surface was hit by the view ray, we sample the color at the returned texture coordinates
     // Also the depth of the intersected surface is computed and written into the depth buffer so it can interact with
     // other geometry correctly
-    
-    if (hit)
-    {
-        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy, 0.0);
-        
 
-        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
-        hit_ndc     /= hit_ndc.w;
-        hit_ndc      = (hit_ndc + 1.0)*0.5;
-        gl_FragDepth = hit_ndc.z;
-    } else
-        discard;
-    
-    //////////////////////////////////////////////////////////
+
+//    //if ( all(greaterThanEqual(vTexCoord.xy, vec2(0.0))) && all(lessThanEqual(vTexCoord.xy, vec2(1.0))) )
+//    if ( any(greaterThanEqual(newTexCoords.xy, vec2(0.0))) || any(lessThanEqual(newTexCoords, vec2(0.0))) )
+//    {
+//        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
+////        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+////
+////
+////        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+////        hit_ndc     /= hit_ndc.w;
+////        hit_ndc      = (hit_ndc + 1.0)*0.5;
+////        gl_FragDepth = hit_ndc.z;
+//    } else {
+//        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+//    }
+
+//    if (hit) {
+//        gl_FragColor   = texture2D(uRadianceTex, vTexCoord.xy);
+//    } else {
+//        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+//    }
+
+
+
+
+        //////////////////////////////////////////////////////////
 
 }
 

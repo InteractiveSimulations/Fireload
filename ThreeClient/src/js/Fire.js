@@ -11,15 +11,15 @@ export default class Fire{
         // creating fire material shader
         this.textures = Loader.loadParallaxFireTextures();
         this.view = new THREE.Matrix4();
-        this.view.set(1, 0, 0, -10,
-                      0, 1, 0, 0,
-                      0, 0, 1, 0,
-                      0, 0, 0, 1);
+        this.view.set(1.0, 0.0, 0.0, -10.0,
+                      0.0, 1.0, 0.0, 0.0,
+                      0.0, 0.0, 1.0, 0.0,
+                      0.0, 0.0, 0.0, 1.0);
         this.projection = new THREE.Matrix4(); 
-        this.projection.set(6.9395, 0, 0, 0,
-                            0, 6.9395, 0, 0,
-                            0, 0, -1.001, -1,
-                            0, 0, -0.1001, 0);
+        this.projection.set(6.9395, 0.0, 0.0, 0.0,
+                            0.0, 6.9395, 0.0, 0.0,
+                            0.0, 0.0, -1.001, -1.0,
+                            0.0, 0.0, -0.1001, 0.0);
         this.material = new THREE.ShaderMaterial( {
             uniforms: { 
                 //resolution of three.js
