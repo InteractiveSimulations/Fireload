@@ -77,9 +77,9 @@ export default class Fire{
         this.material.transparent = true;
         this.material.defines = { EPSILON: 0.0001, LARGE_FLOAT: 1000.0 };
         //create fire mesh
-        this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.material);
-        this.mesh.position.set(0, 1, 0);
-        this.mesh.rotateY(Math.PI);
+        this.mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), this.material);
+        // this.mesh.position.set(0, 0, 0);
+        // this.mesh.rotateY(Math.PI);
         this.scene = scene;
         this.scene.add(this.mesh);
        

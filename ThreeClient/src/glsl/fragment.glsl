@@ -23,7 +23,7 @@ float minComponent(vec3 v) {
     return min( min(v.x, v.y), v.z );
 }
 float safeInverse(float x) { 
-    return (x == 0.0) ? 1000000000000.0 : (1.0 / x); 
+    return (x == 0.0) ? 1000000000000.0 : (1.0 / x);
 }
 vec3  safeInverse(vec3 v) { 
     return vec3(safeInverse(v.x), safeInverse(v.y), safeInverse(v.z)); 
@@ -109,7 +109,7 @@ vec2 RaymarchHeightfieldSimple(inout vec3 hitpoint_ws, vec3 Start_w, vec3 End_w,
     vec3 End_c                = (viewMat * vec4(End_w, 1.0)).xyz;
 
 
-//    if ( Start_c.x == 0.0 && Start_c.y == 0.0 && Start_c.z == 0.0 && Start_c.x == 0.0 && Start_c.y == 0.0 && Start_c.z <= 0.0 )
+//    if ( End_c.x == 0.0 && End_c.y == 0.0 && End_c.z == 0.0 && End_c.x == 0.0 && End_c.y == 0.0 && End_c.z <= 0.0 )
 //    {
 //        gl_FragColor = texture2D(uRadianceTex, vTexCoord.xy);
 //                //        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
@@ -200,12 +200,12 @@ vec2 RaymarchHeightfieldSimple(inout vec3 hitpoint_ws, vec3 Start_w, vec3 End_w,
 
     if(hit)
     {
-//        vec3 result_ts    = Start_ts + alpha*d_ts;
-//        vec3 hitCoords_cs = Ts2Cam(result_ts, inverse(projMat));
-//        hitpoint_ws       = Cam2Ws(hitCoords_cs, inverse(viewMat));
-//
-//        return result_ts.xy;
-        return currentTexCoord.xy;
+        vec3 result_ts    = Start_ts + alpha*d_ts;
+        vec3 hitCoords_cs = Ts2Cam(result_ts, inverse(projMat));
+        hitpoint_ws       = Cam2Ws(hitCoords_cs, inverse(viewMat));
+
+        return result_ts.xy;
+        //return currentTexCoord.xy;
     }
     else
     {
@@ -227,7 +227,8 @@ void main(void){
     // Step2: Intersect T_w with the impostor bounding box. This results in S_w and E_w (start & endpoint in worldspace)
     vec3 S_w                 = intersectBBox(ray_start_world.xyz, T_w);
     vec3 E_w                 = intersectBBox(S_w + T_w*float(LARGE_FLOAT), -T_w);
-    //vec3 E_w                 = intersectBBox(S_w + T_w*1000000000000.0, -T_w);
+
+    gl_FragColor = vec4(T_w, 1.0);
 
 //    if ( E_w.x == 0.0 && E_w.y == 0.0 && E_w.z == 0.0 && E_w.x == 0.0 && E_w.y == 0.0 && E_w.z <= 0.0 )
 //    {
@@ -288,7 +289,12 @@ void main(void){
 //    }
 
 //    if (hit) {
-//        gl_FragColor   = texture2D(uRadianceTex, vTexCoord.xy);
+//        gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy);
+//
+//        vec4 hit_ndc = uProjMatrix*uViewMatrix*vec4(hitpoint_ws, 1.0);
+//        hit_ndc     /= hit_ndc.w;
+//        hit_ndc      = (hit_ndc + 1.0)*0.5;
+//        gl_FragDepth = hit_ndc.z;
 //    } else {
 //        gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
 //    }
