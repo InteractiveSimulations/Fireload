@@ -17,6 +17,7 @@ export default class UI{
             console.log(getCookie("floorTexture"))
             setCookie("1k", "floorResolution")
             setCookie(1, "floorFiltering")
+            setCookie( true, "floorCompression")
 
             setCookie('field 3 [sunset][sunny]', "HDRITexture")
             setCookie(true, "HDRIBackground")
@@ -28,11 +29,14 @@ export default class UI{
 
             setCookie(0.25, "lightIntensity")
 
-            setCookie(400, "fireResolutionX")
-            setCookie(400, "fireResolutionY")
-            setCookie(20, "smokeDomainSizeX")
-            setCookie(20, "smokeDomainSizeY")
-            setCookie(20, "smokeDomainSizeZ")
+            setCookie( true, "fireCompression")
+            // setCookie(400, "fireResolutionX")
+            // setCookie(400, "fireResolutionY")
+            setCookie(512, "fireResolutionXY")
+            // setCookie(20, "smokeDomainSizeX")
+            // setCookie(20, "smokeDomainSizeY")
+            // setCookie(20, "smokeDomainSizeZ")
+            setCookie(2, "smokeDomainSizeXYZ")
             setCookie(1, "startFrame")
             setCookie(180, "endFrame")
             setCookie(30, "frameRate")
@@ -45,7 +49,8 @@ export default class UI{
             texture: getCookie("floorTexture").toString(),
             resolution: getCookie("floorResolution").toString(),
             filtering: parseInt(getCookie("floorFiltering")),
-            repeat: parseInt(getCookie("floorRepeat"))
+            repeat: parseInt(getCookie("floorRepeat")),
+            compression: (getCookie("floorCompression") === 'true' )
         }
 
         let hdriController = {
@@ -93,29 +98,35 @@ export default class UI{
             endFrame: 180,
             */
 
-            resolutionX: parseInt(getCookie("fireResolutionX")),
-            resolutionY: parseInt(getCookie("fireResolutionY")),
-            smokeDomainSizeX: parseInt(getCookie("smokeDomainSizeX")),
-            smokeDomainSizeY: parseInt(getCookie("smokeDomainSizeY")),
-            smokeDomainSizeZ: parseInt(getCookie("smokeDomainSizeZ")),
+            compression: (getCookie("fireCompression") === 'true'),
+            // resolutionX: parseInt(getCookie("fireResolutionX")),
+            // resolutionY: parseInt(getCookie("fireResolutionY")),
+            resolutionXY: parseInt(getCookie("fireResolutionXY")),
+            // smokeDomainSizeX: parseInt(getCookie("smokeDomainSizeX")),
+            // smokeDomainSizeY: parseInt(getCookie("smokeDomainSizeY")),
+            // smokeDomainSizeZ: parseInt(getCookie("smokeDomainSizeZ")),
+            smokeDomainSizeXYZ: parseInt(getCookie("smokeDomainSizeXYZ")),
             frameRate: parseInt(getCookie("frameRate")),
             startFrame: parseInt(getCookie("startFrame")),
             endFrame: parseInt(getCookie("endFrame")),
 
             start: function(){
                 let data = {
+                    "compression": this.compression,
                     "frameRate": this.frameRate,
                     "startFrame": this.startFrame,
                     "endFrame": this.endFrame,
-                    "resolutionX": this.resolutionX,
-                    "resolutionY": this.resolutionY,
+                    // "resolutionX": this.resolutionX,
+                    // "resolutionY": this.resolutionY,
+                    "resolutionXY": this.resolutionXY,
                     "fireResolution": 30,
                     "material": "wood",
-                    "smokeDomainSize": [
-                        this.smokeDomainSizeX,
-                        this.smokeDomainSizeY,
-                        this.smokeDomainSizeZ
-                    ],
+                    // "smokeDomainSize": [
+                    //     this.smokeDomainSizeX,
+                    //     this.smokeDomainSizeY,
+                    //     this.smokeDomainSizeZ
+                    // ],
+                    "smokeDomainSizeXYZ": this.smokeDomainSizeXYZ,
                     "objectType": objectController.activeObject,
                     "objectId": objectController.objectId,
                     "scale": [
@@ -161,8 +172,8 @@ export default class UI{
 
         //create floor folder
         this.floorFolder = this.datgui.addFolder('Floor');
-            this.floorFolder.add(floorController, 'texture', ['none', 'wood', 'small tiles']).name('Texture').onChange(function() { onChangeFloor(floorController, floor)});
-            this.floorFolder.add(floorController, 'repeat', 0.2, 50).name('Repeat').onChange(function() { onChangeFloor(floorController, floor)});
+            this.floorFolder.add(floorController, 'texture', ['none', 'wood', 'small tiles']).name('Texture').onChange(function() { onChangeFloor(floorController, floor, 'texture')});
+            this.floorFolder.add(floorController, 'repeat', 0.2, 50).name('Repeat').onChange(function() { onChangeFloor(floorController, floor, 'repeat')});
             //create hdri folder
         this.hdriFolder = this.datgui.addFolder('HDRI');
             this.hdriFolder.add(hdriController, 'texture', ['none', 'apartment 1 [day][sunny]', 'apartment 2 [day][sunny]', 'apartment 3 [day][sunny]',
@@ -182,8 +193,10 @@ export default class UI{
                 this.hdriSettingsFolder = this.graphicsFolder.addFolder('HDRI');
                     this.hdriSettingsFolder.add(hdriController, 'resolution', ['1k', '2k', '4k']).name('HDRI texture resolution').onChange(function() { onChangeHDRI(hdriController, scene) });
                 this.floorSettingsFolder = this.graphicsFolder.addFolder('Floor')
-                    this.floorSettingsFolder.add(floorController, 'resolution', ['1k', '2k']).name('Floor texture resolution').onChange(function() { onChangeFloor(floorController, floor) });
-                    this.floorSettingsFolder.add(floorController, 'filtering', 1, renderer.capabilities.getMaxAnisotropy()).name('Anisotropic Filtering').onChange(function() { onChangeFloor(floorController, floor) });
+                    this.floorCompressionFolder = this.floorSettingsFolder.addFolder('Texture Compression')
+                        this.floorCompressionFolder.add(floorController, 'compression').name('Activate').onChange(function (){ onChangeFloor(floorController, floor, 'compression') });
+                    this.floorSettingsFolder.add(floorController, 'resolution', ['1k', '2k']).name('Floor texture resolution').onChange(function() { onChangeFloor(floorController, floor, 'resolution') });
+                    this.floorSettingsFolder.add(floorController, 'filtering', 1, renderer.capabilities.getMaxAnisotropy()).name('Anisotropic Filtering').onChange(function() { onChangeFloor(floorController, floor, 'filtering') });
         //create light folder
         this.lightFolder = this.datgui.addFolder('Light');
             this.ambientLightFolder = this.lightFolder.addFolder('Ambient light');
@@ -193,20 +206,24 @@ export default class UI{
         //create fire folder
         this.fireFolder = this.datgui.addFolder('Fire');
             this.#name_controller = this.fireFolder.add(objectController, 'activeObject', ["none"]).name('Select Object');
+            this.fireCompressionFolder = this.fireFolder.addFolder('Texture Compression')
+                this.fireCompressionFolder.add(that.JSONController, 'compression').name('Activate').onChange(function (){ onChangeFire(that.JSONController) });
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
-                this.resolutionFolder.add(that.JSONController, 'resolutionX', 20, 2000).name('Resolution X').onChange(function() { onChangeFire(that.JSONController)});
-                this.resolutionFolder.add(that.JSONController, 'resolutionY', 20, 2000).name('Resolution Y').onChange(function() { onChangeFire(that.JSONController)});
+                // this.resolutionFolder.add(that.JSONController, 'resolutionX', 20, 2000).name('Resolution X').onChange(function() { onChangeFire(that.JSONController)});
+                // this.resolutionFolder.add(that.JSONController, 'resolutionY', 20, 2000).name('Resolution Y').onChange(function() { onChangeFire(that.JSONController)});
+                this.resolutionFolder.add(that.JSONController, 'resolutionXY', { Low: 512, Medium: 1024, High: 2048 } ).onChange(function() { onChangeFire(that.JSONController)});
             this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
-                this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X').onChange(function() { onChangeFire(that.JSONController)});
-                this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y').onChange(function() { onChangeFire(that.JSONController)});
-                this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z').onChange(function() { onChangeFire(that.JSONController)});
+                // this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X').onChange(function() { onChangeFire(that.JSONController)});
+                // this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y').onChange(function() { onChangeFire(that.JSONController)});
+                // this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z').onChange(function() { onChangeFire(that.JSONController)});
+                this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeXYZ', 1, 10).name('XYZ').onChange(function() { onChangeFire(that.JSONController)});
             this.framesFolder = this.fireFolder.addFolder('Frames');
                 this.framesFolder.add(that.JSONController, 'startFrame', 1, 1000).name('Start Frame').onChange(function() { onChangeFire(that.JSONController)});
                 this.framesFolder.add(that.JSONController, 'endFrame', this.getJSONController().startFrame, 1000).name('End Frame').onChange(function() { onChangeFire(that.JSONController)});
                 this.framesFolder.add(that.JSONController, 'frameRate', 30, 60).name('Frame Rate').onChange(function() { onChangeFire(that.JSONController)});
 
         //simulation folder
-        this.datgui.add(this.JSONController, 'start').name('Start simulation');
+        this.datgui.add(this.JSONController, 'start').name('Request Simulation');
 
         /* init floor */
         Loader.loadFloorMaterial(floorController, floor);
@@ -276,14 +293,15 @@ function getCookie(data) {
     return "";
 }
 
-function onChangeFloor(floorController, floor){
+function onChangeFloor(floorController, floor, change = ''){
     //loader function
-    Loader.loadFloorMaterial(floorController, floor)
+    Loader.loadFloorMaterial(floorController, floor, change)
     //server sending
     setCookie(floorController.texture, "floorTexture")
     setCookie(floorController.repeat, "floorRepeat")
     setCookie(floorController.resolution, "floorResolution")
     setCookie(floorController.filtering, "floorFiltering")
+    setCookie(floorController.compression, "floorCompression")
 }
 
 function onChangeHDRI(hdriController, scene){
@@ -315,12 +333,17 @@ function onChangeLight(ambientLight, value){
 
 function onChangeFire(JSONController){
     //server sending
-    setCookie(JSONController.resolutionX, "fireResolutionX")
-    setCookie(JSONController.resolutionY, "fireResolutionY")
-    setCookie(JSONController.smokeDomainSizeX, "smokeDomainSizeX")
-    setCookie(JSONController.smokeDomainSizeY, "smokeDomainSizeY")
-    setCookie(JSONController.smokeDomainSizeZ, "smokeDomainSizeZ")
+    setCookie(JSONController.compression, "fireCompression")
+    // setCookie(JSONController.resolutionX, "fireResolutionX")
+    // setCookie(JSONController.resolutionY, "fireResolutionY")
+    setCookie(JSONController.resolutionXY, "fireResolutionXY")
+    // setCookie(JSONController.smokeDomainSizeX, "smokeDomainSizeX")
+    // setCookie(JSONController.smokeDomainSizeY, "smokeDomainSizeY")
+    // setCookie(JSONController.smokeDomainSizeZ, "smokeDomainSizeZ")
+    setCookie(JSONController.smokeDomainSizeXYZ, "smokeDomainSizeXYZ")
     setCookie(JSONController.startFrame, "startFrame")
     setCookie(JSONController.endFrame, "endFrame")
     setCookie(JSONController.frameRate, "frameRate")
+
+    console.log(JSONController.resolutionXY)
 }

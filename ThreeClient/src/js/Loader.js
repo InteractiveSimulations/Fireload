@@ -1,73 +1,202 @@
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 import * as THREE from 'three';
+import * as SCRIPT from './script'
+
 //takes in texture name and resolution and sets texture as floor texture
-export function loadFloorMaterial(floorController, floor){
-    //standard material is applied when none is chosen
-    if(floorController.texture == 'none'){
-        floor.material = new THREE.MeshStandardMaterial();
+export function loadFloorMaterial(floorController, floor, change = ''){
+
+    if( floor.material.map == null || change === 'texture' || change === 'resolution' || change === 'compression' ) {
+
+        if (floorController.texture == 'none') {
+
+            //standard material is applied when none is chosen
+            floor.material = new THREE.MeshStandardMaterial();
+
+        } else {
+
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.setPath('assets/textures/floor/');
+
+            const ktx2Loader = new KTX2Loader();
+            ktx2Loader.setPath('assets/textures/floor/');
+            ktx2Loader.setTranscoderPath('libs/basis/');
+            ktx2Loader.detectSupport(SCRIPT.renderer);
+
+            console.log(floorController.texture + '-diffuse_' + floorController.resolution + '.png');
+
+            const formatStrings = {
+                [THREE.RGBAFormat]: 'RGBA32',
+                [THREE.RGBA_BPTC_Format]: 'RGBA_BPTC',
+                [THREE.RGBA_ASTC_4x4_Format]: 'RGBA_ASTC_4x4',
+                [THREE.RGB_S3TC_DXT1_Format]: 'RGB_S3TC_DXT1',
+                [THREE.RGBA_S3TC_DXT5_Format]: 'RGBA_S3TC_DXT5',
+                [THREE.RGB_PVRTC_4BPPV1_Format]: 'RGB_PVRTC_4BPPV1',
+                [THREE.RGBA_PVRTC_4BPPV1_Format]: 'RGBA_PVRTC_4BPPV1',
+                [THREE.RGB_ETC1_Format]: 'RGB_ETC1',
+                [THREE.RGB_ETC2_Format]: 'RGB_ETC2',
+                [THREE.RGBA_ETC2_EAC_Format]: 'RGB_ETC2_EAC',
+            };
+
+            let diffuse, normal, roughness;
+
+            if (floorController.compression) {
+
+                // loading albedo/diffuse map
+                diffuse = ktx2Loader.load(floorController.texture + '-diffuse_' + floorController.resolution + '.ktx2',
+                    //called when loading is in progresses
+                    function (texture) {
+
+                        texture.encoding = THREE.sRGBEncoding;
+
+                        console.info(`transcoded to ${formatStrings[texture.format]}\n
+                                        Of Type CompressedTexture: ` + texture.isCompressedTexture);
+
+                    },
+                    undefined,
+                    function (error) {
+                        console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                    }
+                );
+
+                //loading normal map
+                normal = ktx2Loader.load(floorController.texture + '-normal_' + floorController.resolution + '.ktx2',
+                    //called when loading is in progresses
+                    function (texture) {
+
+                        texture.encoding = THREE.sRGBEncoding;
+
+                        console.info(`transcoded to ${formatStrings[texture.format]}\n
+                                        Of Type CompressedTexture: ` + texture.isCompressedTexture);
+
+                    },
+                    undefined,
+                    //called when loading has errors
+                    function (error) {
+                        console.log('An error happened while loading the floor normaltexture!');
+                    }
+                );
+
+                roughness = ktx2Loader.load(floorController.texture + '-roughness_' + floorController.resolution + '.ktx2',
+                    //called when loading is in progresses
+                    function (texture) {
+
+                        texture.encoding = THREE.sRGBEncoding;
+
+                        console.info(`transcoded to ${formatStrings[texture.format]}\n
+                                        Of Type CompressedTexture: ` + texture.isCompressedTexture);
+
+                    },
+                    //called when loading is in progresses
+                    undefined,
+                    function (error) {
+                        console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                    }
+                );
+
+            } else {
+
+                // loading albedo/diffuse map
+                diffuse = textureLoader.load(floorController.texture + '-diffuse_' + floorController.resolution + '.png',
+                    //called when loading is in progresses
+                    function (texture) {
+                        console.log((texture.loaded / texture.total * 100) + '% loaded');
+                    },
+                    undefined,
+                    //called when loading has errors
+                    function (error) {
+                        console.log('An error happened while loading the floor diffuse texture!');
+                    }
+                );
+
+                //loading normal map
+                normal = textureLoader.load(floorController.texture + '-normal_' + floorController.resolution + '.png',
+                    //called when loading is in progresses
+                    function (texture) {
+                        console.log((texture.loaded / texture.total * 100) + '% loaded');
+                    },
+                    undefined,
+                    //called when loading has errors
+                    function (error) {
+                        console.log('An error happened while loading the floor normaltexture!');
+                    }
+                );
+
+                //loading roughness map
+                roughness = textureLoader.load(floorController.texture + '-roughness_' + floorController.resolution + '.png',
+                    //called when loading is in progresses
+                    function (texture) {
+                        console.log((texture.loaded / texture.total * 100) + '% loaded');
+                    },
+                    undefined,
+                    //called when loading has errors
+                    function (error) {
+                        console.log('An error happened while loading the floor roughness texture!');
+                    }
+                );
+
+            }
+
+            diffuse.wrapS = THREE.RepeatWrapping;
+            diffuse.wrapT = THREE.RepeatWrapping;
+            diffuse.repeat.set(floorController.repeat, floorController.repeat);
+            diffuse.anisotropy = floorController.filtering;
+
+            normal.wrapS = THREE.RepeatWrapping;
+            normal.wrapT = THREE.RepeatWrapping;
+            normal.repeat.set(floorController.repeat, floorController.repeat);
+            normal.anisotropy = floorController.filtering;
+
+            roughness.wrapS = THREE.RepeatWrapping;
+            roughness.wrapT = THREE.RepeatWrapping;
+            roughness.repeat.set(floorController.repeat, floorController.repeat);
+            roughness.anisotropy = floorController.filtering;
+
+            floor.material.map = diffuse;
+            floor.material.normalMap = normal;
+            floor.material.roughnessMap = roughness;
+            floor.material.needsUpdate = true;
+
+            ktx2Loader.dispose();
+
+        }
+
+
     }
-    else{
-        
-        var textureLoader = new THREE.TextureLoader();
-        textureLoader.setPath('assets/textures/floor/');
 
-        console.log(floorController.texture + '-diffuse_' + floorController.resolution + '.png');
+    if(change === 'repeat') {
 
-        //loading albedo/diffuse map
-        var diffuse = textureLoader.load(floorController.texture + '-diffuse_' + floorController.resolution + '.png',
-        //called when loading is in progresses
-        function ( texture ) {
-            console.log( ( texture.loaded / texture.total * 100 ) + '% loaded' );
-        },
-        //called when loading has errors
-        function ( error ) {
-            console.log( 'An error happened while loading the floor diffuse texture!' );
-        }
-        );
+        floor.material.map.wrapS = THREE.RepeatWrapping;
+        floor.material.map.wrapT = THREE.RepeatWrapping;
+        floor.material.map.repeat.set(floorController.repeat, floorController.repeat);
+        floor.material.map.needsUpdate = true;
 
-        diffuse.wrapS = THREE.RepeatWrapping;
-        diffuse.wrapT = THREE.RepeatWrapping;
-        diffuse.repeat.set(floorController.repeat, floorController.repeat);
-        diffuse.anisotropy = floorController.filtering;
+        floor.material.normalMap.wrapS = THREE.RepeatWrapping;
+        floor.material.normalMap.wrapT = THREE.RepeatWrapping;
+        floor.material.normalMap.repeat.set(floorController.repeat, floorController.repeat);
+        floor.material.normalMap.needsUpdate = true;
 
-        //loading normal map
-        var normal = textureLoader.load(floorController.texture + '-normal_' + floorController.resolution + '.png',
-        //called when loading is in progresses
-        function ( xhr ) {
-            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-        },
-        //called when loading has errors
-        function ( error ) {
-            console.log( 'An error happened while loading the floor normaltexture!' );
-        }
-        );
+        floor.material.roughnessMap.wrapS = THREE.RepeatWrapping;
+        floor.material.roughnessMap.wrapT = THREE.RepeatWrapping;
+        floor.material.roughnessMap.repeat.set(floorController.repeat, floorController.repeat);
+        floor.material.roughnessMap.needsUpdate = true;
 
-        normal.wrapS = THREE.RepeatWrapping;
-        normal.wrapT = THREE.RepeatWrapping;
-        normal.repeat.set(floorController.repeat, floorController.repeat);  
-        normal.anisotropy = floorController.filtering;
-
-        //loading roughness map
-        var roughness = textureLoader.load(floorController.texture + '-roughness_' + floorController.resolution + '.png',
-        //called when loading is in progresses
-        function ( xhr ) {
-            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-        },
-        //called when loading has errors
-        function ( error ) {
-            console.log( 'An error happened while loading the floor rougness texture!' );
-        }
-        );
-
-        roughness.wrapS = THREE.RepeatWrapping;
-        roughness.wrapT = THREE.RepeatWrapping;
-        roughness.repeat.set(floorController.repeat, floorController.repeat);
-        roughness.anisotropy = floorController.filtering;
-
-        // immediately use the texture for material creation
-        floor.material =  new THREE.MeshStandardMaterial( { map: diffuse, normalMap: normal, roughnessMap: roughness} );
     }
+
+    if(change === 'filtering') {
+
+        floor.material.map.anisotropy = floorController.filtering;
+        floor.material.map.needsUpdate = true;
+
+        floor.material.normalMap.anisotropy = floorController.filtering;
+        floor.material.normalMap.needsUpdate = true;
+
+        floor.material.roughnessMap.anisotropy = floorController.filtering;
+        floor.material.roughnessMap.needsUpdate = true;
+
+    }
+
 }
 
 export function loadFireFromFrames(JSONController){
