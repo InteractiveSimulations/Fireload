@@ -15,7 +15,7 @@ export default class Fire{
         this.scene.add(this.light);
 
         //only used when the fire is loaded as individual frames
-        this.material = Loader.loadFireFromFrames(JSONController);
+        this.atlasMaterials = Loader.loadFireFromFrames(JSONController);
  
         //adding fire meseh to the scene
         this.boundingBox = new THREE.Box3().setFromObject(this.mesh);
@@ -29,6 +29,9 @@ export default class Fire{
         this.deltaTime = 0;
         this.frameRate = JSONController.frameRate;
         this.numberOfFrames = JSONController.endFrame - JSONController.startFrame;
+
+        // Todo atlas variablen erstellen
+        this.framesPerAtlas = 0
 
         // matrix4 arrays with size 4 for each perspective: F = 0, R = 1, B = 2, L = 3
         this.modelViewMats = modelViewMats;
@@ -85,14 +88,16 @@ export default class Fire{
         this.pivot.rotation.y = angle;
         //updating fire texture (only used when the fire is loaded as individual frames)
 
-        console.log("Active perspective: " + this.getPerspective())
-        
-        this.deltaTime += this.clock.getDelta();
-        if(this.deltaTime > (1 / this.frameRate)){
-            this.mesh.material = this.material[this.counter % this.numberOfFrames];
-            this.counter++;
-            this.deltaTime = this.deltaTime % (1/this.frameRate);
-        }
+        // Todo load atlas rgba and z for perspectiv and actual frame to material or shader
+
+        // console.log("Active perspective: " + this.getPerspective())
+        //
+        // this.deltaTime += this.clock.getDelta();
+        // if(this.deltaTime > (1 / this.frameRate)){
+        //     this.mesh.material = this.atlasMaterials[this.counter % this.numberOfFrames];
+        //     this.counter++;
+        //     this.deltaTime = this.deltaTime % (1/this.frameRate);
+        // }
         
         
     }
