@@ -100,19 +100,19 @@ def set_location(name, x, y, z):
     
     
 
-cameraDistancePlane = 50*(((SmokeDomain_size[2]*1000)/(-36))+1) /1000 
-set_location("Camera_ZF", cameraDistancePlane-SmokeDomain_size[0]/2,0,SmokeDomain_size[2]/2)
-set_location("Camera_ZL", 0,cameraDistancePlane-SmokeDomain_size[1]/2,SmokeDomain_size[2]/2)
-set_location("Camera_ZR", 0,-cameraDistancePlane+SmokeDomain_size[1]/2,SmokeDomain_size[2]/2)
-set_location("Camera_ZB", -cameraDistancePlane+SmokeDomain_size[0]/2,0,SmokeDomain_size[2]/2)
+cameraDistancePlane = 50*(((SmokeDomain_size*1000)/(-36))+1) /1000
+set_location("Camera_ZF", cameraDistancePlane-SmokeDomain_size/2,0,SmokeDomain_size/2)
+set_location("Camera_ZL", 0,cameraDistancePlane-SmokeDomain_size/2,SmokeDomain_size/2)
+set_location("Camera_ZR", 0,-cameraDistancePlane+SmokeDomain_size/2,SmokeDomain_size/2)
+set_location("Camera_ZB", -cameraDistancePlane+SmokeDomain_size/2,0,SmokeDomain_size/2)
 bpy.data.cameras["Camera_ZF"].clip_start = -cameraDistancePlane
 bpy.data.cameras["Camera_ZL"].clip_start = -cameraDistancePlane
 bpy.data.cameras["Camera_ZR"].clip_start = -cameraDistancePlane
 bpy.data.cameras["Camera_ZB"].clip_start = -cameraDistancePlane
-bpy.data.cameras["Camera_ZF"].clip_end = -cameraDistancePlane + SmokeDomain_size[0]
-bpy.data.cameras["Camera_ZL"].clip_end = -cameraDistancePlane + SmokeDomain_size[1]
-bpy.data.cameras["Camera_ZR"].clip_end = -cameraDistancePlane + SmokeDomain_size[1]
-bpy.data.cameras["Camera_ZB"].clip_end = -cameraDistancePlane + SmokeDomain_size[0]
+bpy.data.cameras["Camera_ZF"].clip_end = -cameraDistancePlane + SmokeDomain_size
+bpy.data.cameras["Camera_ZL"].clip_end = -cameraDistancePlane + SmokeDomain_size
+bpy.data.cameras["Camera_ZR"].clip_end = -cameraDistancePlane + SmokeDomain_size
+bpy.data.cameras["Camera_ZB"].clip_end = -cameraDistancePlane + SmokeDomain_size
 
 #starts the render for the RGBA Images
 #bpy.ops.render.render(animation=True) 

@@ -93,13 +93,13 @@ export default class UI{
             start: function(){
                 let data = {
                     "compression": this.compression,
-                    "frameRate": this.frameRate,
-                    "startFrame": this.startFrame,
-                    "endFrame": this.endFrame,
-                    "resolutionXY": this.resolutionXY,
+                    "frameRate": parseInt(this.frameRate),
+                    "startFrame": parseInt(this.startFrame),
+                    "endFrame": parseInt(this.endFrame),
+                    "resolutionXY": parseInt(this.resolutionXY),
                     "fireResolution": 30,
                     "material": "wood",
-                    "smokeDomainSizeXYZ": this.smokeDomainSizeXYZ,
+                    "smokeDomainSizeXYZ": parseInt(this.smokeDomainSizeXYZ),
                     "objectType": objectController.activeObject,
                     "objectId": objectController.objectId,
                     "scale": [
