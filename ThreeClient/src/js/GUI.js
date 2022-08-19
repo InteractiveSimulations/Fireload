@@ -30,12 +30,7 @@ export default class UI{
             setCookie(0.25, "lightIntensity")
 
             setCookie( true, "fireCompression")
-            // setCookie(400, "fireResolutionX")
-            // setCookie(400, "fireResolutionY")
             setCookie(512, "fireResolutionXY")
-            // setCookie(20, "smokeDomainSizeX")
-            // setCookie(20, "smokeDomainSizeY")
-            // setCookie(20, "smokeDomainSizeZ")
             setCookie(2, "smokeDomainSizeXYZ")
             setCookie(1, "startFrame")
             setCookie(180, "endFrame")
@@ -87,24 +82,9 @@ export default class UI{
         }
 
         this.JSONController = {
-            /*
-            resolutionX: 400,
-            resolutionY: 400,
-            smokeDomainSizeX: 20,
-            smokeDomainSizeY: 20,
-            smokeDomainSizeZ: 20,
-            frameRate: 30,
-            startFrame: 1,
-            endFrame: 180,
-            */
 
             compression: (getCookie("fireCompression") === 'true'),
-            // resolutionX: parseInt(getCookie("fireResolutionX")),
-            // resolutionY: parseInt(getCookie("fireResolutionY")),
             resolutionXY: parseInt(getCookie("fireResolutionXY")),
-            // smokeDomainSizeX: parseInt(getCookie("smokeDomainSizeX")),
-            // smokeDomainSizeY: parseInt(getCookie("smokeDomainSizeY")),
-            // smokeDomainSizeZ: parseInt(getCookie("smokeDomainSizeZ")),
             smokeDomainSizeXYZ: parseInt(getCookie("smokeDomainSizeXYZ")),
             frameRate: parseInt(getCookie("frameRate")),
             startFrame: parseInt(getCookie("startFrame")),
@@ -116,16 +96,9 @@ export default class UI{
                     "frameRate": this.frameRate,
                     "startFrame": this.startFrame,
                     "endFrame": this.endFrame,
-                    // "resolutionX": this.resolutionX,
-                    // "resolutionY": this.resolutionY,
                     "resolutionXY": this.resolutionXY,
                     "fireResolution": 30,
                     "material": "wood",
-                    // "smokeDomainSize": [
-                    //     this.smokeDomainSizeX,
-                    //     this.smokeDomainSizeY,
-                    //     this.smokeDomainSizeZ
-                    // ],
                     "smokeDomainSizeXYZ": this.smokeDomainSizeXYZ,
                     "objectType": objectController.activeObject,
                     "objectId": objectController.objectId,
@@ -209,13 +182,8 @@ export default class UI{
             this.fireCompressionFolder = this.fireFolder.addFolder('Texture Compression')
                 this.fireCompressionFolder.add(that.JSONController, 'compression').name('Activate').onChange(function (){ onChangeFire(that.JSONController) });
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
-                // this.resolutionFolder.add(that.JSONController, 'resolutionX', 20, 2000).name('Resolution X').onChange(function() { onChangeFire(that.JSONController)});
-                // this.resolutionFolder.add(that.JSONController, 'resolutionY', 20, 2000).name('Resolution Y').onChange(function() { onChangeFire(that.JSONController)});
                 this.resolutionFolder.add(that.JSONController, 'resolutionXY', { Low: 512, Medium: 1024, High: 2048 } ).onChange(function() { onChangeFire(that.JSONController)});
             this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
-                // this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeX', 1, 100).name('Smoke Domain Size X').onChange(function() { onChangeFire(that.JSONController)});
-                // this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeY', 1, 100).name('Smoke Domain Size Y').onChange(function() { onChangeFire(that.JSONController)});
-                // this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeZ', 1, 100).name('Smoke Domain Size Z').onChange(function() { onChangeFire(that.JSONController)});
                 this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeXYZ', 1, 10).name('XYZ').onChange(function() { onChangeFire(that.JSONController)});
             this.framesFolder = this.fireFolder.addFolder('Frames');
                 this.framesFolder.add(that.JSONController, 'startFrame', 1, 1000).name('Start Frame').onChange(function() { onChangeFire(that.JSONController)});
@@ -334,12 +302,7 @@ function onChangeLight(ambientLight, value){
 function onChangeFire(JSONController){
     //server sending
     setCookie(JSONController.compression, "fireCompression")
-    // setCookie(JSONController.resolutionX, "fireResolutionX")
-    // setCookie(JSONController.resolutionY, "fireResolutionY")
     setCookie(JSONController.resolutionXY, "fireResolutionXY")
-    // setCookie(JSONController.smokeDomainSizeX, "smokeDomainSizeX")
-    // setCookie(JSONController.smokeDomainSizeY, "smokeDomainSizeY")
-    // setCookie(JSONController.smokeDomainSizeZ, "smokeDomainSizeZ")
     setCookie(JSONController.smokeDomainSizeXYZ, "smokeDomainSizeXYZ")
     setCookie(JSONController.startFrame, "startFrame")
     setCookie(JSONController.endFrame, "endFrame")

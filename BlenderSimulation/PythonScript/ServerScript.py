@@ -28,9 +28,9 @@ with open(dirJson, 'r') as json_file:
     Framerate = allData['frameRate']
     StartFrame = allData['startFrame']
     EndFrame = allData['endFrame']
-    resolutionX = allData['resolutionX']
-    resolutionY =allData['resolutionY']
-    SmokeDomain_size = allData['smokeDomainSize']
+    resolutionX = allData['resolutionXY']
+    resolutionY =allData['resolutionXY']
+    SmokeDomain_size = allData['smokeDomainSizeXYZ']
     id = allData['objectId']
     scale = allData['scale']
     rotation = allData['rotation']
@@ -86,7 +86,7 @@ bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
 bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
 bpy.data.scenes["Scene"].render.image_settings.use_zbuffer = True
 bpy.data.scenes["Scene"].render.image_settings.use_preview = False
-bpy.context.scene.render.image_settings.compression = 100
+bpy.context.scene.render.image_settings.compression = 0
 
 #Change the Size of an SmokeDomain
 def set_size_SD(name, x, y, z): #läuft nur wenn die SmokeDomain ausgewählt ist
