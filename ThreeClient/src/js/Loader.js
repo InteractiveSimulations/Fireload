@@ -65,7 +65,7 @@ export function loadFloorMaterial(floorController, floor, change = ''){
                     //called when loading is in progresses
                     function (texture) {
 
-                        texture.encoding = THREE.sRGBEncoding;
+                        // texture.encoding = THREE.sRGBEncoding;
 
                         console.info(`transcoded to ${formatStrings[texture.format]}\n
                                         Of Type CompressedTexture: ` + texture.isCompressedTexture);
@@ -156,6 +156,7 @@ export function loadFloorMaterial(floorController, floor, change = ''){
             floor.material.map = diffuse;
             floor.material.normalMap = normal;
             floor.material.roughnessMap = roughness;
+
             floor.material.needsUpdate = true;
 
             ktx2Loader.dispose();
