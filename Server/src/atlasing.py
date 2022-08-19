@@ -20,17 +20,9 @@ def startAtlasing():
         data = json.load(json_file)
         start_frame = data["startFrame"]
         end_frame = data["endFrame"]
-        resolution_level = "medium"
-
-    if resolution_level == "low":
-        frame_size = 512
-    elif resolution_level == "medium":
-        frame_size = 1024
-    elif resolution_level == "high":
-        frame_size = 2048
+        frame_size = data["resolutionXY"]
 
     atlas_size = 4096
-
     frames_per_dimension = int(atlas_size/frame_size)
     frames_per_atlas = int(frames_per_dimension * frames_per_dimension)
     number_of_frames = int(end_frame - start_frame + 1)

@@ -14,7 +14,8 @@ window.addEventListener('keydown', onKeyDown, false);
 window.addEventListener('keyup', onKeyUp, false);
 window.addEventListener('mousemove', onMouseMove, false);
 
-let renderer, scene, camera;
+export let renderer;
+let scene, camera;
 let controller;
 let gui;
 

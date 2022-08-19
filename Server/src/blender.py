@@ -12,7 +12,7 @@ def startBlender():
     print(parent_directory2)
 
     # Joined path of the fireSim version
-    version_rgba = os.path.join(parent_directory2, "BlenderSimulation", "FireSimulation", "Fire_v10.blend").replace("\\", "/")
+    version_rgba = os.path.join(parent_directory2, "BlenderSimulation", "FireSimulation", "Fire_v11.blend").replace("\\", "/")
 
     # Joind parth of the zBuffer Frames
     version_z = os.path.join(parent_directory2, "BlenderSimulation", "FireSimulation", "Fire_ZBuffer_v10.blend").replace("\\", "/")

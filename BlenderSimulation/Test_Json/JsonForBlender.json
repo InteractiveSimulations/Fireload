@@ -1,14 +1,12 @@
 {
+  "compression": true,
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 180,
-  "resolutionX": 400,
-  "resolutionY": 400,
-  "smokeDomainSize": [
-    20,
-    20,
-    20
-  ],
+  "endFrame": 20,
+  "resolutionXY": 512,
+  "fireResolution": 30,
+  "material": "wood",
+  "smokeDomainSizeXYZ": 5,
   "objectType": "Cube",
   "objectId": 1,
   "scale": [
@@ -24,6 +22,23 @@
   "rotation": [
     0,
     0,
+    0
+  ],
+  "forceType": "Wind",
+  "forceId": 1,
+  "forceScale": [
+    2,
+    2,
+    3
+  ],
+  "forceLocation": [
+    10,
+    0,
+    4
+  ],
+  "forceRotation": [
+    0,
+    270,
     0
   ]
 }

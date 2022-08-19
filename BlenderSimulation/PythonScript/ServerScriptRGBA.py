@@ -30,9 +30,9 @@ with open(dirJson, 'r') as json_file:
     Framerate = allData['frameRate']
     StartFrame = allData['startFrame']
     EndFrame = allData['endFrame']
-    resolutionX = allData['resolutionX']
-    resolutionY =allData['resolutionY']
-    SmokeDomain_size = allData['smokeDomainSize']
+    resolutionX = allData['resolutionXY']
+    resolutionY =allData['resolutionXY']
+    SmokeDomain_size = allData['smokeDomainSizeXYZ']
     id = allData['objectId']
     scale = allData['scale']
     rotation = allData['rotation']
@@ -273,16 +273,16 @@ set_scale(type, scale[0], scale[1], scale[2])
 set_location(type, location[0], location[1], location[2])
 set_rotation(type, rotation[0], rotation[1], rotation[2])
 
-cameraDistancePlane = 50*(((SmokeDomain_size[2]*1000)/(-36))+1) /1000 
+cameraDistancePlane = 50*(((SmokeDomain_size*1000)/(-36))+1) /1000
 print(cameraDistancePlane)
-set_location("Camera_F", cameraDistancePlane-SmokeDomain_size[0]/2 ,0,SmokeDomain_size[2]/2)
-set_location("Camera_L", 0,cameraDistancePlane-SmokeDomain_size[1]/2,SmokeDomain_size[2]/2)
-set_location("Camera_R", 0,-cameraDistancePlane+SmokeDomain_size[1]/2,SmokeDomain_size[2]/2)
-set_location("Camera_B", -cameraDistancePlane+SmokeDomain_size[0]/2,0,SmokeDomain_size[2]/2)
-set_location("Camera_ZF", cameraDistancePlane-SmokeDomain_size[0]/2,0,SmokeDomain_size[2]/2)
-set_location("Camera_ZL", 0,cameraDistancePlane-SmokeDomain_size[1]/2,SmokeDomain_size[2]/2)
-set_location("Camera_ZR", 0,-cameraDistancePlane+SmokeDomain_size[1]/2,SmokeDomain_size[2]/2)
-set_location("Camera_ZB", -cameraDistancePlane+SmokeDomain_size[0]/2,0,SmokeDomain_size[2]/2)
+set_location("Camera_F", cameraDistancePlane-SmokeDomain_size/2 ,0,SmokeDomain_size/2)
+set_location("Camera_L", 0,cameraDistancePlane-SmokeDomain_size/2,SmokeDomain_size/2)
+set_location("Camera_R", 0,-cameraDistancePlane+SmokeDomain_size/2,SmokeDomain_size/2)
+set_location("Camera_B", -cameraDistancePlane+SmokeDomain_size/2,0,SmokeDomain_size/2)
+set_location("Camera_ZF", cameraDistancePlane-SmokeDomain_size/2,0,SmokeDomain_size/2)
+set_location("Camera_ZL", 0,cameraDistancePlane-SmokeDomain_size/2,SmokeDomain_size/2)
+set_location("Camera_ZR", 0,-cameraDistancePlane+SmokeDomain_size/2,SmokeDomain_size/2)
+set_location("Camera_ZB", -cameraDistancePlane+SmokeDomain_size/2,0,SmokeDomain_size/2)
 
 #get the view and projection matrix
 def modelViewMatrix(letter):
@@ -338,7 +338,7 @@ fire_evolve(material)
 #bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'REPLAY'
 #bpy.data.objects["SmokeDomain"].select_set(False)
 
-set_size_SD("SmokeDomain", SmokeDomain_size[0], SmokeDomain_size[1], SmokeDomain_size[2])
+set_size_SD("SmokeDomain", SmokeDomain_size, SmokeDomain_size, SmokeDomain_size)
 #bpy.ops.screen.animation_play()
 
 #currentFrame = bpy.data.scenes[0].frame_current
