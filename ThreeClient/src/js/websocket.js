@@ -1,6 +1,7 @@
 export let websocket;
 export let simStatus;
 import * as SCRIPT from './script'
+import * as LOADER from './Loader'
 
 
 function showMessage(message) {
@@ -13,6 +14,8 @@ function receiveSimulationStatus( message ) {
 
     SCRIPT.setMatrices( json.modelViewMats, json.projectionMats );
     SCRIPT.createTextAnimation();
+
+    LOADER.atlasFilenames = json.atlasFilenames;
 
 }
 

@@ -4,6 +4,8 @@ import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 import * as THREE from 'three';
 import * as SCRIPT from './script'
 
+export let atlasFilenames = [];
+
 //takes in texture name and resolution and sets texture as floor texture
 export function loadFloorMaterial(floorController, floor, change = ''){
 
@@ -201,37 +203,88 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 }
 
 export function loadFireFromFrames(JSONController){
-    var materials = [];
-    var textureLoader = new THREE.TextureLoader();
+
+    // Todo atlasse in zweidimensionales array laden
+
+    let atlasMaterials = [[]];
+
+    const textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/simulations/');
-    for(let i = JSONController.startFrame; i <= JSONController.endFrame; i++){
-        let zeros = '000';
-        //loading albedo/diffuse map
-        if(i >= 10){
-            zeros = '00';
+    textureLoader.setPath('assets/simulations/')
+
+    const ktx2Loader = new KTX2Loader();
+    ktx2Loader.setPath('assets/simulations/');
+    ktx2Loader.setTranscoderPath('libs/basis/');
+    ktx2Loader.detectSupport(SCRIPT.renderer);
+
+
+    for(let i = 0; i <= atlasFilenames.length; i++){
+
+        let atlasRGBA, atlasZ;
+
+        if(JSONController.compression) {
+
+            atlasRGBA = ktx2Loader.load(atlasFilenames[0][i],
+                function (texture) {
+
+                    texture.encoding = THREE.sRGBEncoding;
+
+                },
+                undefined,
+                function (error) {
+                    console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                }
+            );
+
+            atlasZ = ktx2Loader.load(atlasFilenames[1][i],
+                function (atlas) {
+
+                    atlas.encoding = THREE.sRGBEncoding;
+
+                },
+                undefined,
+                function (error) {
+                    console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                }
+            );
+
+        } else {
+
+            atlasRGBA = textureLoader.load(atlasFilenames[0][i],
+                function (texture) {
+                },
+                undefined,
+                function (error) {
+                    console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                }
+            );
+
+            atlasZ = textureLoader.load(atlasFilenames[1][i],
+                function (atlas) {
+                },
+                undefined,
+                function (error) {
+                    console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                }
+            );
+
         }
-        if(i >= 100){
-            zeros = '0';
-        }
-        if(i >= 1000){
-            zeros = '';
-        }
-        var texture = textureLoader.load( zeros + i + '.png',
-        //called when loading is in progresses
-        function ( texture ) {
-            console.log( ( texture.loaded / texture.total * 100 ) + '% loaded' );
-        },
-        //called when loading has errors
-        function ( error ) {
-            console.log( 'An error happened while loading the fire texture!' );
-        }
-        );
-        texture.anisotropy = 8;
-        var material = new THREE.MeshBasicMaterial( { map: texture } );
-        material.transparent = true;
-        materials.push(material);
+
+        atlasRGBA.anisotropy = 8;
+        atlasZ.anisotropy = 8;
+
+        let atlasMaterialRGBA = new THREE.MeshBasicMaterial( { map: atlasRGBA } );
+        let atlasMaterialZ = new THREE.MeshBasicMaterial( { map: atlasZ } );
+
+        atlasMaterialRGBA.transparent = true;
+        atlasMaterialZ.transparent = true;
+
+        atlasMaterials[0].push(atlasMaterialRGBA);
+        atlasMaterials[1].push(atlasMaterialZ)
+
     }
-    return materials;
+
+    return atlasMaterials;
 }
 
 //takes in the hdri name and the resolution and adds hdri to scene
