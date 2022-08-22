@@ -102,8 +102,8 @@ def startAtlasing():
 
             if compression:
 
-                subprocess.run(["basisu", "-ktx2", atlas_rgba_path, '-output_path', atlas_rgba_dir])
-                subprocess.run(["basisu", "-ktx2", atlas_z_path, '-output_path', atlas_z_dir])
+                subprocess.run(["basisu", "-ktx2", "-y_flip", atlas_rgba_path, '-output_path', atlas_rgba_dir])
+                subprocess.run(["basisu", "-ktx2", "-y_flip", atlas_z_path, '-output_path', atlas_z_dir])
 
                 send_data["atlasFilenames"][0].append(atlas_rgba_filename + ".ktx2")
                 send_data["atlasFilenames"][1].append(atlas_z_filename + ".ktx2")
