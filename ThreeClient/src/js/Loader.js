@@ -206,7 +206,7 @@ export function loadFireFromFrames(JSONController){
 
     // Todo atlasse in zweidimensionales array laden
 
-    let atlasMaterials = [[]];
+    let atlases = [[]];
 
     const textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/simulations/');
@@ -273,18 +273,12 @@ export function loadFireFromFrames(JSONController){
         atlasRGBA.anisotropy = 8;
         atlasZ.anisotropy = 8;
 
-        let atlasMaterialRGBA = new THREE.MeshBasicMaterial( { map: atlasRGBA } );
-        let atlasMaterialZ = new THREE.MeshBasicMaterial( { map: atlasZ } );
-
-        atlasMaterialRGBA.transparent = true;
-        atlasMaterialZ.transparent = true;
-
-        atlasMaterials[0].push(atlasMaterialRGBA);
-        atlasMaterials[1].push(atlasMaterialZ)
+        atlases[0].push(atlasRGBA);
+        atlases[1].push(atlasZ)
 
     }
 
-    return atlasMaterials;
+    return atlases;
 }
 
 //takes in the hdri name and the resolution and adds hdri to scene
