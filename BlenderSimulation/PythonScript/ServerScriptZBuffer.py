@@ -154,7 +154,7 @@ context.view_layer.objects.active = obj
 
 bpy.ops.object.modifier_add(type='VOLUME_TO_MESH')
 bpy.context.object.modifiers["Volume to Mesh"].object = bpy.data.objects["fluid_data_000"+str(StartFrame)]
-bpy.context.object.modifiers["Volume to Mesh"].threshold = 0.483
+bpy.context.object.modifiers["Volume to Mesh"].threshold = 0.2
 bpy.context.object.modifiers["Volume to Mesh"].adaptivity = 1
 
 #bpy.context.area.ui_type = 'TEXT_EDITOR'
