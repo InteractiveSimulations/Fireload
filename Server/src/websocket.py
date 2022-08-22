@@ -3,7 +3,7 @@
 import websockets
 import json
 import blender
-import atlasing
+#import atlasing
 import asyncio
 
 

@@ -2,11 +2,11 @@
   "compression": true,
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 20,
+  "endFrame": 30,
   "resolutionXY": 512,
   "fireResolution": 30,
   "material": "wood",
-  "smokeDomainSizeXYZ": 5,
+  "smokeDomainSizeXYZ": 20,
   "objectType": "Cube",
   "objectId": 1,
   "scale": [
@@ -25,7 +25,7 @@
     0
   ],
   "forceType": "Wind",
-  "forceId": 1,
+  "forceId": 0,
   "forceScale": [
     2,
     2,

@@ -133,7 +133,8 @@ for i in range(StartFrame, EndFrame):
 
 
 bpy.ops.mesh.primitive_cube_add(enter_editmode=False, align='WORLD', location=(0, 0, 1), scale=(1, 1, 1))
- 
+bpy.ops.mesh.primitive_cube_add(enter_editmode=False, align='WORLD', location=(0, 0, 0.1), scale=(0.1, 0.1, 0.1))
+
 bpy.ops.object.volume_import(filepath="//cache_fluid_90784781/data/", directory=dirOpenVBD, files=file, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
 bpy.context.object.data.is_sequence = True
 bpy.context.object.data.frame_duration = EndFrame
