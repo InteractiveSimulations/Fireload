@@ -56,28 +56,26 @@ vec3 Cam2Ws(vec3 csPos, mat4 invView)
 bool ailaWaldHitAABox(vec3 boxCenter, vec3 boxRadius, vec3 rayOrigin, vec3 rayDirection, inout vec3 firstIntersectionPoint) {
 
     vec3 rayOriginCompute  = rayOrigin - boxCenter;
-    //gl_FragColor = vec4(rayOrigin * 0.001, 1.0);
-    //gl_FragColor = vec4(normalize(rayOrigin), 1.0);
     vec3 invRayDirection   = safeInverse(rayDirection);
     vec3 t_min             = (-boxRadius - rayOriginCompute) * invRayDirection;
     vec3 t_max             = ( boxRadius - rayOriginCompute) * invRayDirection;
     float t0               = maxComponent(min(t_min, t_max));
     float t1               = minComponent(max(t_min, t_max));
 
+
     // Compute the intersection distance
     float distance = (t0 > 0.0) ? t0 : t1;
     firstIntersectionPoint = (rayOrigin + rayDirection * distance);
-
     return (t0 <= t1) && (distance > 0.0);
-    
 }
 
 vec3 intersectBBox(vec3 start, vec3 direction)
 {
+    //gl_FragColor = vec4(start, 1.0);
     vec3 bbCenter   = (bboxMin.xyz + bboxMax.xyz) * 0.5f;
     vec3 bbRadius   = vec3(abs(bboxMax.x - bboxMin.x)*0.5f, abs(bboxMax.y - bboxMin.y)*0.5f, abs(bboxMax.z - bboxMin.z)*0.5);
     vec3 E_w        = vec3(0.0, 0.0, 0.0);
-    ailaWaldHitAABox(bbCenter, bbRadius, start + direction*2.0, direction, E_w);
+    ailaWaldHitAABox(bbCenter, bbRadius, start + direction*EPSILON, direction, E_w);
 
     return E_w;
 }
@@ -88,18 +86,17 @@ vec2 RaymarchHeightfieldSimple(inout vec3 hitpoint_ws, vec3 Start_w, vec3 End_w,
     vec3 Start_c              = (viewMat * vec4(Start_w, 1.0)).xyz;
     vec3 End_c                = (viewMat * vec4(End_w, 1.0)).xyz;
 
-    
     vec3 Start_ts             = Cam2Ts(Start_c, projMat);
     vec3 End_ts               = Cam2Ts(End_c, projMat);
     vec3 d_ts                 = End_ts - Start_ts;
     float alpha               = 0.0;
 
-    
         //Raaaaaay....MARCH!
         hit = false;
         int   currentStep          = 0;
         vec3  currentTexCoord      = Start_ts + alpha*d_ts; //currentTexCoord.z = ray depth in [0,1]
         float currentTextureDepth  = texture2D(heightfield, currentTexCoord.xy, 0.0).r;
+        gl_FragColor              = vec4((currentTexCoord), 1.0);
 
         while( currentStep < steps )
         {
@@ -143,12 +140,11 @@ void main(void){
     ray_start_world        = uViewInverse*ray_start_world;
     vec3 T_w               = normalize(ray_start_world.xyz - cameraPosition.xyz);
 
-    gl_FragColor = vec4(T_w, 1.0);
-
     // Step2: Intersect T_w with the impostor bounding box. This results in S_w and E_w (start & endpoint in worldspace)
+    //gl_FragColor = vec4(ray_start_world.xyz, 1.0);
     vec3 S_w                 = intersectBBox(ray_start_world.xyz, T_w);
     vec3 E_w                 = intersectBBox(S_w + T_w*float(LARGE_FLOAT), -T_w);
-
+    //gl_FragColor = vec4(S_w, 1.0);
     // Step3: Check if heightfield is intersected "hit", and compute the intersected
     // texture coordinate "newTexCoords", as well as the corresponding world position "hitpoint_ws"
     // Increasing "steps" improves the precision of the result but also uses more computing power. Recommended values [16 - 128]
@@ -162,6 +158,7 @@ void main(void){
     // Step4: If the heightfield surface was hit by the view ray, we sample the color at the returned texture coordinates
     // Also the depth of the intersected surface is computed and written into the depth buffer so it can interact with
     // other geometry correctly
+    
     /*
     if (hit) {
         gl_FragColor   = texture2D(uRadianceTex, newTexCoords.xy, 0.0);

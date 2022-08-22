@@ -15,11 +15,25 @@ export default class Fire{
                       0.0, 1.0, 0.0, 0.0,
                       0.0, 0.0, 1.0, 0.0,
                       0.0, 0.0, 0.0, 1.0);
+                      
+/*
+        this.view.set(0.0, 0.0, -1.0, -37.7278,
+                      -1.0, 0.0, 0.0, 0.0,
+                      0.0, 1.0, 0.0, 10.0,
+                      0.0, 0.0, 0.0, 1.0);
+                      */
         this.projection = new THREE.Matrix4(); 
-        this.projection.set(6.9395, 0.0, 0.0, 0.0,
-                            0.0, 6.9395, 0.0, 0.0,
-                            0.0, 0.0, -1.001, -1.0,
-                            0.0, 0.0, -0.1001, 0.0);
+        
+        this.projection.set(0.97428, 0.0, 0.0, 0.0,
+                            0.0, 0.97428, 0.0, 0.0,
+                            0.0, 0.0, -1.00, 0.0,
+                            0.0, 0.0, -1.000, 0.0);
+          /*                  
+        this.projection.set(2.7778, 0.0, 0.0, 0.0,
+                            0.0, 2.7778, 0.0, 0.0,
+                            0.0, 0.0, -1.002, -0.2002,
+                            0.0, 0.0, -1.0, 0.0)
+                            */
         this.material = new THREE.ShaderMaterial( {
             uniforms: { 
                 //resolution of three.js
@@ -75,7 +89,7 @@ export default class Fire{
         console.log("[" + this.projection.elements[2] + ", " + this.projection.elements[6] + ", " + this.projection.elements[10] + ", " + this.projection.elements[14] + "]")
         console.log("[" + this.projection.elements[3] + ", " + this.projection.elements[7] + ", " + this.projection.elements[11] + ", " + this.projection.elements[15] + "]")
         this.material.transparent = true;
-        this.material.defines = { EPSILON: 0.0001, LARGE_FLOAT: 1000.0 };
+        this.material.defines = { EPSILON: 0.0001, LARGE_FLOAT: 10000.0 };
         //create fire mesh
         this.mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), this.material);
         // this.mesh.position.set(0, 0, 0);

@@ -74,8 +74,8 @@ export function loadParallaxFireTextures(){
     var textures = [];
     var textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/dummy/');
-    textures.push(textureLoader.load('suzanne_radiance_front.png'));
-    textures.push(textureLoader.load('suzanne_heightfield_front.png'));
+    textures.push(textureLoader.load('fire_radiance_front.png'));
+    textures.push(textureLoader.load('fire_heightfield_front.png'));
     textures[0].generateMipmaps = false;
     textures[1].generateMipmaps = false;
     textures[0].minFilter = THREE.NearestFilter
