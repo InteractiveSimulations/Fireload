@@ -30,8 +30,8 @@ export default class Fire{
                 uProjInverse: { value: camera.projectionMatrix.clone().invert() },
                 uHeightfieldTex: { value: this.textures[1] },
                 uRadianceTex: { value: this.textures[0] },
-                uCaptureViewMatrix: { value: this.view },
-                uCaptureProjMatrix: { value: this.projection }
+                uCaptureViewMat: { value: this.view },
+                uCaptureProjMat: { value: this.projection }
             },
             
             vertexShader: vertex,
@@ -132,8 +132,8 @@ export default class Fire{
         this.material.uniforms.uProjInverse.value = camera.projectionMatrix.clone().invert();
         this.material.uniforms.uViewInverse.value = camera.matrixWorldInverse.clone().invert();
         this.material.uniforms.uProjInverse.value = camera.projectionMatrix.clone().invert();
-        this.material.uniforms.uCaptureViewMatrix.value = this.view;
-        this.material.uniforms.uCaptureProjMatrix.value = this.projection;
+        this.material.uniforms.uCaptureViewMat.value = this.view;
+        this.material.uniforms.uCaptureProjMat.value = this.projection;
     }
 
 }
