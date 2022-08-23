@@ -52,18 +52,16 @@ def startAtlasing():
         for i in range(number_of_atlases):
 
             atlas_start_frame = start_frame + i * frames_per_atlas
-            atlas_end_frame = (i + 1) * frames_per_atlas
+            atlas_end_frame = start_frame + (i + 1) * frames_per_atlas - 1
 
-            if i + 1 == number_of_atlases and number_of_frames % frames_per_atlas != 0:
-                atlas_end_frame = i * frames_per_atlas + ( number_of_frames % frames_per_atlas )
+            if i + 1 == number_of_atlases:
+                atlas_end_frame = atlas_start_frame + ( number_of_frames % frames_per_atlas ) - 1
 
             frame_number = atlas_start_frame
 
-            for y in range(frames_per_dimension):
+            for row in range(frames_per_dimension):
 
-                for x in range(frames_per_dimension):
-
-                    frame_number = i * frames_per_atlas + y * frames_per_dimension + x + 1
+                for col in range(frames_per_dimension):
 
                     if frame_number > end_frame:
                         break
@@ -79,17 +77,19 @@ def startAtlasing():
                     frame_rgba_path = os.path.join(atlas_rgba_dir, zeros + str(frame_number) + "_" + perspective + ".png")
                     frame_rgba = cv.imread(frame_rgba_path, cv.IMREAD_UNCHANGED)
                     frame_rgba = cv.cvtColor(frame_rgba, cv.COLOR_BGRA2RGBA)
-                    atlases_rgba[i][y * frame_size:(y + 1) * frame_size, x * frame_size:(x + 1) * frame_size] = frame_rgba
+                    atlases_rgba[i][row * frame_size:(row + 1) * frame_size, col * frame_size:(col + 1) * frame_size] = frame_rgba
 
                     frame_z_path = os.path.join(atlas_z_dir, "Image" + zeros + str(frame_number) + "_Z" + perspective + ".jpg")
                     frame_z = cv.imread(frame_z_path)
-                    atlases_z[i][y * frame_size:(y + 1) * frame_size, x * frame_size:(x + 1) * frame_size] = frame_z
+                    atlases_z[i][row * frame_size:(row + 1) * frame_size, col * frame_size:(col + 1) * frame_size] = frame_z
+
+                    frame_number += 1
 
                 if frame_number > end_frame:
                     break
 
             atlas_rgba_filename = perspective + "_" + str(atlas_start_frame) + "_" + str(atlas_end_frame)
-            atlas_z_filename ="Z" +  perspective + "_" + str(atlas_start_frame) + "_" + str(atlas_end_frame)
+            atlas_z_filename = "Z" + perspective + "_" + str(atlas_start_frame) + "_" + str(atlas_end_frame)
 
             atlas_rgba_path = os.path.join(atlas_rgba_dir, atlas_rgba_filename + ".png")
             atlas_z_path = os.path.join(atlas_z_dir, atlas_z_filename + ".png")
