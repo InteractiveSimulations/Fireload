@@ -124,9 +124,9 @@ function switchToFPControls(){
         controller = new FirstPersonController(camera, document);
         fire = new Fire(gui.getJSONController(), null, camera, scene, modelViewMats, projectionMats);
 
-        notifications = false;
-        let notification = scene.getObjectByName("notification");
-        scene.remove(notification);
+        // notifications = false;
+        // let notification = scene.getObjectByName("notification");
+        // scene.remove(notification);
     }
 }
 

@@ -202,11 +202,44 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
 }
 
-export function loadFireFromFrames(JSONController){
+export async function loadFireFromFrames(JSONController){
 
     // Todo atlasse in zweidimensionales array laden
 
-    let atlases = [[]];
+    atlasFilenames = [
+        [
+            [
+                "F_1_0.png"
+            ],
+            [
+                "R_1_0.png"
+            ],
+            [
+                "B_1_0.png"
+            ],
+            [
+                "L_1_0.png"
+            ]
+        ],
+        [
+            [
+                "ZF_1_0.png"
+            ],
+            [
+                "ZR_1_0.png"
+            ],
+            [
+                "ZB_1_0.png"
+            ],
+            [
+                "ZL_1_0.png"
+            ]
+        ]
+    ];
+
+    let atlases = [];
+    atlases.push([]);
+    atlases.push([]);
 
     const textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/simulations/');
@@ -218,63 +251,77 @@ export function loadFireFromFrames(JSONController){
     ktx2Loader.detectSupport(SCRIPT.renderer);
 
 
-    for(let i = 0; i <= atlasFilenames.length; i++){
+    for(let perspective = 0; perspective < 4; perspective++ ) {
 
-        let atlasRGBA, atlasZ;
+        atlases[0].push([]);
+        atlases[1].push([]);
 
-        if(JSONController.compression) {
+        for (let i = 0; i < atlasFilenames[0][0].length; i++) {
 
-            atlasRGBA = ktx2Loader.load(atlasFilenames[0][i],
-                function (texture) {
+            // console.log( "TEST perspective = " + perspective + ", i = " + i );
 
-                    texture.encoding = THREE.sRGBEncoding;
+            let atlasRGBA, atlasZ;
 
-                },
-                undefined,
-                function (error) {
-                    console.log('An error happened while loading the floor diffuse texture!: ' + error);
-                }
-            );
+            if (false) {
 
-            atlasZ = ktx2Loader.load(atlasFilenames[1][i],
-                function (atlas) {
+                atlasRGBA = await ktx2Loader.loadAsync(atlasFilenames[0][perspective][i],
+                    function (atlas) {
 
-                    atlas.encoding = THREE.sRGBEncoding;
+                        atlas.encoding = THREE.sRGBEncoding;
 
-                },
-                undefined,
-                function (error) {
-                    console.log('An error happened while loading the floor diffuse texture!: ' + error);
-                }
-            );
+                    },
+                    undefined,
+                    function (error) {
+                        console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                    }
+                );
 
-        } else {
+                atlasZ = await ktx2Loader.loadAsync(atlasFilenames[1][perspective][i],
+                    function (atlas) {
 
-            atlasRGBA = textureLoader.load(atlasFilenames[0][i],
-                function (texture) {
-                },
-                undefined,
-                function (error) {
-                    console.log('An error happened while loading the floor diffuse texture!: ' + error);
-                }
-            );
+                        atlas.encoding = THREE.sRGBEncoding;
 
-            atlasZ = textureLoader.load(atlasFilenames[1][i],
-                function (atlas) {
-                },
-                undefined,
-                function (error) {
-                    console.log('An error happened while loading the floor diffuse texture!: ' + error);
-                }
-            );
+                    },
+                    undefined,
+                    function (error) {
+                        console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                    }
+                );
+
+            } else {
+
+                console.log( "TEST perspective = " + perspective + ", i = " + i );
+
+                atlasRGBA = await textureLoader.loadAsync(atlasFilenames[0][perspective][i],
+                    function (atlas) {
+                        console.log("Load RGBA " + i);
+                    }
+                    // },
+                    // undefined,
+                    // function (error) {
+                    //     console.log('An error happened while loading the RGBA atlas!: ' + error);
+                    // }
+                );
+
+                atlasZ = await textureLoader.loadAsync("zBuffer/" + atlasFilenames[1][perspective][i],
+                    function (atlas) {
+                        console.log("Load Z " + i);
+                    }
+                    // undefined,
+                    // function (error) {
+                    //     console.log('An error happened while loading the Z atlas!: ' + error);
+                    // }
+                );
+
+            }
+
+            atlasRGBA.anisotropy = 8;
+            atlasZ.anisotropy = 8;
+
+            atlases[0][perspective].push( atlasRGBA );
+            atlases[1][perspective].push( atlasZ    );
 
         }
-
-        atlasRGBA.anisotropy = 8;
-        atlasZ.anisotropy = 8;
-
-        atlases[0].push(atlasRGBA);
-        atlases[1].push(atlasZ)
 
     }
 
