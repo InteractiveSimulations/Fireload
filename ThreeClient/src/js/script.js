@@ -16,7 +16,7 @@ window.addEventListener('mousemove', onMouseMove, false);
 
 export let renderer;
 let scene, camera;
-let controller;
+export let controller;
 let gui;
 
 let floor;
@@ -122,7 +122,7 @@ function switchToFPControls(){
         controller.destroy();
         gui.hide();
         controller = new FirstPersonController(camera, document);
-        fire = new Fire(gui.getJSONController(), null, camera, scene, modelViewMats, projectionMats);
+        fire = new Fire(gui.getJSONController(), null, camera, scene, controller, modelViewMats, projectionMats);
 
         // notifications = false;
         // let notification = scene.getObjectByName("notification");

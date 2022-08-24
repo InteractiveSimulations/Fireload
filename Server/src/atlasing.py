@@ -30,8 +30,8 @@ def startAtlasing():
     with open(send_json_path, "r") as json_file:
         send_data = json.load(json_file)
         send_data["atlasFilenames"] = []
-        send_data["atlasFilenames"].append([])
-        send_data["atlasFilenames"].append([])
+        send_data["atlasFilenames"].append([ [], [], [], [] ])
+        send_data["atlasFilenames"].append([ [], [], [], [] ])
 
     atlas_size = 4096
     frames_per_dimension = int(atlas_size/frame_size)
@@ -54,7 +54,7 @@ def startAtlasing():
             atlas_start_frame = start_frame + i * frames_per_atlas
             atlas_end_frame = start_frame + (i + 1) * frames_per_atlas - 1
 
-            if i + 1 == number_of_atlases:
+            if i + 1 == number_of_atlases and number_of_frames % frames_per_atlas != 0:
                 atlas_end_frame = atlas_start_frame + ( number_of_frames % frames_per_atlas ) - 1
 
             frame_number = atlas_start_frame
@@ -105,12 +105,12 @@ def startAtlasing():
                 subprocess.run(["basisu", "-ktx2", "-y_flip", atlas_rgba_path, '-output_path', atlas_rgba_dir])
                 subprocess.run(["basisu", "-ktx2", "-y_flip", atlas_z_path, '-output_path', atlas_z_dir])
 
-                send_data["atlasFilenames"][0].append(atlas_rgba_filename + ".ktx2")
-                send_data["atlasFilenames"][1].append(atlas_z_filename + ".ktx2")
+                send_data["atlasFilenames"][0][n].append(atlas_rgba_filename + ".ktx2")
+                send_data["atlasFilenames"][1][n].append(atlas_z_filename + ".ktx2")
 
             else:
-                send_data["atlasFilenames"][0].append(atlas_rgba_filename + ".png")
-                send_data["atlasFilenames"][1].append(atlas_z_filename + ".png")
+                send_data["atlasFilenames"][0][n].append(atlas_rgba_filename + ".png")
+                send_data["atlasFilenames"][1][n].append(atlas_z_filename + ".png")
 
             with open(send_json_path, "w") as json_file:
                 json.dump(send_data, json_file, indent=4, sort_keys=True)

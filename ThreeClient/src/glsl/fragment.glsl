@@ -1,12 +1,6 @@
 struct Fire {
-//    sampler2D atlasesRGBA_F[10];
-//    sampler2D atlasesZ_F[10];
-//    sampler2D atlasesRGBA_R[10];
-//    sampler2D atlasesZ_R[10];
-//    sampler2D atlasesRGBA_B[10];
-//    sampler2D atlasesZ_B[10];
-//    sampler2D atlasesRGBA_L[10];
-//    sampler2D atlasesZ_L[10];
+    sampler2D atlasesRGBA[4];
+    sampler2D atlasesZ[4];
     int frame;
     int resolutionXY;
     int atlasResolutionXY;
@@ -19,14 +13,6 @@ struct Camera {
 
 uniform Fire   uFire;
 uniform Camera uCamera;
-uniform sampler2D atlasesRGBA_F[2];
-uniform sampler2D atlasesZ_F[2];
-uniform sampler2D atlasesRGBA_R[2];
-uniform sampler2D atlasesZ_R[2];
-uniform sampler2D atlasesRGBA_B[2];
-uniform sampler2D atlasesZ_B[2];
-uniform sampler2D atlasesRGBA_L[2];
-uniform sampler2D atlasesZ_L[2];
 
 varying vec2 vTexCoords;
 
@@ -52,49 +38,31 @@ vec2 convertToAtlasSpace(vec2 texCoords, int frameNumber, int resolution){
 
 void main(){
 
-//    sampler2D atlasesRGBA[uFire.numberOfAtlases];
-//    sampler2D atlasesZ[uFire.numberOfAtlases];
-//
-//    for ( i= 0; i < uFire.numberOfAtlases; i++ ) {
-//        atlasesRGBA[i] = uFire.atlasesRGBA[i];
-//        atlasesZ[i]    = uFire.atlasesZ[i];
-//    }
+    vec2 atlasCoords = convertToAtlasSpace(vTexCoords, uFire.frame, uFire.resolutionXY);
 
-//    uFire.atlasesRGBA = atlasesRGBA;
-//    uFire.atlasesZ    = atlasesZ;
-
-    vec2 atlasCoords = convertToAtlasSpace(vTexCoords, 9, uFire.resolutionXY);
     vec4 atlasRGBA;
-    vec3 perspectiveTest;
+    vec4 atlasZ;
 
     switch (uCamera.perspective) {
         case 0:
-        atlasRGBA = texture2D( atlasesRGBA_F[0], atlasCoords );
-        perspectiveTest = vec3( 0.0, 1.0, 0.0 );
-//        atlasZ    = atlasesZ_F[0];
+        atlasRGBA = texture2D( uFire.atlasesRGBA[0], atlasCoords );
+        atlasZ    = texture2D( uFire.atlasesZ[0],    atlasCoords );
         break;
         case 1:
-        atlasRGBA = texture2D( atlasesRGBA_R[0], atlasCoords );
-        perspectiveTest = vec3( 1.0, 0.0, 0.0 );
-//        atlasZ    = atlasesZ_R[1];
+        atlasRGBA = texture2D( uFire.atlasesRGBA[1], atlasCoords );
+        atlasZ    = texture2D( uFire.atlasesZ[1],    atlasCoords );
         break;
         case 2:
-        atlasRGBA = texture2D( atlasesRGBA_B[0], atlasCoords );
-        perspectiveTest = vec3( 0.0, 0.0, 1.0 );
-//        atlasZ    = atlasesZ_B[2];
+        atlasRGBA = texture2D( uFire.atlasesRGBA[2], atlasCoords );
+        atlasZ    = texture2D( uFire.atlasesZ[2],    atlasCoords );
         break;
         case 3:
-        atlasRGBA = texture2D( atlasesRGBA_L[0], atlasCoords );
-        perspectiveTest = vec3( 1.0, 0.0, 1.0 );
-//        atlasZ    = atlasesZ_L[3];
+        atlasRGBA = texture2D( uFire.atlasesRGBA[3], atlasCoords );
+        atlasZ    = texture2D( uFire.atlasesZ[3],    atlasCoords );
         break;
     }
 
-
-
-//    vec4 texColor = texture2D( atlasRGBA, atlasCoords );
-//    gl_FragColor  = atlasRGBA.rgba;
-    gl_FragColor  = vec4( perspectiveTest, 1.0 );
+    gl_FragColor = atlasRGBA.rgba;
 
 }
 

@@ -7,56 +7,46 @@ const vertex   = require(         '../glsl/vertex.glsl'          );
 const fragment = require(         '../glsl/fragment.glsl'        );
 
 export default class Fire{
-    constructor(JSONController, parent, camera, scene, modelViewMats, projectionMats){
+    constructor(JSONController, parent, camera, scene,controller, modelViewMats, projectionMats){
 
         this.parent = parent;
         this.camera = camera;
         this.scene = scene;
+        this.controller = controller;
 
-        //create fire mesh
-        // this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(10.55,10.55));
-        // this.mesh.position.set(0, 4.65, 0.75);
+        this.currentCameraPosition = this.camera.position.clone();
+        this.currentPerspective    = 0;
 
         this.light = new THREE.PointLight(0xccac77, 0.2, 100);
         this.light.position.set(0, 4.54, 0);
         this.scene.add(this.light);
 
-        //only used when the fire is loaded as individual frames
-        // this.atlases = Loader.loadFireFromFrames(JSONController);
-        this.atlases = [[[]]];
- 
-        //adding fire meseh to the scene
-        // this.boundingBox = new THREE.Box3().setFromObject(this.mesh);
-        // this.boundingBox.center(this.mesh.position);
-        //this.mesh.position.multipyScalar(-1);
+        this.mesh = new THREE.Mesh();
 
-        this.counter = 0;
-        this.clock = new THREE.Clock();
-        this.deltaTime = 0;
-        this.frameRate = JSONController.frameRate;
-        this.numberOfFrames = JSONController.endFrame - JSONController.startFrame;
-        this.resolutionXY = JSONController.resolutionXY;
+        this.currentFrame   = 1;
+        this.clock          = new THREE.Clock();
+        this.deltaTime      = 0;
+        this.frameRate      = JSONController.frameRate;
+        this.numberOfFrames = JSONController.endFrame - JSONController.startFrame + 1;
+        this.resolutionXY   = JSONController.resolutionXY;
 
-        // Todo atlas variablen erstellen
-        this.framesPerAtlas = 0
+        this.atlases         = [[[]]];
+        this.currentAtlas    = 0;
+        this.framesPerAtlas  = ( 4096 / this.resolutionXY ) * ( 4096 / this.resolutionXY );
+        this.numberOfAtlases = Math.ceil( this.numberOfFrames / this.framesPerAtlas   );
 
         // matrix4 arrays with size 4 for each perspective: F = 0, R = 1, B = 2, L = 3
-        this.modelViewMats = modelViewMats;
+        this.modelViewMats  = modelViewMats;
         this.projectionMats = projectionMats;
 
-        this.mesh = this.createSmokeDomain();
+        const axesHelper = new THREE.AxesHelper(20);
+        this.scene.add( axesHelper );
 
-        this.currentPerspective = 0;
-
-
-        // this.pivot = new THREE.Group();
-        // this.scene.add(this.pivot);
-        // this.pivot.add(this.mesh)
+        this.addFireToScene();
 
     }
 
     destroy(){
-        // this.scene.remove(this.pivot);
         this.scene.remove(this.mesh);
     }
 
@@ -64,15 +54,16 @@ export default class Fire{
         return this.mesh;
     }
 
-    addToScene(scene){
-        scene.add(this.mesh);
+    async addFireToScene(){
+        await this.createSmokeDomain();
+        this.scene.add(this.mesh);
     }
 
     // returns index of the perspective that needs to be loaded into the shader
     getPerspective(){
         //calculate angle of fire from camera position with pythagoras theorem
-        // let angle = Math.atan2(this.camera.position.z - this.mesh.position.z, this.camera.position.x - this.mesh.position.x) + Math.PI;
-        let angle = Math.atan2(this.camera.position.z, this.camera.position.x) + Math.PI;
+        let angle = Math.atan2(this.camera.position.z - this.mesh.position.z, this.camera.position.x - this.mesh.position.x) + Math.PI;
+        // let angle = Math.atan2(this.camera.position.z, this.camera.position.x) + Math.PI;
         let perspective = -1;
         if(angle <= Math.PI/4 * 1 | angle >= Math.PI/4 * 7){
             perspective = 0;
@@ -91,39 +82,90 @@ export default class Fire{
 
     update(){
 
-        console.log( this.getPerspective() );
+        if ( this.mesh != null && this.mesh.material != null && this.mesh.material.uniforms != null ) {
 
-        const perspective = this.getPerspective();
+            if ( !this.currentCameraPosition.equals( this.camera.position ) ) {
 
-        if( this.mesh.material != null && this.currentPerspective != perspective )
-            this.mesh.material.uniforms.uCamera.value.perspective = perspective;
+                const newPerspective = this.getPerspective();
 
-        // //calculate angle of fire from camera position with pythagoras theorem
-        // var angle = Math.atan(1/(Math.abs(this.camera.position.z) / Math.abs(this.camera.position.x)));
-        // if(this.camera.position.x > 0  && this.camera.position.z < 0){
-        //     angle = Math.PI / 2 + (Math.PI / 2 - angle);
-        // }
-        // if(this.camera.position.x < 0  && this.camera.position.z < 0){
-        //     angle += Math.PI;
-        // }
-        // if(this.camera.position.x < 0  && this.camera.position.z > 0){
-        //     angle = 3 * Math.PI / 2 + (Math.PI / 2 - angle);
-        // }
-        // //rotating fire around pivot point/parent object
-        // this.pivot.rotation.y = angle;
-        // //updating fire texture (only used when the fire is loaded as individual frames)
+                if( newPerspective !== this.currentPerspective ) {
 
-        // Todo load atlas rgba and z for perspectiv and actual frame to material or shader
+                    let del = newPerspective + 2
+                    let add = this.currentPerspective + 2;
 
-        // console.log("Active perspective: " + this.getPerspective())
-        //
-        // this.deltaTime += this.clock.getDelta();
-        // if(this.deltaTime > (1 / this.frameRate)){
-        //     this.mesh.material = this.atlasMaterials[this.counter % this.numberOfFrames];
-        //     this.counter++;
-        //     this.deltaTime = this.deltaTime % (1/this.frameRate);
-        // }
-        
+                    if ( del > 3 ) {
+                        if ( del === 4 )
+                            del = 0;
+                        else
+                            del = 1;
+                    }
+
+                    if ( add > 3 ) {
+                        if ( add === 4 )
+                            add = 0;
+                        else
+                            add = 1;
+                    }
+
+                    this.mesh.material.uniforms.uCamera.value.perspective = newPerspective;
+
+                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[del] = null;
+                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[add] = this.atlases[0][add][this.currentAtlas];
+                    this.mesh.material.uniforms.uFire.value.atlasesZ[del]    = null;
+                    this.mesh.material.uniforms.uFire.value.atlasesZ[add]    = this.atlases[0][add][this.currentAtlas];
+
+                    this.mesh.material.needsUpdate = true;
+
+                    console.log( "current: " + this.currentPerspective + ", new: " + newPerspective + ", del: " + del + ", add: " + add );
+
+                    this.currentPerspective = newPerspective;
+                }
+
+                this.currentCameraPosition = this.camera.position.clone();
+
+            }
+
+            this.deltaTime += this.clock.getDelta();
+            if (this.deltaTime > (1 / this.frameRate)) {
+
+                // loop
+                if (  this.currentFrame  % ( this.numberOfFrames + 1 ) === 0 )
+                    this.currentFrame = 1;
+
+                let currentAtlasEndFrame = this.framesPerAtlas * ( this.currentAtlas + 1 );
+
+                if( this.currentFrame % ( currentAtlasEndFrame + 1 ) === 0 && this.numberOfAtlases !== 1 ) {
+
+                    this.currentAtlas++;
+
+                    let perspective    = this.currentPerspective
+                    let leftNeighbour  = perspective - 1;
+                    let rightNeighbour = perspective + 1;
+
+                    if ( leftNeighbour  === -1 )
+                        leftNeighbour  = 3;
+                    if ( rightNeighbour ===  4 )
+                        rightNeighbour = 0;
+
+                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[ perspective    ] = this.atlases[0][ perspective   ][this.currentAtlas];
+                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[ leftNeighbour  ] = this.atlases[0][ leftNeighbour ][this.currentAtlas];
+                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[ rightNeighbour ] = this.atlases[0][ rightNeighbour][this.currentAtlas];
+
+                    this.mesh.material.uniforms.uFire.value.atlasesZ[ perspective    ] = this.atlases[1][ perspective   ][this.currentAtlas];
+                    this.mesh.material.uniforms.uFire.value.atlasesZ[ leftNeighbour  ] = this.atlases[1][ leftNeighbour ][this.currentAtlas];
+                    this.mesh.material.uniforms.uFire.value.atlasesZ[ rightNeighbour ] = this.atlases[1][ rightNeighbour][this.currentAtlas];
+
+                    this.mesh.material.needsUpdate = true;
+
+                }
+
+                this.mesh.material.uniforms.uFire.value.frame = this.currentFrame;
+                this.currentFrame++;
+                this.deltaTime = this.deltaTime % (1 / this.frameRate);
+
+            }
+
+        }
         
     }
 
@@ -131,9 +173,14 @@ export default class Fire{
 
         this.atlases = await loadFireFromFrames();
 
-        const smokeDomain = new THREE.Mesh();
-        const smokeDomainSize = 1;
+        const smokeDomainSize = 10;
         const smokeDomainCenter = new THREE.Vector3( 0, 0, 0 );
+
+        let smokeDomain = new THREE.Mesh();
+        smokeDomain.position.y += 5;
+
+        this.mesh = smokeDomain;
+        this.currentPerspective = this.getPerspective();
 
         const smokeDomainMin = new THREE.Vector3(
             smokeDomainCenter.x - smokeDomainSize / 2,
@@ -159,61 +206,40 @@ export default class Fire{
             smokeDomainSize
         );
 
+        const atlasesRGBA = [];
+        const atlasesZ    = [];
+
+        for (  let p = 0; p < 4; p++ ) {
+            atlasesRGBA.push( this.atlases[0][p][0] );
+            atlasesZ.push(    this.atlases[1][p][0] );
+        }
+
         const smokeDomainMaterial = new ShaderMaterial({
             uniforms: {
                 uCamera: {
                     value: {
-                        perspective:   this.getPerspective()
+                        perspective:   this.currentPerspective
                     }
                 },
                 uFire: {
                     value: {
-                        // atlasesRGBA_F:     this.atlases[0][0],
-                        // atlasesZ_F:        this.atlases[1][0],
-                        // atlasesRGBA_R:     this.atlases[0][1],
-                        // atlasesZ_R:        this.atlases[1][1],
-                        // atlasesRGBA_B:     this.atlases[0][2],
-                        // atlasesZ_B:        this.atlases[1][2],
-                        // atlasesRGBA_L:     this.atlases[0][3],
-                        // atlasesZ_L:        this.atlases[1][3],
+                        atlasesRGBA: atlasesRGBA,
+                        atlasesZ: atlasesZ,
                         frame:             15,
                         resolutionXY:      this.resolutionXY,
                         atlasResolutionXY: 4096,
                         numberOfAtlases:   1
                     }
                 },
-                atlasesRGBA_F: { value:  this.atlases[0][0] },
-                atlasesZ_F:    { value:  this.atlases[1][0] },
-                atlasesRGBA_R: { value:  this.atlases[0][1] },
-                atlasesZ_R:    { value:  this.atlases[1][1] },
-                atlasesRGBA_B: { value:  this.atlases[0][2] },
-                atlasesZ_B:    { value:  this.atlases[1][2] },
-                atlasesRGBA_L: { value:  this.atlases[0][3] },
-                atlasesZ_L:    { value:  this.atlases[1][3] },
-                // atlasesRGBA_F:  {   this.atlases[0],
-                // atlasesZ_F:        this.atlases[1],
-                // atlasesRGBA_R:     this.atlases[0],
-                // atlasesZ_R:        this.atlases[1],
-                // atlasesRGBA_B:     this.atlases[0],
-                // atlasesZ_B:        this.atlases[1],
-                // atlasesRGBA_L:     this.atlases[0],
-                // atlasesZ_L:        this.atlases[1],
             },
             vertexShader:   vertex,
             fragmentShader: fragment
         });
 
-        smokeDomain.geometry = smokeDomainGeometry;
-        smokeDomain.material = smokeDomainMaterial;
         smokeDomainMaterial.transparent = true;
 
-        smokeDomain.position.x += 0.5;
-        smokeDomain.position.y += 0.5;
-        smokeDomain.position.z += 0.5;
-
-        this.scene.add( smokeDomain );
-
-        return smokeDomain;
+        smokeDomain.material = smokeDomainMaterial;
+        smokeDomain.geometry = smokeDomainGeometry;
 
     }
 

@@ -1,12 +1,14 @@
 import * as THREE from 'three'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 
+// let perspective;
+
 export default class FirstPersonController{
     constructor(camera, document){
         document.body.requestPointerLock();
         this.controls = new PointerLockControls(camera, document.body); //can only be called after pointerlock call request
         this.camera = camera;
-        camera.position.set(-5, 1.7, -5);
+        camera.position.set(0, 1.7, -10);
         this.camera.rotation.order = 'YXZ';
         camera.rotation.set( 0, 0, 0 );
         camera.lookAt( 0, 0, 0 );
@@ -130,4 +132,29 @@ export default class FirstPersonController{
     addEventListener(){
         this.controls.addEventListener(type, listener);
     }
+
+    // change() {
+    //
+    // }
+    //
+    // getPerspective(){
+    //     //calculate angle of fire from camera position with pythagoras theorem
+    //     // let angle = Math.atan2(this.camera.position.z - this.mesh.position.z, this.camera.position.x - this.mesh.position.x) + Math.PI;
+    //     let angle = Math.atan2(this.camera.position.z, this.camera.position.x) + Math.PI;
+    //     let perspective = -1;
+    //     if(angle <= Math.PI/4 * 1 | angle >= Math.PI/4 * 7){
+    //         perspective = 0;
+    //     }
+    //     if(angle <= Math.PI/4 * 3 && angle >= Math.PI/4 * 1){
+    //         perspective = 1;
+    //     }
+    //     if(angle <= Math.PI/4 * 5 && angle >= Math.PI/4 * 3){
+    //         perspective = 2;
+    //     }
+    //     if(angle <= Math.PI/4 * 7 && angle >= Math.PI/4 * 5){
+    //         perspective = 3;
+    //     }
+    //     return perspective;
+    // }
+
 }
