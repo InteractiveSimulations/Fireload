@@ -1,24 +1,27 @@
 import math
 import subprocess
 
-import numpy
 import numpy as np
 import cv2 as cv
 import os
 import json
 from PIL import Image
 
+
+# Creating atlases for RGBA and Z frames with OpenCV
 def startAtlasing():
 
+    # Creating file directories for saving the atlases
     fileDirectory = os.path.dirname(__file__)
     parentDirectory1 = os.path.dirname(fileDirectory)
     parentDirectory2 = os.path.dirname(parentDirectory1)
 
     blender_json_path = os.path.join(parentDirectory2, "BlenderSimulation", "Test_Json", "JsonForBlender.json")
     send_json_path = os.path.join(parentDirectory2, "BlenderSimulation", "Test_Json", "Send.json")
-    atlas_rgba_dir = os.path.join(parentDirectory2,"dist","assets","simulations")
-    atlas_z_dir = os.path.join(parentDirectory2,"dist","assets","simulations", "zBuffer")
+    atlas_rgba_dir = os.path.join(parentDirectory2, "dist", "assets", "simulations")
+    atlas_z_dir = os.path.join(parentDirectory2, "dist", "assets", "simulations", "zBuffer")
 
+    # Extracting parameters from the JSON to calculate the size of atlases
     with open(blender_json_path, "r") as json_file:
         data = json.load(json_file)
         compression = data["compression"]
@@ -30,37 +33,40 @@ def startAtlasing():
     with open(send_json_path, "r") as json_file:
         send_data = json.load(json_file)
         send_data["atlasFilenames"] = []
-        send_data["atlasFilenames"].append([ [], [], [], [] ])
-        send_data["atlasFilenames"].append([ [], [], [], [] ])
+        send_data["atlasFilenames"].append([[], [], [], []])
+        send_data["atlasFilenames"].append([[], [], [], []])
 
-    atlas_size = 4096
-    frames_per_dimension = int(atlas_size/frame_size)
+    # Calculating the parameters to define size and frames of atlases
+    atlas_size = 4096  # 4096 pixel is the maximum size a texture can have in WebGL
+    frames_per_dimension = int(atlas_size / frame_size)
     frames_per_atlas = int(frames_per_dimension * frames_per_dimension)
     number_of_frames = int(end_frame - start_frame + 1)
-    number_of_atlases = math.ceil(number_of_frames/frames_per_atlas)
+    number_of_atlases = math.ceil(number_of_frames / frames_per_atlas)
 
     atlases_rgba = []
     atlases_z = []
 
+    # Appending all atlases into an array
     for i in range(number_of_atlases):
+        atlases_rgba.append(np.zeros((4096, 4096, 4), dtype=np.int8))
+        atlases_z.append(np.zeros((4096, 4096, 3), dtype=np.int8))
 
-        atlases_rgba.append( np.zeros((4096, 4096, 4), dtype=numpy.int8) )
-        atlases_z.append(np.zeros( (4096, 4096, 3), dtype=numpy.int8) )
-
+    # Creating the atlases for all perspectives
+    # FRBL: F=Front, R=Right, B=Back, L=Left
     for n, perspective in enumerate("FRBL"):
-
         for i in range(number_of_atlases):
 
+            # Defining the start and end frame based on how many frames the atlas should have
             atlas_start_frame = start_frame + i * frames_per_atlas
             atlas_end_frame = start_frame + (i + 1) * frames_per_atlas - 1
 
             if i + 1 == number_of_atlases and number_of_frames % frames_per_atlas != 0:
-                atlas_end_frame = atlas_start_frame + ( number_of_frames % frames_per_atlas ) - 1
+                atlas_end_frame = atlas_start_frame + (number_of_frames % frames_per_atlas) - 1
 
             frame_number = atlas_start_frame
 
+            # Merging the frames into one atlas
             for row in range(frames_per_dimension):
-
                 for col in range(frames_per_dimension):
 
                     if frame_number > end_frame:
@@ -74,11 +80,15 @@ def startAtlasing():
                     elif frame_number < 1000:
                         zeros = "0"
 
+                    # Define atlas directory and create atlas by joining the frames into one texture
+                    # Atlas for RGBA frames
                     frame_rgba_path = os.path.join(atlas_rgba_dir, zeros + str(frame_number) + "_" + perspective + ".png")
                     frame_rgba = cv.imread(frame_rgba_path, cv.IMREAD_UNCHANGED)
                     frame_rgba = cv.cvtColor(frame_rgba, cv.COLOR_BGRA2RGBA)
                     atlases_rgba[i][row * frame_size:(row + 1) * frame_size, col * frame_size:(col + 1) * frame_size] = frame_rgba
 
+                    # Define atlas directory and create atlas by joining the frames into one texture
+                    # Atlas for Z frames
                     frame_z_path = os.path.join(atlas_z_dir, "Image" + zeros + str(frame_number) + "_Z" + perspective + ".jpg")
                     frame_z = cv.imread(frame_z_path)
                     atlases_z[i][row * frame_size:(row + 1) * frame_size, col * frame_size:(col + 1) * frame_size] = frame_z
@@ -94,12 +104,16 @@ def startAtlasing():
             atlas_rgba_path = os.path.join(atlas_rgba_dir, atlas_rgba_filename + ".png")
             atlas_z_path = os.path.join(atlas_z_dir, atlas_z_filename + ".png")
 
-            atlas_rgba = Image.fromarray( atlases_rgba[i], mode="RGBA" )
-            atlas_rgba.save(atlas_rgba_path, compress_level = 1)
+            # Saving the atlases
+            atlas_rgba = Image.fromarray(atlases_rgba[i], mode="RGBA")
+            atlas_rgba.save(atlas_rgba_path, compress_level=1)
 
-            atlas_z = Image.fromarray( atlases_z[i], mode="RGB" )
-            atlas_z.save(atlas_z_path, compress_level = 1)
+            atlas_z = Image.fromarray(atlases_z[i], mode="RGB")
+            atlas_z.save(atlas_z_path, compress_level=1)
 
+            # Texture compression with Basis Universal Texture Codec:
+            # https://github.com/BinomialLLC/basis_universal
+            # https://opensource.googleblog.com/2021/02/basis-universal-textures.html
             if compression:
 
                 subprocess.run(["basisu", "-ktx2", "-y_flip", atlas_rgba_path, '-output_path', atlas_rgba_dir])
