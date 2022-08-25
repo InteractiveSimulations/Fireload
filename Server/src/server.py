@@ -1,8 +1,10 @@
 import http.server
 import socketserver
 
+# Simple HTTP Server for communication
+
 PORT = 8000
-## Distribution Directory
+# Distribution Directory
 DIRECTORY = "../../dist"
 
 class Handler(http.server.SimpleHTTPRequestHandler):

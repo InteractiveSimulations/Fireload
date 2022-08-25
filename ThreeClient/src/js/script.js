@@ -31,6 +31,7 @@ let selected;
 
 let notifications = false;
 
+// simulation capture cameras matrices: front -> [0], right -> [1], back -> [2], left -> [3]
 let modelViewMats = [ new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4()];
 let projectionMats = [ new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4(), new THREE.Matrix4()];
 
@@ -204,6 +205,11 @@ function onKeyUp(event){
     controller.onKeyUp(event);
 }
 
+/**
+ * Sets the capture camera matrices.
+ * @param {Float[][]} modelViews  - First dimension for camera, second for matrix.
+ * @param {Float[][]} projections - First dimension for camera, second for matrix.
+ */
 export function setMatrices( modelViews, projections ){
 
     for ( let p = 0; p < 4; p++ ) {

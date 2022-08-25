@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as Loader from './Loader.js';
 import {ShaderMaterial} from "three";
-import {loadFireFromFrames} from "./Loader.js";
+import {loadFireAtlases} from "./Loader.js";
 
 const vertex   = require(         '../glsl/vertex.glsl'          );
 const fragment = require(         '../glsl/fragment.glsl'        );
@@ -14,15 +14,16 @@ export default class Fire{
         this.scene = scene;
         this.controller = controller;
 
-        this.currentCameraPosition = this.camera.position.clone();
-        this.currentPerspective    = 0;
+        this.lastCameraPosition = this.camera.position.clone();
+        this.lastPerspective    = 0;
 
         this.light = new THREE.PointLight(0xccac77, 0.2, 100);
         this.light.position.set(0, 4.54, 0);
         this.scene.add(this.light);
 
-        this.mesh = new THREE.Mesh();
+        this.smokeDomain = new THREE.Mesh();
 
+        // parameters for frame access
         this.currentFrame   = 1;
         this.clock          = new THREE.Clock();
         this.deltaTime      = 0;
@@ -48,22 +49,25 @@ export default class Fire{
     }
 
     destroy(){
-        this.scene.remove(this.mesh);
+        this.scene.remove(this.smokeDomain);
     }
 
     getMesh(){
-        return this.mesh;
+        return this.smokeDomain;
     }
 
+    /**
+     * Adds fire simulation to this scene after all resources are loaded.
+     */
     async addFireToScene(){
         await this.createSmokeDomain();
-        this.scene.add(this.mesh);
+        this.scene.add(this.smokeDomain);
     }
 
     // returns index of the perspective that needs to be loaded into the shader
     getPerspective(){
         //calculate angle of fire from camera position with pythagoras theorem
-        let angle = Math.atan2(this.camera.position.z - this.mesh.position.z, this.camera.position.x - this.mesh.position.x) + Math.PI;
+        let angle = Math.atan2(this.camera.position.z - this.smokeDomain.position.z, this.camera.position.x - this.smokeDomain.position.x) + Math.PI;
         // let angle = Math.atan2(this.camera.position.z, this.camera.position.x) + Math.PI;
         let perspective = -1;
         if(angle <= Math.PI/4 * 1 | angle >= Math.PI/4 * 7){
@@ -83,16 +87,22 @@ export default class Fire{
 
     update(){
 
-        if ( this.mesh != null && this.mesh.material != null && this.mesh.material.uniforms != null ) {
+        // checks if smoke domain and parameters are already set
+        if ( this.smokeDomain != null && this.smokeDomain.material != null && this.smokeDomain.material.uniforms != null ) {
 
-            if ( !this.currentCameraPosition.equals( this.camera.position ) ) {
+            // checks if camera position has changed
+            if ( !this.lastCameraPosition.equals( this.camera.position ) ) {
 
+                // calculate the current atlas perspective
                 const newPerspective = this.getPerspective();
 
-                if( newPerspective !== this.currentPerspective ) {
+                // check if perspective has changed
+                if( newPerspective !== this.lastPerspective ) {
 
+                    // indices for deleting atlas perspective, which is on the opposite side of the new perspective
                     let del = newPerspective + 2
-                    let add = this.currentPerspective + 2;
+                    // indices for loading a new atlas perspective
+                    let add = this.lastPerspective + 2;
 
                     if ( del > 3 ) {
                         if ( del === 4 )
@@ -108,37 +118,46 @@ export default class Fire{
                             add = 1;
                     }
 
-                    this.mesh.material.uniforms.uCamera.value.perspective = newPerspective;
+                    // update perspective uniform
+                    this.smokeDomain.material.uniforms.uCamera.value.perspective = newPerspective;
 
-                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[del] = null;
-                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[add] = this.atlases[0][add][this.currentAtlas];
-                    this.mesh.material.uniforms.uFire.value.atlasesZ[del]    = null;
-                    this.mesh.material.uniforms.uFire.value.atlasesZ[add]    = this.atlases[0][add][this.currentAtlas];
+                    // loads the new calculated atlas perspective and its neighbours, deletes the opposite side of the new perspective
+                    // loading only 6 texture, instead of 8 into the GPU.
+                    // example: newPerspective -> front, add neighbours -> left and right, delete -> back
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[del] = null;
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[add] = this.atlases[0][add][this.currentAtlas];
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[del]    = null;
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[add]    = this.atlases[0][add][this.currentAtlas];
 
-                    this.mesh.material.needsUpdate = true;
+                    this.smokeDomain.material.needsUpdate = true;
 
-                    this.currentPerspective = newPerspective;
+                    this.lastPerspective = newPerspective;
 
                 }
 
-                this.currentCameraPosition = this.camera.position.clone();
+                this.lastCameraPosition = this.camera.position.clone();
 
             }
 
+            // delta time for frame counting
             this.deltaTime += this.clock.getDelta();
+
+            // checks if the next frame is reached
             if (this.deltaTime > (1 / this.frameRate)) {
 
-                // loop
+                // loop simulation
                 if (  this.currentFrame  % ( this.numberOfFrames + 1 ) === 0 )
                     this.currentFrame = 1;
 
                 let currentAtlasEndFrame = this.framesPerAtlas * ( this.currentAtlas + 1 );
 
+                // checks if current atlas is finished
                 if( this.currentFrame % ( currentAtlasEndFrame + 1 ) === 0 && this.numberOfAtlases !== 1 ) {
 
                     this.currentAtlas++;
 
-                    let perspective    = this.currentPerspective
+                    // switch to next atlases depending on current perspective
+                    let perspective    = this.lastPerspective
                     let leftNeighbour  = perspective - 1;
                     let rightNeighbour = perspective + 1;
 
@@ -147,19 +166,20 @@ export default class Fire{
                     if ( rightNeighbour ===  4 )
                         rightNeighbour = 0;
 
-                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[ perspective    ] = this.atlases[0][ perspective   ][this.currentAtlas];
-                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[ leftNeighbour  ] = this.atlases[0][ leftNeighbour ][this.currentAtlas];
-                    this.mesh.material.uniforms.uFire.value.atlasesRGBA[ rightNeighbour ] = this.atlases[0][ rightNeighbour][this.currentAtlas];
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ perspective    ] = this.atlases[0][ perspective   ][this.currentAtlas];
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ leftNeighbour  ] = this.atlases[0][ leftNeighbour ][this.currentAtlas];
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ rightNeighbour ] = this.atlases[0][ rightNeighbour][this.currentAtlas];
 
-                    this.mesh.material.uniforms.uFire.value.atlasesZ[ perspective    ] = this.atlases[1][ perspective   ][this.currentAtlas];
-                    this.mesh.material.uniforms.uFire.value.atlasesZ[ leftNeighbour  ] = this.atlases[1][ leftNeighbour ][this.currentAtlas];
-                    this.mesh.material.uniforms.uFire.value.atlasesZ[ rightNeighbour ] = this.atlases[1][ rightNeighbour][this.currentAtlas];
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ perspective    ] = this.atlases[1][ perspective   ][this.currentAtlas];
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ leftNeighbour  ] = this.atlases[1][ leftNeighbour ][this.currentAtlas];
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ rightNeighbour ] = this.atlases[1][ rightNeighbour][this.currentAtlas];
 
-                    this.mesh.material.needsUpdate = true;
+                    this.smokeDomain.material.needsUpdate = true;
 
                 }
 
-                this.mesh.material.uniforms.uFire.value.frame = this.currentFrame;
+                // set frame current number for shader
+                this.smokeDomain.material.uniforms.uFire.value.frame = this.currentFrame;
                 this.currentFrame++;
                 this.deltaTime = this.deltaTime % (1 / this.frameRate);
 
@@ -169,18 +189,23 @@ export default class Fire{
         
     }
 
+    /**
+     * Creates the smoke domain and sets all shader uniforms after all atlases are loaded from the server.
+     */
     async createSmokeDomain() {
 
-        this.atlases = await loadFireFromFrames( this.compression );
+        // load atlases from server
+        this.atlases = await loadFireAtlases( this.compression );
 
+        // set smoke domain parameters
         const smokeDomainSize = 10;
         const smokeDomainCenter = new THREE.Vector3( 0, 0, 0 );
 
         let smokeDomain = new THREE.Mesh();
         smokeDomain.position.y += 5;
 
-        this.mesh = smokeDomain;
-        this.currentPerspective = this.getPerspective();
+        this.smokeDomain        = smokeDomain;
+        this.lastPerspective = this.getPerspective();
 
         const smokeDomainMin = new THREE.Vector3(
             smokeDomainCenter.x - smokeDomainSize / 2,
@@ -206,6 +231,7 @@ export default class Fire{
             smokeDomainSize
         );
 
+        // prepare atlas arrays for shader
         const atlasesRGBA = [];
         const atlasesZ    = [];
 
@@ -214,21 +240,22 @@ export default class Fire{
             atlasesZ.push(    this.atlases[1][p][0] );
         }
 
+        // shader material with all uniforms and vertex and fragment shader
         const smokeDomainMaterial = new ShaderMaterial({
             uniforms: {
                 uCamera: {
                     value: {
-                        perspective:   this.currentPerspective
+                        perspective:   this.lastPerspective
                     }
                 },
                 uFire: {
                     value: {
                         atlasesRGBA: atlasesRGBA,
                         atlasesZ: atlasesZ,
-                        frame:             15,
+                        frame:             1,
                         resolutionXY:      this.resolutionXY,
                         atlasResolutionXY: 4096,
-                        numberOfAtlases:   1
+                        numberOfAtlases:   this.numberOfAtlases
                     }
                 },
             },

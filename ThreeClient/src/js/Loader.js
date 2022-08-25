@@ -4,9 +4,16 @@ import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 import * as THREE from 'three';
 import * as SCRIPT from './script'
 
+// holds all the atlas filenames for server download
 export let atlasFilenames = [];
 
-//takes in texture name and resolution and sets texture as floor texture
+/**
+ * Loads a new or updates the parameters of a current floor texture.
+ * Texture formats are .png or if compression is enabled .ktx2.
+ * @param {object}     floorController - holds the current floor parameters.
+ * @param {THREE.Mesh} floor           - floor mesh.
+ * @param {string}     change          - describes which floor parameter was changed.
+ */
 export function loadFloorMaterial(floorController, floor, change = ''){
 
     if( floor.material.map == null || change === 'texture' || change === 'resolution' || change === 'compression' ) {
@@ -18,16 +25,17 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
         } else {
 
+            // loader for .png
             const textureLoader = new THREE.TextureLoader();
             textureLoader.setPath('assets/textures/floor/');
 
+            // loader for .ktx2
             const ktx2Loader = new KTX2Loader();
             ktx2Loader.setPath('assets/textures/floor/');
             ktx2Loader.setTranscoderPath('libs/basis/');
             ktx2Loader.detectSupport(SCRIPT.renderer);
 
-            console.log(floorController.texture + '-diffuse_' + floorController.resolution + '.png');
-
+            // format strings to check which compression format the client transcoded the .ktx2/.basis format into
             const formatStrings = {
                 [THREE.RGBAFormat]: 'RGBA32',
                 [THREE.RGBA_BPTC_Format]: 'RGBA_BPTC',
@@ -47,9 +55,9 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
                 // loading albedo/diffuse map
                 diffuse = ktx2Loader.load(floorController.texture + '-diffuse_' + floorController.resolution + '.ktx2',
-                    //called when loading is in progresses
                     function (texture) {
 
+                        // enable sRGB encoding needed for compressed formats
                         texture.encoding = THREE.sRGBEncoding;
 
                         console.info(`transcoded to ${formatStrings[texture.format]}\n
@@ -58,42 +66,40 @@ export function loadFloorMaterial(floorController, floor, change = ''){
                     },
                     undefined,
                     function (error) {
-                        console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                        console.log('An error happened while loading the floors compressed diffuse texture!: ' + error);
                     }
                 );
 
                 //loading normal map
                 normal = ktx2Loader.load(floorController.texture + '-normal_' + floorController.resolution + '.ktx2',
-                    //called when loading is in progresses
                     function (texture) {
 
-                        // texture.encoding = THREE.sRGBEncoding;
+                        // normal maps don't need sRGB encoding
 
                         console.info(`transcoded to ${formatStrings[texture.format]}\n
                                         Of Type CompressedTexture: ` + texture.isCompressedTexture);
 
                     },
                     undefined,
-                    //called when loading has errors
                     function (error) {
-                        console.log('An error happened while loading the floor normaltexture!');
+                        console.log('An error happened while loading the floors compressed normal texture!:' + error);
                     }
                 );
 
+                // loading roughness map
                 roughness = ktx2Loader.load(floorController.texture + '-roughness_' + floorController.resolution + '.ktx2',
-                    //called when loading is in progresses
                     function (texture) {
 
+                        // enable sRGB encoding needed for compressed formats
                         texture.encoding = THREE.sRGBEncoding;
 
                         console.info(`transcoded to ${formatStrings[texture.format]}\n
                                         Of Type CompressedTexture: ` + texture.isCompressedTexture);
 
                     },
-                    //called when loading is in progresses
                     undefined,
                     function (error) {
-                        console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                        console.log('An error happened while loading the floors compressed roughness texture!: ' + error);
                     }
                 );
 
@@ -140,27 +146,29 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
             }
 
-            diffuse.wrapS = THREE.RepeatWrapping;
-            diffuse.wrapT = THREE.RepeatWrapping;
+            // set maps parameters
+            diffuse.wrapS      = THREE.RepeatWrapping;
+            diffuse.wrapT      = THREE.RepeatWrapping;
             diffuse.repeat.set(floorController.repeat, floorController.repeat);
             diffuse.anisotropy = floorController.filtering;
 
-            normal.wrapS = THREE.RepeatWrapping;
-            normal.wrapT = THREE.RepeatWrapping;
+            normal.wrapS      = THREE.RepeatWrapping;
+            normal.wrapT      = THREE.RepeatWrapping;
             normal.repeat.set(floorController.repeat, floorController.repeat);
             normal.anisotropy = floorController.filtering;
 
-            roughness.wrapS = THREE.RepeatWrapping;
-            roughness.wrapT = THREE.RepeatWrapping;
+            roughness.wrapS      = THREE.RepeatWrapping;
+            roughness.wrapT      = THREE.RepeatWrapping;
             roughness.repeat.set(floorController.repeat, floorController.repeat);
             roughness.anisotropy = floorController.filtering;
 
-            floor.material.map = diffuse;
-            floor.material.normalMap = normal;
+            floor.material.map          = diffuse;
+            floor.material.normalMap    = normal;
             floor.material.roughnessMap = roughness;
 
             floor.material.needsUpdate = true;
 
+            // disposes the loader object, de-allocating any Web Workers created.
             ktx2Loader.dispose();
 
         }
@@ -168,6 +176,7 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
     }
 
+    // update maps repeat parameters
     if(change === 'repeat') {
 
         floor.material.map.wrapS = THREE.RepeatWrapping;
@@ -187,6 +196,7 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
     }
 
+    // update maps anisotropy parameters
     if(change === 'filtering') {
 
         floor.material.map.anisotropy = floorController.filtering;
@@ -202,22 +212,34 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
 }
 
-export async function loadFireFromFrames( compression ){
+/**
+ * Loads the simulation atlases asynchronously if the server finished the creation process.
+ * @param {boolean} compression - if atlases were compressed by the server.
+ * @return {THREE.Texture[[[]]]} - three-dimensional Texture array which holds all simulation atlases for
+ * a combination RGBA or Z and capture camera perspective.
+ * first dimension: RGBA -> [0], Z -> [1]
+ * second dimension: front -> [0], right -> [1], back -> [2], left -> [3]
+ * third dimension: atlases with simulation frames
+ */
+export async function loadFireAtlases(compression ){
 
     let atlases = [];
     atlases.push([]);
     atlases.push([]);
 
+    // loader for .png
     const textureLoader = new THREE.TextureLoader();
     textureLoader.setPath('assets/simulations/');
     textureLoader.setPath('assets/simulations/')
 
+    // loader for .ktx2
     const ktx2Loader = new KTX2Loader();
     ktx2Loader.setPath('assets/simulations/');
     ktx2Loader.setTranscoderPath('libs/basis/');
     ktx2Loader.detectSupport(SCRIPT.renderer);
 
 
+    // load atlases from server with help of atlasFilenames
     for(let perspective = 0; perspective < 4; perspective++ ) {
 
         atlases[0].push([]);
@@ -237,7 +259,7 @@ export async function loadFireFromFrames( compression ){
                     },
                     undefined,
                     function (error) {
-                        console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                        console.log('An error happened while loading an atlas!: ' + error);
                     }
                 );
 
@@ -249,7 +271,7 @@ export async function loadFireFromFrames( compression ){
                     },
                     undefined,
                     function (error) {
-                        console.log('An error happened while loading the floor diffuse texture!: ' + error);
+                        console.log('An error happened while loading an atlas!: ' + error);
                     }
                 );
 
@@ -261,12 +283,15 @@ export async function loadFireFromFrames( compression ){
             }
 
             atlasRGBA.anisotropy = 8;
-            atlasZ.anisotropy = 8;
+            atlasZ.anisotropy    = 8;
 
             atlases[0][perspective].push( atlasRGBA );
             atlases[1][perspective].push( atlasZ    );
 
         }
+
+        // disposes the loader object, de-allocating any Web Workers created.
+        ktx2Loader.dispose();
 
     }
 
