@@ -202,40 +202,7 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
 }
 
-export async function loadFireFromFrames(JSONController){
-
-    // Todo atlasse in zweidimensionales array laden
-
-    atlasFilenames = [
-        [
-            [
-                "F_1_0.png"
-            ],
-            [
-                "R_1_0.png"
-            ],
-            [
-                "B_1_0.png"
-            ],
-            [
-                "L_1_0.png"
-            ]
-        ],
-        [
-            [
-                "ZF_1_0.png"
-            ],
-            [
-                "ZR_1_0.png"
-            ],
-            [
-                "ZB_1_0.png"
-            ],
-            [
-                "ZL_1_0.png"
-            ]
-        ]
-    ];
+export async function loadFireFromFrames( compression ){
 
     let atlases = [];
     atlases.push([]);
@@ -258,11 +225,9 @@ export async function loadFireFromFrames(JSONController){
 
         for (let i = 0; i < atlasFilenames[0][0].length; i++) {
 
-            // console.log( "TEST perspective = " + perspective + ", i = " + i );
-
             let atlasRGBA, atlasZ;
 
-            if (false) {
+            if ( compression ) {
 
                 atlasRGBA = await ktx2Loader.loadAsync(atlasFilenames[0][perspective][i],
                     function (atlas) {
@@ -290,28 +255,8 @@ export async function loadFireFromFrames(JSONController){
 
             } else {
 
-                console.log( "TEST perspective = " + perspective + ", i = " + i );
-
-                atlasRGBA = await textureLoader.loadAsync(atlasFilenames[0][perspective][i],
-                    function (atlas) {
-                        console.log("Load RGBA " + i);
-                    }
-                    // },
-                    // undefined,
-                    // function (error) {
-                    //     console.log('An error happened while loading the RGBA atlas!: ' + error);
-                    // }
-                );
-
-                atlasZ = await textureLoader.loadAsync("zBuffer/" + atlasFilenames[1][perspective][i],
-                    function (atlas) {
-                        console.log("Load Z " + i);
-                    }
-                    // undefined,
-                    // function (error) {
-                    //     console.log('An error happened while loading the Z atlas!: ' + error);
-                    // }
-                );
+                atlasRGBA = await textureLoader.loadAsync( atlasFilenames[0][perspective][i]              );
+                atlasZ    = await textureLoader.loadAsync( "zBuffer/" + atlasFilenames[1][perspective][i] );
 
             }
 

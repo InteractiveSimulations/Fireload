@@ -29,6 +29,7 @@ export default class Fire{
         this.frameRate      = JSONController.frameRate;
         this.numberOfFrames = JSONController.endFrame - JSONController.startFrame + 1;
         this.resolutionXY   = JSONController.resolutionXY;
+        this.compression    = JSONController.compression;
 
         this.atlases         = [[[]]];
         this.currentAtlas    = 0;
@@ -116,9 +117,8 @@ export default class Fire{
 
                     this.mesh.material.needsUpdate = true;
 
-                    console.log( "current: " + this.currentPerspective + ", new: " + newPerspective + ", del: " + del + ", add: " + add );
-
                     this.currentPerspective = newPerspective;
+
                 }
 
                 this.currentCameraPosition = this.camera.position.clone();
@@ -171,7 +171,7 @@ export default class Fire{
 
     async createSmokeDomain() {
 
-        this.atlases = await loadFireFromFrames();
+        this.atlases = await loadFireFromFrames( this.compression );
 
         const smokeDomainSize = 10;
         const smokeDomainCenter = new THREE.Vector3( 0, 0, 0 );
