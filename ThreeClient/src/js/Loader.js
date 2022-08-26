@@ -238,6 +238,36 @@ export async function loadFireAtlases(compression ){
     ktx2Loader.setTranscoderPath('libs/basis/');
     ktx2Loader.detectSupport(SCRIPT.renderer);
 
+    // atlasFilenames = [
+    //     [
+    //         [
+    //             "F_1_64.png"
+    //         ],
+    //         [
+    //             "R_1_64.png"
+    //         ],
+    //         [
+    //             "B_1_64.png"
+    //         ],
+    //         [
+    //             "L_1_64.png"
+    //         ]
+    //     ],
+    //     [
+    //         [
+    //             "ZF_1_64.png"
+    //         ],
+    //         [
+    //             "ZR_1_64.png"
+    //         ],
+    //         [
+    //             "ZB_1_64.png"
+    //         ],
+    //         [
+    //             "ZL_1_64.png"
+    //         ]
+    //     ]
+    // ];
 
     // load atlases from server with help of atlasFilenames
     for(let perspective = 0; perspective < 4; perspective++ ) {
@@ -263,7 +293,7 @@ export async function loadFireAtlases(compression ){
                     }
                 );
 
-                atlasZ = await ktx2Loader.loadAsync(atlasFilenames[1][perspective][i],
+                atlasZ = await ktx2Loader.loadAsync( "zBuffer" + atlasFilenames[1][perspective][i],
                     function (atlas) {
 
                         atlas.encoding = THREE.sRGBEncoding;

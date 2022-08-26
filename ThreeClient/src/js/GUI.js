@@ -31,8 +31,8 @@ export default class UI{
 
             setCookie( true, "fireCompression")
             setCookie(512, "fireResolutionXY")
-            setCookie(2, "smokeDomainSizeXYZ")
-            setCookie(1, "startFrame")
+            // setCookie(2, "smokeDomainSizeXYZ")
+            // setCookie(1, "startFrame")
             setCookie(180, "endFrame")
             setCookie(30, "frameRate")
         }
@@ -85,21 +85,21 @@ export default class UI{
 
             compression: (getCookie("fireCompression") === 'true'),
             resolutionXY: parseInt(getCookie("fireResolutionXY")),
-            smokeDomainSizeXYZ: parseInt(getCookie("smokeDomainSizeXYZ")),
+            smokeDomainSizeXYZ: 10,
             frameRate: parseInt(getCookie("frameRate")),
-            startFrame: parseInt(getCookie("startFrame")),
+            startFrame: 1,
             endFrame: parseInt(getCookie("endFrame")),
 
             start: function(){
                 let data = {
                     "compression": this.compression,
                     "frameRate": parseInt(this.frameRate),
-                    "startFrame": parseInt(this.startFrame),
+                    "startFrame": 1,
                     "endFrame": parseInt(this.endFrame),
                     "resolutionXY": parseInt(this.resolutionXY),
                     "fireResolution": 30,
                     "material": "wood",
-                    "smokeDomainSizeXYZ": parseInt(this.smokeDomainSizeXYZ),
+                    "smokeDomainSizeXYZ": 10,
                     "objectType": objectController.activeObject,
                     "objectId": objectController.objectId,
                     "scale": [
@@ -183,11 +183,11 @@ export default class UI{
                 this.fireCompressionFolder.add(that.JSONController, 'compression').name('Activate').onChange(function (){ onChangeFire(that.JSONController) });
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
                 this.resolutionFolder.add(that.JSONController, 'resolutionXY', { Low: 512, Medium: 1024, High: 2048 } ).onChange(function() { onChangeFire(that.JSONController)});
-            this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
-                this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeXYZ', 1, 10).name('XYZ').onChange(function() { onChangeFire(that.JSONController)});
+            // this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
+            //     this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeXYZ', 1, 10).name('XYZ').onChange(function() { onChangeFire(that.JSONController)});
             this.framesFolder = this.fireFolder.addFolder('Frames');
-                this.framesFolder.add(that.JSONController, 'startFrame', 1, 1000).name('Start Frame').onChange(function() { onChangeFire(that.JSONController)});
-                this.framesFolder.add(that.JSONController, 'endFrame', this.getJSONController().startFrame, 1000).name('End Frame').onChange(function() { onChangeFire(that.JSONController)});
+                // this.framesFolder.add(that.JSONController, 'startFrame', 1, 1000).name('Start Frame').onChange(function() { onChangeFire(that.JSONController)});
+                this.framesFolder.add(that.JSONController, 'endFrame', 1, 180).name('Number Of Frames').onChange(function() { onChangeFire(that.JSONController)});
                 this.framesFolder.add(that.JSONController, 'frameRate', 30, 60).name('Frame Rate').onChange(function() { onChangeFire(that.JSONController)});
 
         //simulation folder
@@ -303,10 +303,9 @@ function onChangeFire(JSONController){
     //server sending
     setCookie(JSONController.compression, "fireCompression")
     setCookie(JSONController.resolutionXY, "fireResolutionXY")
-    setCookie(JSONController.smokeDomainSizeXYZ, "smokeDomainSizeXYZ")
-    setCookie(JSONController.startFrame, "startFrame")
+    // setCookie(JSONController.smokeDomainSizeXYZ, "smokeDomainSizeXYZ")
+    // setCookie(JSONController.startFrame, "startFrame")
     setCookie(JSONController.endFrame, "endFrame")
     setCookie(JSONController.frameRate, "frameRate")
 
-    console.log(JSONController.resolutionXY)
 }

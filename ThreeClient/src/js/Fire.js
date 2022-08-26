@@ -2,26 +2,30 @@ import * as THREE from 'three';
 import * as Loader from './Loader.js';
 import {ShaderMaterial} from "three";
 import {loadFireAtlases} from "./Loader.js";
+import * as SCRIPT from './script'
 
 const vertex   = require(         '../glsl/vertex.glsl'          );
 const fragment = require(         '../glsl/fragment.glsl'        );
 
 export default class Fire{
-    constructor(JSONController, parent, camera, scene,controller, modelViewMats, projectionMats){
+    constructor(JSONController, camera, scene, controller, modelViewMats, projectionMats){
 
-        this.parent = parent;
         this.camera = camera;
         this.scene = scene;
         this.controller = controller;
-
-        this.lastCameraPosition = this.camera.position.clone();
-        this.lastPerspective    = 0;
 
         this.light = new THREE.PointLight(0xccac77, 0.2, 100);
         this.light.position.set(0, 4.54, 0);
         this.scene.add(this.light);
 
-        this.smokeDomain = new THREE.Mesh();
+        // set smoke domain parameters
+        this.smokeDomain             = new THREE.Mesh();
+        this.smokeDomainSize         = 10;
+        this.smokeDomainCenter       = new THREE.Vector3( 0, 5, 0 );
+        this.smokeDomain.position.y += 5;
+
+        this.lastCameraPosition = this.camera.position.clone();
+        this.lastPerspective    = this.getPerspective();
 
         // parameters for frame access
         this.currentFrame   = 1;
@@ -44,6 +48,8 @@ export default class Fire{
         const axesHelper = new THREE.AxesHelper(20);
         this.scene.add( axesHelper );
 
+        this.captureCameras = [];
+
         this.addFireToScene();
 
     }
@@ -60,35 +66,46 @@ export default class Fire{
      * Adds fire simulation to this scene after all resources are loaded.
      */
     async addFireToScene(){
+
+        await this.createCaptureCameras();
         await this.createSmokeDomain();
         this.scene.add(this.smokeDomain);
+
     }
 
     // returns index of the perspective that needs to be loaded into the shader
     getPerspective(){
+
         //calculate angle of fire from camera position with pythagoras theorem
         let angle = Math.atan2(this.camera.position.z - this.smokeDomain.position.z, this.camera.position.x - this.smokeDomain.position.x) + Math.PI;
-        // let angle = Math.atan2(this.camera.position.z, this.camera.position.x) + Math.PI;
+
         let perspective = -1;
         if(angle <= Math.PI/4 * 1 | angle >= Math.PI/4 * 7){
-            perspective = 0;
-        }
-        if(angle <= Math.PI/4 * 3 && angle >= Math.PI/4 * 1){
-            perspective = 1;
-        }
-        if(angle <= Math.PI/4 * 5 && angle >= Math.PI/4 * 3){
-            perspective = 2;
-        }
-        if(angle <= Math.PI/4 * 7 && angle >= Math.PI/4 * 5){
             perspective = 3;
         }
+        if(angle <= Math.PI/4 * 3 && angle >= Math.PI/4 * 1){
+            perspective = 2;
+        }
+        if(angle <= Math.PI/4 * 5 && angle >= Math.PI/4 * 3){
+            perspective = 1;
+        }
+        if(angle <= Math.PI/4 * 7 && angle >= Math.PI/4 * 5){
+            perspective = 0;
+        }
         return perspective;
+
     }
 
     update(){
 
         // checks if smoke domain and parameters are already set
         if ( this.smokeDomain != null && this.smokeDomain.material != null && this.smokeDomain.material.uniforms != null ) {
+
+            this.camera.updateProjectionMatrix()
+            this.smokeDomain.material.uniforms.uCamera.value.view          = this.camera.matrixWorldInverse;
+            this.smokeDomain.material.uniforms.uCamera.value.viewInv       = this.camera.matrixWorld;
+            this.smokeDomain.material.uniforms.uCamera.value.projection    = this.camera.projectionMatrix;
+            this.smokeDomain.material.uniforms.uCamera.value.projectionInv = this.camera.projectionMatrixInverse;
 
             // checks if camera position has changed
             if ( !this.lastCameraPosition.equals( this.camera.position ) ) {
@@ -127,7 +144,7 @@ export default class Fire{
                     this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[del] = null;
                     this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[add] = this.atlases[0][add][this.currentAtlas];
                     this.smokeDomain.material.uniforms.uFire.value.atlasesZ[del]    = null;
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[add]    = this.atlases[0][add][this.currentAtlas];
+                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[add]    = this.atlases[1][add][this.currentAtlas];
 
                     this.smokeDomain.material.needsUpdate = true;
 
@@ -197,38 +214,51 @@ export default class Fire{
         // load atlases from server
         this.atlases = await loadFireAtlases( this.compression );
 
-        // set smoke domain parameters
-        const smokeDomainSize = 10;
-        const smokeDomainCenter = new THREE.Vector3( 0, 0, 0 );
+        const captureCamData = [];
 
-        let smokeDomain = new THREE.Mesh();
-        smokeDomain.position.y += 5;
+        for ( let p = 0; p < this.captureCameras.length; p++ ) {
 
-        this.smokeDomain        = smokeDomain;
-        this.lastPerspective = this.getPerspective();
+            const captureCam = this.captureCameras[p];
+
+            console.log( p + ":\n" );
+            console.log(captureCam.matrixWorldInverse);
+            console.log(captureCam.matrixWorld);
+            console.log(captureCam.projectionMatrix);
+            console.log(captureCam.projectionMatrixInverse);
+
+            captureCamData.push(
+                {
+                    view:          captureCam.matrixWorldInverse,
+                    viewInv:       captureCam.matrixWorld,
+                    projection:    captureCam.projectionMatrix,
+                    projectionInv: captureCam.projectionMatrixInverse
+                }
+            )
+
+        }
 
         const smokeDomainMin = new THREE.Vector3(
-            smokeDomainCenter.x - smokeDomainSize / 2,
-            smokeDomainCenter.y - smokeDomainSize / 2,
-            smokeDomainCenter.z - smokeDomainSize / 2
+            this.smokeDomainCenter.x - this.smokeDomainSize / 2,
+            this.smokeDomainCenter.y - this.smokeDomainSize / 2,
+            this.smokeDomainCenter.z - this.smokeDomainSize / 2
         );
 
         const smokeDomainMax = new THREE.Vector3(
-            smokeDomainCenter.x + smokeDomainSize / 2,
-            smokeDomainCenter.y + smokeDomainSize / 2,
-            smokeDomainCenter.z + smokeDomainSize / 2
+            this.smokeDomainCenter.x + this.smokeDomainSize / 2,
+            this.smokeDomainCenter.y + this.smokeDomainSize / 2,
+            this.smokeDomainCenter.z + this.smokeDomainSize / 2
         );
 
         const smokeDomainRadius = new THREE.Vector3(
-            smokeDomainSize / 2,
-            smokeDomainSize / 2,
-            smokeDomainSize / 2
+            this.smokeDomainSize / 2,
+            this.smokeDomainSize / 2,
+            this.smokeDomainSize / 2
         );
 
         const smokeDomainGeometry = new THREE.BoxGeometry(
-            smokeDomainSize,
-            smokeDomainSize,
-            smokeDomainSize
+            this.smokeDomainSize,
+            this.smokeDomainSize,
+            this.smokeDomainSize
         );
 
         // prepare atlas arrays for shader
@@ -243,15 +273,34 @@ export default class Fire{
         // shader material with all uniforms and vertex and fragment shader
         const smokeDomainMaterial = new ShaderMaterial({
             uniforms: {
+                uWindow: {
+                    value: {
+                        resolution: SCRIPT.renderer.getSize( new THREE.Vector2() ),
+                        pixelRatio: SCRIPT.renderer.getPixelRatio()
+                    }
+                },
                 uCamera: {
                     value: {
+                        view:          this.camera.matrixWorldInverse,
+                        viewInv:       this.camera.matrixWorld,
+                        projection:    this.camera.projectionMatrix,
+                        projectionInv: this.camera.projectionMatrixInverse,
                         perspective:   this.lastPerspective
                     }
                 },
+                uCaptureCameras: {
+                    value: captureCamData
+                },
                 uFire: {
                     value: {
-                        atlasesRGBA: atlasesRGBA,
-                        atlasesZ: atlasesZ,
+                        smokeDomain: {
+                            min:    smokeDomainMin,
+                            max:    smokeDomainMax,
+                            center: this.smokeDomainCenter,
+                            radius: smokeDomainRadius
+                        },
+                        atlasesRGBA:       atlasesRGBA,
+                        atlasesZ:          atlasesZ,
                         frame:             1,
                         resolutionXY:      this.resolutionXY,
                         atlasResolutionXY: 4096,
@@ -263,10 +312,54 @@ export default class Fire{
             fragmentShader: fragment
         });
 
-        smokeDomainMaterial.transparent = true;
+        smokeDomainMaterial.transparent       = true;
+        this.smokeDomain.material.needsUpdate = true;
 
-        smokeDomain.material = smokeDomainMaterial;
-        smokeDomain.geometry = smokeDomainGeometry;
+        this.smokeDomain.material = smokeDomainMaterial;
+        this.smokeDomain.geometry = smokeDomainGeometry;
+
+    }
+
+    async createCaptureCameras() {
+
+        const aspectRatio = 1;
+        const fovDeg      = 45;
+        const fovRad      = THREE.MathUtils.degToRad( fovDeg );
+        const distance    = ( this.smokeDomainSize/ 2.0 ) / ( Math.tan( 0.5 * fovRad ) ) + 0.5 * this.smokeDomainSize;
+        const near        = distance - this.smokeDomainSize / 2;
+        const far         = distance + this.smokeDomainSize / 2;
+
+        const frontCapture = new THREE.PerspectiveCamera( fovDeg, aspectRatio, near, far );
+        frontCapture.position.set( this.smokeDomainCenter.x, this.smokeDomainCenter.y, this.smokeDomainCenter.z + distance );
+        frontCapture.lookAt( this.smokeDomainCenter );
+        frontCapture.updateProjectionMatrix()
+        this.captureCameras.push( frontCapture );
+
+        const rightCapture = new THREE.PerspectiveCamera( fovDeg, aspectRatio, near, far );
+        rightCapture.position.set( this.smokeDomainCenter.x + distance, this.smokeDomainCenter.y, this.smokeDomainCenter.z);
+        rightCapture.lookAt( this.smokeDomainCenter );
+        rightCapture.updateProjectionMatrix()
+        this.captureCameras.push( rightCapture );
+
+        const backCapture = new THREE.PerspectiveCamera( fovDeg, aspectRatio, near, far );
+        backCapture.position.set( this.smokeDomainCenter.x, this.smokeDomainCenter.y, this.smokeDomainCenter.z - distance );
+        backCapture.lookAt( this.smokeDomainCenter );
+        backCapture.updateProjectionMatrix()
+        this.captureCameras.push( backCapture );
+
+        const leftCapture = new THREE.PerspectiveCamera( fovDeg, aspectRatio, near, far );
+        leftCapture.position.set( this.smokeDomainCenter.x - distance, this.smokeDomainCenter.y, this.smokeDomainCenter.z );
+        leftCapture.lookAt( this.smokeDomainCenter );
+        leftCapture.updateProjectionMatrix()
+        this.captureCameras.push( leftCapture );
+
+        for ( let p = 0; p < this.captureCameras.length; p++ ) {
+
+            const helper = new THREE.CameraHelper( this.captureCameras[p] );
+            this.scene.add( this.captureCameras[p] );
+            this.scene.add( helper                 );
+
+        }
 
     }
 
