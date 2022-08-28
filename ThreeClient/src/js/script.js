@@ -82,7 +82,7 @@ export function createTextAnimation() {
 
 function initScene(){
     //creating and setting up camera
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000 );
     camera.position.set(10, 10, 10);
     //create scene
     scene = new THREE.Scene();
@@ -107,7 +107,7 @@ function initLights(){
 function initRendering(){
     //creating and setting up the renderer
     renderer = new THREE.WebGLRenderer( {antialias: true} );
-    renderer.setPixelRatio(window.devicePixelRatio);
+    // renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     //set tonemapping
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -123,11 +123,11 @@ function switchToFPControls(){
         controller.destroy();
         gui.hide();
         controller = new FirstPersonController(camera, document);
-        fire = new Fire(gui.getJSONController(), null, camera, scene, controller, modelViewMats, projectionMats);
+        fire = new Fire( gui.getJSONController(), camera, scene, controller, modelViewMats, projectionMats );
 
-        // notifications = false;
-        // let notification = scene.getObjectByName("notification");
-        // scene.remove(notification);
+        notifications = false;
+        let notification = scene.getObjectByName("notification");
+        scene.remove(notification);
     }
 }
 
@@ -164,10 +164,12 @@ function update() {
 }
 
 function onWindowResize() {
+
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     render();
+
 }
 
 function onMouseDown(event) {
@@ -191,11 +193,11 @@ function onKeyDown(event){
         console.log('switching to first person');
         switchToFPControls();
         break;
-        
+
         case 'KeyO':
         console.log('switching to orbit');
         switchToOrbitControls();
-        
+
         //switchToFPControls();
         break;
     }
@@ -207,8 +209,8 @@ function onKeyUp(event){
 
 /**
  * Sets the capture camera matrices.
- * @param {Float[][]} modelViews  - First dimension for camera, second for matrix.
- * @param {Float[][]} projections - First dimension for camera, second for matrix.
+ * @param {number[][]} modelViews  - First dimension for camera, second for matrix.
+ * @param {number[][]} projections - First dimension for camera, second for matrix.
  */
 export function setMatrices( modelViews, projections ){
 
@@ -216,10 +218,6 @@ export function setMatrices( modelViews, projections ){
         modelViewMats[p].fromArray(modelViews[p])
         projectionMats[p].fromArray(projections[p])
     }
-
-    console.log('script.js')
-    console.log(modelViewMats)
-    console.log(projectionMats)
 
 }
 

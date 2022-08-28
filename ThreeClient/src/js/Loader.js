@@ -214,14 +214,15 @@ export function loadFloorMaterial(floorController, floor, change = ''){
 
 /**
  * Loads the simulation atlases asynchronously if the server finished the creation process.
- * @param {boolean} compression - if atlases were compressed by the server.
+ * @param {boolean} compression - if atlases are compressed.
+ * @param {boolean} dummy - play dummy simulation.
  * @return {THREE.Texture[[[]]]} - three-dimensional Texture array which holds all simulation atlases for
  * a combination RGBA or Z and capture camera perspective.
  * first dimension: RGBA -> [0], Z -> [1]
  * second dimension: front -> [0], right -> [1], back -> [2], left -> [3]
  * third dimension: atlases with simulation frames
  */
-export async function loadFireAtlases(compression ){
+export async function loadFireAtlases( compression, dummy ){
 
     let atlases = [];
     atlases.push([]);
@@ -238,6 +239,14 @@ export async function loadFireAtlases(compression ){
     ktx2Loader.setTranscoderPath('libs/basis/');
     ktx2Loader.detectSupport(SCRIPT.renderer);
 
+    if ( dummy ) {
+
+        setDummyFilenames( compression );
+
+        textureLoader.setPath('assets/simulations/dummy/');
+        ktx2Loader.setPath('assets/simulations/dummy/');
+
+    }
 
     // load atlases from server with help of atlasFilenames
     for(let perspective = 0; perspective < 4; perspective++ ) {
@@ -263,10 +272,10 @@ export async function loadFireAtlases(compression ){
                     }
                 );
 
-                atlasZ = await ktx2Loader.loadAsync(atlasFilenames[1][perspective][i],
+                atlasZ = await ktx2Loader.loadAsync( "zBuffer/" + atlasFilenames[1][perspective][i],
                     function (atlas) {
 
-                        atlas.encoding = THREE.sRGBEncoding;
+                        // atlas.encoding = THREE.sRGBEncoding;
 
                     },
                     undefined,
@@ -282,8 +291,8 @@ export async function loadFireAtlases(compression ){
 
             }
 
-            atlasRGBA.anisotropy = 8;
-            atlasZ.anisotropy    = 8;
+            // atlasRGBA.anisotropy = 8;
+            // atlasZ.anisotropy    = 8;
 
             atlases[0][perspective].push( atlasRGBA );
             atlases[1][perspective].push( atlasZ    );
@@ -296,6 +305,257 @@ export async function loadFireAtlases(compression ){
     }
 
     return atlases;
+}
+
+/**
+ * Sets filenames to load the dummy simulation.
+ * @param {boolean} compression - if atlases are compressed.
+ */
+function setDummyFilenames( compression ) {
+
+    if ( compression ) {
+
+        atlasFilenames = [
+            [
+                [
+                    "F_1_16.ktx2",
+                    "F_17_32.ktx2",
+                    "F_33_48.ktx2",
+                    "F_49_64.ktx2",
+                    "F_65_80.ktx2",
+                    "F_81_96.ktx2",
+                    "F_97_112.ktx2",
+                    "F_113_128.ktx2",
+                    "F_129_144.ktx2",
+                    "F_145_160.ktx2",
+                    "F_161_176.ktx2",
+                    "F_177_180.ktx2"
+                ],
+                [
+                    "R_1_16.ktx2",
+                    "R_17_32.ktx2",
+                    "R_33_48.ktx2",
+                    "R_49_64.ktx2",
+                    "R_65_80.ktx2",
+                    "R_81_96.ktx2",
+                    "R_97_112.ktx2",
+                    "R_113_128.ktx2",
+                    "R_129_144.ktx2",
+                    "R_145_160.ktx2",
+                    "R_161_176.ktx2",
+                    "R_177_180.ktx2"
+                ],
+                [
+                    "B_1_16.ktx2",
+                    "B_17_32.ktx2",
+                    "B_33_48.ktx2",
+                    "B_49_64.ktx2",
+                    "B_65_80.ktx2",
+                    "B_81_96.ktx2",
+                    "B_97_112.ktx2",
+                    "B_113_128.ktx2",
+                    "B_129_144.ktx2",
+                    "B_145_160.ktx2",
+                    "B_161_176.ktx2",
+                    "B_177_180.ktx2"
+                ],
+                [
+                    "L_1_16.ktx2",
+                    "L_17_32.ktx2",
+                    "L_33_48.ktx2",
+                    "L_49_64.ktx2",
+                    "L_65_80.ktx2",
+                    "L_81_96.ktx2",
+                    "L_97_112.ktx2",
+                    "L_113_128.ktx2",
+                    "L_129_144.ktx2",
+                    "L_145_160.ktx2",
+                    "L_161_176.ktx2",
+                    "L_177_180.ktx2"
+                ]
+            ],
+            [
+                [
+                    "ZF_1_16.ktx2",
+                    "ZF_17_32.ktx2",
+                    "ZF_33_48.ktx2",
+                    "ZF_49_64.ktx2",
+                    "ZF_65_80.ktx2",
+                    "ZF_81_96.ktx2",
+                    "ZF_97_112.ktx2",
+                    "ZF_113_128.ktx2",
+                    "ZF_129_144.ktx2",
+                    "ZF_145_160.ktx2",
+                    "ZF_161_176.ktx2",
+                    "ZF_177_180.ktx2"
+                ],
+                [
+                    "ZR_1_16.ktx2",
+                    "ZR_17_32.ktx2",
+                    "ZR_33_48.ktx2",
+                    "ZR_49_64.ktx2",
+                    "ZR_65_80.ktx2",
+                    "ZR_81_96.ktx2",
+                    "ZR_97_112.ktx2",
+                    "ZR_113_128.ktx2",
+                    "ZR_129_144.ktx2",
+                    "ZR_145_160.ktx2",
+                    "ZR_161_176.ktx2",
+                    "ZR_177_180.ktx2"
+                ],
+                [
+                    "ZB_1_16.ktx2",
+                    "ZB_17_32.ktx2",
+                    "ZB_33_48.ktx2",
+                    "ZB_49_64.ktx2",
+                    "ZB_65_80.ktx2",
+                    "ZB_81_96.ktx2",
+                    "ZB_97_112.ktx2",
+                    "ZB_113_128.ktx2",
+                    "ZB_129_144.ktx2",
+                    "ZB_145_160.ktx2",
+                    "ZB_161_176.ktx2",
+                    "ZB_177_180.ktx2"
+                ],
+                [
+                    "ZL_1_16.ktx2",
+                    "ZL_17_32.ktx2",
+                    "ZL_33_48.ktx2",
+                    "ZL_49_64.ktx2",
+                    "ZL_65_80.ktx2",
+                    "ZL_81_96.ktx2",
+                    "ZL_97_112.ktx2",
+                    "ZL_113_128.ktx2",
+                    "ZL_129_144.ktx2",
+                    "ZL_145_160.ktx2",
+                    "ZL_161_176.ktx2",
+                    "ZL_177_180.ktx2"
+                ]
+            ]
+        ];
+    } else {
+
+        atlasFilenames = [
+            [
+                [
+                    "F_1_16.png",
+                    "F_17_32.png",
+                    "F_33_48.png",
+                    "F_49_64.png",
+                    "F_65_80.png",
+                    "F_81_96.png",
+                    "F_97_112.png",
+                    "F_113_128.png",
+                    "F_129_144.png",
+                    "F_145_160.png",
+                    "F_161_176.png",
+                    "F_177_180.png"
+                ],
+                [
+                    "R_1_16.png",
+                    "R_17_32.png",
+                    "R_33_48.png",
+                    "R_49_64.png",
+                    "R_65_80.png",
+                    "R_81_96.png",
+                    "R_97_112.png",
+                    "R_113_128.png",
+                    "R_129_144.png",
+                    "R_145_160.png",
+                    "R_161_176.png",
+                    "R_177_180.png"
+                ],
+                [
+                    "B_1_16.png",
+                    "B_17_32.png",
+                    "B_33_48.png",
+                    "B_49_64.png",
+                    "B_65_80.png",
+                    "B_81_96.png",
+                    "B_97_112.png",
+                    "B_113_128.png",
+                    "B_129_144.png",
+                    "B_145_160.png",
+                    "B_161_176.png",
+                    "B_177_180.png"
+                ],
+                [
+                    "L_1_16.png",
+                    "L_17_32.png",
+                    "L_33_48.png",
+                    "L_49_64.png",
+                    "L_65_80.png",
+                    "L_81_96.png",
+                    "L_97_112.png",
+                    "L_113_128.png",
+                    "L_129_144.png",
+                    "L_145_160.png",
+                    "L_161_176.png",
+                    "L_177_180.png"
+                ]
+            ],
+            [
+                [
+                    "ZF_1_16.png",
+                    "ZF_17_32.png",
+                    "ZF_33_48.png",
+                    "ZF_49_64.png",
+                    "ZF_65_80.png",
+                    "ZF_81_96.png",
+                    "ZF_97_112.png",
+                    "ZF_113_128.png",
+                    "ZF_129_144.png",
+                    "ZF_145_160.png",
+                    "ZF_161_176.png",
+                    "ZF_177_180.png"
+                ],
+                [
+                    "ZR_1_16.png",
+                    "ZR_17_32.png",
+                    "ZR_33_48.png",
+                    "ZR_49_64.png",
+                    "ZR_65_80.png",
+                    "ZR_81_96.png",
+                    "ZR_97_112.png",
+                    "ZR_113_128.png",
+                    "ZR_129_144.png",
+                    "ZR_145_160.png",
+                    "ZR_161_176.png",
+                    "ZR_177_180.png"
+                ],
+                [
+                    "ZB_1_16.png",
+                    "ZB_17_32.png",
+                    "ZB_33_48.png",
+                    "ZB_49_64.png",
+                    "ZB_65_80.png",
+                    "ZB_81_96.png",
+                    "ZB_97_112.png",
+                    "ZB_113_128.png",
+                    "ZB_129_144.png",
+                    "ZB_145_160.png",
+                    "ZB_161_176.png",
+                    "ZB_177_180.png"
+                ],
+                [
+                    "ZL_1_16.png",
+                    "ZL_17_32.png",
+                    "ZL_33_48.png",
+                    "ZL_49_64.png",
+                    "ZL_65_80.png",
+                    "ZL_81_96.png",
+                    "ZL_97_112.png",
+                    "ZL_113_128.png",
+                    "ZL_129_144.png",
+                    "ZL_145_160.png",
+                    "ZL_161_176.png",
+                    "ZL_177_180.png"
+                ]
+            ]
+        ];
+
+    }
+
 }
 
 //takes in the hdri name and the resolution and adds hdri to scene
