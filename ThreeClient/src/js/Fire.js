@@ -102,11 +102,7 @@ export default class Fire{
         // checks if smoke domain and parameters are already set
         if ( this.smokeDomain != null && this.smokeDomain.material != null && this.smokeDomain.material.uniforms != null ) {
 
-            this.camera.updateProjectionMatrix()
-            this.smokeDomain.material.uniforms.uCamera.value.view          = this.camera.matrixWorldInverse;
-            this.smokeDomain.material.uniforms.uCamera.value.viewInv       = this.camera.matrixWorld;
-            this.smokeDomain.material.uniforms.uCamera.value.projection    = this.camera.projectionMatrix;
-            this.smokeDomain.material.uniforms.uCamera.value.projectionInv = this.camera.projectionMatrixInverse;
+            this.updateCameraUniforms();
 
             // checks if camera position has changed
             if ( !this.lastCameraPosition.equals( this.camera.position ) ) {
@@ -119,37 +115,7 @@ export default class Fire{
                 // check if perspective has changed
                 if( newPerspective !== this.lastPerspective ) {
 
-                    // indices for deleting atlas perspective, which is on the opposite side of the new perspective
-                    let del = newPerspective + 2
-                    // indices for loading a new atlas perspective
-                    let add = this.lastPerspective + 2;
-
-                    if ( del > 3 ) {
-                        if ( del === 4 )
-                            del = 0;
-                        else
-                            del = 1;
-                    }
-
-                    if ( add > 3 ) {
-                        if ( add === 4 )
-                            add = 0;
-                        else
-                            add = 1;
-                    }
-
-                    // update perspective uniform
-                    this.smokeDomain.material.uniforms.uCamera.value.perspective = newPerspective;
-
-                    // loads the new calculated atlas perspective and its neighbours, deletes the opposite side of the new perspective
-                    // loading only 6 texture, instead of 8 into the GPU.
-                    // example: newPerspective -> front, add neighbours -> left and right, delete -> back
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[del] = null;
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[add] = this.atlases[0][add][this.currentAtlas];
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[del]    = null;
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[add]    = this.atlases[1][add][this.currentAtlas];
-
-                    // this.smokeDomain.material.needsUpdate = true;
+                    this.perspectiveAtlasSwitching( newPerspective );
 
                     this.lastPerspective = newPerspective;
 
@@ -176,29 +142,9 @@ export default class Fire{
 
                     this.currentAtlas++;
 
-                    // switch to next atlases depending on current perspective
-                    let perspective    = this.lastPerspective
-                    let leftNeighbour  = perspective - 1;
-                    let rightNeighbour = perspective + 1;
-
-                    if ( leftNeighbour  === -1 )
-                        leftNeighbour  = 3;
-                    if ( rightNeighbour ===  4 )
-                        rightNeighbour = 0;
-
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ perspective    ] = this.atlases[0][ perspective   ][this.currentAtlas];
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ leftNeighbour  ] = this.atlases[0][ leftNeighbour ][this.currentAtlas];
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ rightNeighbour ] = this.atlases[0][ rightNeighbour][this.currentAtlas];
-
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ perspective    ] = this.atlases[1][ perspective   ][this.currentAtlas];
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ leftNeighbour  ] = this.atlases[1][ leftNeighbour ][this.currentAtlas];
-                    this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ rightNeighbour ] = this.atlases[1][ rightNeighbour][this.currentAtlas];
-
-                    // this.smokeDomain.material.needsUpdate = true;
+                    this.animationAtlasSwitching()
 
                 }
-
-                console.log( this.currentAtlas );
 
                 // set frame current number for shader
                 this.smokeDomain.material.uniforms.uFire.value.atlasFrame = ( this.currentFrame - 1 ) % this.framesPerAtlas + 1;
@@ -209,6 +155,89 @@ export default class Fire{
 
         }
         
+    }
+
+    /**
+     * Updates camera uniforms to keep vertex and fragment shader in an actual state.
+     */
+    updateCameraUniforms() {
+
+        this.camera.updateProjectionMatrix()
+        this.smokeDomain.material.uniforms.uCamera.value.view          = this.camera.matrixWorldInverse;
+        this.smokeDomain.material.uniforms.uCamera.value.viewInv       = this.camera.matrixWorld;
+        this.smokeDomain.material.uniforms.uCamera.value.projection    = this.camera.projectionMatrix;
+        this.smokeDomain.material.uniforms.uCamera.value.projectionInv = this.camera.projectionMatrixInverse;
+
+    }
+
+    /**
+     * Switches the loaded atlases dependent on the current perspective.
+     * The atlases (RGBA and Z) of the opposite side of the perspective will not be loaded.
+     * @param {number} newPerspective - front: 0, right: 1, back: 2, left: 2.
+     */
+    perspectiveAtlasSwitching(newPerspective ) {
+
+        // indices for deleting atlas perspective, which is on the opposite side of the new perspective
+        let del = newPerspective + 2
+        // indices for loading a new atlas perspective
+        let add = this.lastPerspective + 2;
+
+        if ( del > 3 ) {
+            if ( del === 4 )
+                del = 0;
+            else
+                del = 1;
+        }
+
+        if ( add > 3 ) {
+            if ( add === 4 )
+                add = 0;
+            else
+                add = 1;
+        }
+
+        // update perspective uniform
+        this.smokeDomain.material.uniforms.uCamera.value.perspective = newPerspective;
+
+        // loads the new calculated atlas perspective and its neighbours, deletes the opposite side of the new perspective
+        // loading only 6 texture, instead of 8 into the GPU.
+        // example: newPerspective -> front, add neighbours -> left and right, delete -> back
+        this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[del] = null;
+        this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[add] = this.atlases[0][add][this.currentAtlas];
+        this.smokeDomain.material.uniforms.uFire.value.atlasesZ[del]    = null;
+        this.smokeDomain.material.uniforms.uFire.value.atlasesZ[add]    = this.atlases[1][add][this.currentAtlas];
+
+        // this.smokeDomain.material.needsUpdate = true;
+
+    }
+
+    /**
+     * Switching all atlases if the current frame reached the current atlas end frame.
+     * This will also take the current perspective into account and won't load the atlases (RGBA and Z) of the
+     * opposite side of the current perspective.
+     */
+    animationAtlasSwitching() {
+
+        // switch to next atlases depending on current perspective
+        let perspective    = this.lastPerspective
+        let leftNeighbour  = perspective - 1;
+        let rightNeighbour = perspective + 1;
+
+        if ( leftNeighbour  === -1 )
+            leftNeighbour  = 3;
+        if ( rightNeighbour ===  4 )
+            rightNeighbour = 0;
+
+        this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ perspective    ] = this.atlases[0][ perspective   ][this.currentAtlas];
+        this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ leftNeighbour  ] = this.atlases[0][ leftNeighbour ][this.currentAtlas];
+        this.smokeDomain.material.uniforms.uFire.value.atlasesRGBA[ rightNeighbour ] = this.atlases[0][ rightNeighbour][this.currentAtlas];
+
+        this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ perspective    ] = this.atlases[1][ perspective   ][this.currentAtlas];
+        this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ leftNeighbour  ] = this.atlases[1][ leftNeighbour ][this.currentAtlas];
+        this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ rightNeighbour ] = this.atlases[1][ rightNeighbour][this.currentAtlas];
+
+        // this.smokeDomain.material.needsUpdate = true;
+
     }
 
     /**
@@ -320,6 +349,12 @@ export default class Fire{
 
     }
 
+    /**
+     * Creates cameras for each perspective of the smoke domain: front, right, left back.
+     * These cameras simulate the capture cameras of the simulations rendering process and provide
+     * the matrices for parallax occlusion mapping.
+     * @return {Promise<void>}
+     */
     async createCaptureCameras() {
 
         const aspectRatio = 1;

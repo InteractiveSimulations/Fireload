@@ -307,6 +307,10 @@ export async function loadFireAtlases( compression, dummy ){
     return atlases;
 }
 
+/**
+ * Sets filenames to load the dummy simulation.
+ * @param {boolean} compression - if atlases are compressed.
+ */
 function setDummyFilenames( compression ) {
 
     if ( compression ) {

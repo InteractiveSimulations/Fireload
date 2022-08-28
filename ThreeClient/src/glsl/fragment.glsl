@@ -188,10 +188,12 @@ vec2 intersectDepthMap( inout vec3 hitpoint_ws, Intersection intersection, sampl
 
     hit                        = false;
     float alpha                = 0.0;
+    float deltaTexCoords       = 1.0 / float( steps );
     int   currentStep          = 0;
     float currentRayDepth      = 0.0;
-    vec3  currentTexCoord      = ray.origin.atlas + alpha * ray.direction;
-    float currentTextureDepth  = texture2D( depthMap, currentTexCoord.xy ).r;
+    float deltaRayDepth        = rayDepth / float( steps );
+    vec3  currentTexCoords     = ray.origin.atlas + alpha * ray.direction;
+    float currentTextureDepth  = texture2D( depthMap, currentTexCoords.xy ).r;
 
     while ( currentStep < steps )
     {
@@ -202,10 +204,10 @@ vec2 intersectDepthMap( inout vec3 hitpoint_ws, Intersection intersection, sampl
             break;
         }
 
-        alpha               +=      1.0 / float( steps );
-        currentRayDepth     += rayDepth / float( steps );
-        currentTexCoord      = ray.origin.atlas + alpha * ray.direction;
-        currentTextureDepth  = texture2D( depthMap, currentTexCoord.xy ).r;
+        alpha               += deltaTexCoords;
+        currentRayDepth     += deltaRayDepth;
+        currentTexCoords     = ray.origin.atlas + alpha * ray.direction;
+        currentTextureDepth  = texture2D( depthMap, currentTexCoords.xy ).r;
         currentStep++;
 
     }
@@ -215,19 +217,31 @@ vec2 intersectDepthMap( inout vec3 hitpoint_ws, Intersection intersection, sampl
     if ( hit )
     {
 
+        // parallax occlusion mapping
+        vec2 prevTexCoords = currentTexCoords.xy - deltaTexCoords * ray.direction.xy;
+
+        float afterDepth  = currentTextureDepth - currentRayDepth;
+        float beforeDepth = texture2D( depthMap, prevTexCoords ).r - currentRayDepth + deltaRayDepth;
+
+        float weight = afterDepth / ( afterDepth - beforeDepth );
+        vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords.xy * ( 1.0 - weight );
+
         Spaces intersection;
 
         ray.direction           = ray.end.texture - ray.origin.texture;
 
-        intersection.texture    = ray.origin.texture + alpha * ray.direction;
-        intersection.texture.z  = currentRayDepth;
+//        intersection.texture    = ray.origin.texture + alpha * ray.direction;
+//        intersection.texture.z  = currentRayDepth;
 
-        intersection.camera.xyz = Ts2Cam( intersection.texture, uCaptureCameras[ perspective ].projectionInv );
+        intersection.texture.xy = finalTexCoords;
+        intersection.texture.z  = beforeDepth * weight + currentRayDepth * ( 1.0 - weight );
+
+        intersection.camera.xyz = Ts2Cam( intersection.texture,    uCaptureCameras[ perspective ].projectionInv );
         intersection.camera.z   = 1.0;
 
         hitpoint_ws             = Cam2Ws( intersection.camera.xyz, uCaptureCameras[ perspective ].viewInv       );
 
-        return currentTexCoord.xy;;
+        return currentTexCoords.xy;;
 
     }
     else
@@ -288,7 +302,7 @@ void main() {
 
     if ( intersection.hit ) {
 
-        float epsilon = 0.01;
+        float epsilon = 0.00001;
         int   perspective;
 
 //                if ( abs( intersection.enter.z - uFire.smokeDomain.max.z ) < epsilon ) {

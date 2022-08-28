@@ -125,9 +125,9 @@ function switchToFPControls(){
         controller = new FirstPersonController(camera, document);
         fire = new Fire( gui.getJSONController(), camera, scene, controller, modelViewMats, projectionMats );
 
-        // notifications = false;
-        // let notification = scene.getObjectByName("notification");
-        // scene.remove(notification);
+        notifications = false;
+        let notification = scene.getObjectByName("notification");
+        scene.remove(notification);
     }
 }
 
@@ -168,7 +168,7 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    // render();
+    render();
 
 }
 
