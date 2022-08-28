@@ -41,12 +41,13 @@ export default class Fire{
         this.framesPerAtlas  = ( 4096 / this.resolutionXY ) * ( 4096 / this.resolutionXY );
         this.numberOfAtlases = Math.ceil( this.numberOfFrames / this.framesPerAtlas   );
 
+        this.dummy = JSONController.dummy;
+        if ( this.dummy )
+            this.resolutionXY = 1024;
+
         // matrix4 arrays with size 4 for each perspective: F = 0, R = 1, B = 2, L = 3
         this.modelViewMats  = modelViewMats;
         this.projectionMats = projectionMats;
-
-        const axesHelper = new THREE.AxesHelper(20);
-        this.scene.add( axesHelper );
 
         this.captureCameras = [];
 
@@ -110,6 +111,8 @@ export default class Fire{
             // checks if camera position has changed
             if ( !this.lastCameraPosition.equals( this.camera.position ) ) {
 
+                this.lastCameraPosition = this.camera.position.clone();
+
                 // calculate the current atlas perspective
                 const newPerspective = this.getPerspective();
 
@@ -146,13 +149,11 @@ export default class Fire{
                     this.smokeDomain.material.uniforms.uFire.value.atlasesZ[del]    = null;
                     this.smokeDomain.material.uniforms.uFire.value.atlasesZ[add]    = this.atlases[1][add][this.currentAtlas];
 
-                    this.smokeDomain.material.needsUpdate = true;
+                    // this.smokeDomain.material.needsUpdate = true;
 
                     this.lastPerspective = newPerspective;
 
                 }
-
-                this.lastCameraPosition = this.camera.position.clone();
 
             }
 
@@ -163,8 +164,10 @@ export default class Fire{
             if (this.deltaTime > (1 / this.frameRate)) {
 
                 // loop simulation
-                if (  this.currentFrame  % ( this.numberOfFrames + 1 ) === 0 )
+                if (  this.currentFrame  % ( this.numberOfFrames + 1 ) === 0 ) {
                     this.currentFrame = 1;
+                    this.currentAtlas = 0;
+                }
 
                 let currentAtlasEndFrame = this.framesPerAtlas * ( this.currentAtlas + 1 );
 
@@ -191,12 +194,14 @@ export default class Fire{
                     this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ leftNeighbour  ] = this.atlases[1][ leftNeighbour ][this.currentAtlas];
                     this.smokeDomain.material.uniforms.uFire.value.atlasesZ[ rightNeighbour ] = this.atlases[1][ rightNeighbour][this.currentAtlas];
 
-                    this.smokeDomain.material.needsUpdate = true;
+                    // this.smokeDomain.material.needsUpdate = true;
 
                 }
 
+                console.log( this.currentAtlas );
+
                 // set frame current number for shader
-                this.smokeDomain.material.uniforms.uFire.value.frame = this.currentFrame;
+                this.smokeDomain.material.uniforms.uFire.value.atlasFrame = ( this.currentFrame - 1 ) % this.framesPerAtlas + 1;
                 this.currentFrame++;
                 this.deltaTime = this.deltaTime % (1 / this.frameRate);
 
@@ -212,19 +217,13 @@ export default class Fire{
     async createSmokeDomain() {
 
         // load atlases from server
-        this.atlases = await loadFireAtlases( this.compression );
+        this.atlases = await loadFireAtlases( this.compression, this.dummy );
 
         const captureCamData = [];
 
         for ( let p = 0; p < this.captureCameras.length; p++ ) {
 
             const captureCam = this.captureCameras[p];
-
-            console.log( p + ":\n" );
-            console.log(captureCam.matrixWorldInverse);
-            console.log(captureCam.matrixWorld);
-            console.log(captureCam.projectionMatrix);
-            console.log(captureCam.projectionMatrixInverse);
 
             captureCamData.push(
                 {
@@ -265,6 +264,7 @@ export default class Fire{
         const atlasesRGBA = [];
         const atlasesZ    = [];
 
+        // pushes the first atlas of each perspective
         for (  let p = 0; p < 4; p++ ) {
             atlasesRGBA.push( this.atlases[0][p][0] );
             atlasesZ.push(    this.atlases[1][p][0] );
@@ -301,7 +301,7 @@ export default class Fire{
                         },
                         atlasesRGBA:       atlasesRGBA,
                         atlasesZ:          atlasesZ,
-                        frame:             1,
+                        atlasFrame:        1,
                         resolutionXY:      this.resolutionXY,
                         atlasResolutionXY: 4096,
                         numberOfAtlases:   this.numberOfAtlases
@@ -353,13 +353,10 @@ export default class Fire{
         leftCapture.updateProjectionMatrix()
         this.captureCameras.push( leftCapture );
 
-        for ( let p = 0; p < this.captureCameras.length; p++ ) {
-
-            const helper = new THREE.CameraHelper( this.captureCameras[p] );
+        for ( let p = 0; p < this.captureCameras.length; p++ )
             this.scene.add( this.captureCameras[p] );
-            this.scene.add( helper                 );
 
-        }
+
 
     }
 

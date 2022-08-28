@@ -3,17 +3,16 @@ import * as THREE from 'three';
 import UI  from './GUI.js';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import FirstPersonController from './FirstPersonController';
-// import OrbitController from './OrbitController.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import OrbitController from './OrbitController.js';
 import Fire from './Fire';
 import {FontLoader, TextGeometry} from "three";
 
 window.addEventListener('resize', onWindowResize, false);
-// window.addEventListener('pointerdown', onMouseDown, false);
-// window.addEventListener('pointerup', onMouseUp, false);
+window.addEventListener('pointerdown', onMouseDown, false);
+window.addEventListener('pointerup', onMouseUp, false);
 window.addEventListener('keydown', onKeyDown, false);
-// window.addEventListener('keyup', onKeyUp, false);
-// window.addEventListener('mousemove', onMouseMove, false);
+window.addEventListener('keyup', onKeyUp, false);
+window.addEventListener('mousemove', onMouseMove, false);
 
 export let renderer;
 let scene, camera;
@@ -44,8 +43,7 @@ document.body.appendChild(stats.dom);
 function init() {
     initScene();
     initRendering();
-    // controller = new OrbitController(camera, renderer.domElement, scene, objects, selected);
-    controller = new OrbitControls(camera, renderer.domElement);
+    controller = new OrbitController(camera, renderer.domElement, scene, objects, selected);
     //create gui
     gui = new UI(scene, objects, floor, camera, ambientLight, renderer);
     update();
@@ -112,63 +110,47 @@ function initRendering(){
     // renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     //set tonemapping
-    // renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // renderer.toneMappingExposure = 1;
-    // renderer.shadowMap.enabled = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1;
+    renderer.shadowMap.enabled = true;
     renderer.outputEncoding = THREE.sRGBEncoding;
     //enable shadows
     document.body.appendChild(renderer.domElement);
 }
 
-// function switchToFPControls(){
-//     if(controller instanceof OrbitController){
-//         controller.destroy();
-//         gui.hide();
-//         controller = new FirstPersonController(camera, document);
-//         fire = new Fire( gui.getJSONController(), camera, scene, controller, modelViewMats, projectionMats );
-//
-//         // notifications = false;
-//         // let notification = scene.getObjectByName("notification");
-//         // scene.remove(notification);
-//     }
-// }
-//
-// function switchToOrbitControls(){
-//     if(controller instanceof FirstPersonController){
-//         controller.destroy();
-//         gui.hide();
-//         controller = new OrbitController(camera, document.body, scene, objects, selected);
-//         fire.destroy();
-//         fire = null;
-//     }
-//     update();
-// }
+function switchToFPControls(){
+    if(controller instanceof OrbitController){
+        controller.destroy();
+        gui.hide();
+        controller = new FirstPersonController(camera, document);
+        fire = new Fire( gui.getJSONController(), camera, scene, controller, modelViewMats, projectionMats );
+
+        // notifications = false;
+        // let notification = scene.getObjectByName("notification");
+        // scene.remove(notification);
+    }
+}
+
+function switchToOrbitControls(){
+    if(controller instanceof FirstPersonController){
+        controller.destroy();
+        gui.hide();
+        controller = new OrbitController(camera, document.body, scene, objects, selected);
+        fire.destroy();
+        fire = null;
+    }
+    update();
+}
 
 function render() {
     renderer.render(scene, camera);
 }
 
-// function update() {
-//     stats.update();
-//     // controller.move();
-//     render();
-//     requestAnimationFrame(update);
-//     if(fire != null && fire != 'undefined'){
-//         fire.update();
-//     }
-//     if (notifications){
-//         let notification = scene.getObjectByName("notification");
-//
-//         if(notification != null){
-//             notification.rotation.y += 0.008;
-//         }
-//     }
-// }
-
 function update() {
-    requestAnimationFrame(update);
     stats.update();
-    // controller.move();
+    controller.move();
+    render();
+    requestAnimationFrame(update);
     if(fire != null && fire != 'undefined'){
         fire.update();
     }
@@ -179,8 +161,6 @@ function update() {
             notification.rotation.y += 0.008;
         }
     }
-
-    render();
 }
 
 function onWindowResize() {
@@ -192,67 +172,45 @@ function onWindowResize() {
 
 }
 
-// function onMouseDown(event) {
-//    controller.onMouseDown(event);
-// }
-//
-// function onMouseUp(event){
-//     controller.onMouseUp(event);
-// }
-//
-// function onMouseMove(event){
-//     controller.onMouseMove(event);
-// }
+function onMouseDown(event) {
+   controller.onMouseDown(event);
+}
 
+function onMouseUp(event){
+    controller.onMouseUp(event);
+}
 
-// function onKeyDown(event){
-//     controller.onKeyDown(event);
-//     switch(event.code){
-//         //change to fp controls
-//         case 'KeyF':
-//         console.log('switching to first person');
-//         switchToFPControls();
-//         break;
-//
-//         case 'KeyO':
-//         console.log('switching to orbit');
-//         switchToOrbitControls();
-//
-//         //switchToFPControls();
-//         break;
-//     }
-// }
+function onMouseMove(event){
+    controller.onMouseMove(event);
+}
+
 
 function onKeyDown(event){
-    // controller.onKeyDown(event);
+    controller.onKeyDown(event);
     switch(event.code){
         //change to fp controls
         case 'KeyF':
-            console.log('switching to first person');
-            gui.hide();
-            fire = new Fire( gui.getJSONController(), camera, scene, controller, modelViewMats, projectionMats );
-            notifications = false;
-            let notification = scene.getObjectByName("notification");
-            scene.remove(notification);
-            break;
+        console.log('switching to first person');
+        switchToFPControls();
+        break;
 
         case 'KeyO':
-            console.log('switching to orbit');
-            gui.hide();
-            fire.destroy();
-            fire = null;
-            break;
+        console.log('switching to orbit');
+        switchToOrbitControls();
+
+        //switchToFPControls();
+        break;
     }
 }
 
-// function onKeyUp(event){
-//     controller.onKeyUp(event);
-// }
+function onKeyUp(event){
+    controller.onKeyUp(event);
+}
 
 /**
  * Sets the capture camera matrices.
- * @param {Float[][]} modelViews  - First dimension for camera, second for matrix.
- * @param {Float[][]} projections - First dimension for camera, second for matrix.
+ * @param {number[][]} modelViews  - First dimension for camera, second for matrix.
+ * @param {number[][]} projections - First dimension for camera, second for matrix.
  */
 export function setMatrices( modelViews, projections ){
 
@@ -260,10 +218,6 @@ export function setMatrices( modelViews, projections ){
         modelViewMats[p].fromArray(modelViews[p])
         projectionMats[p].fromArray(projections[p])
     }
-
-    console.log('script.js')
-    console.log(modelViewMats)
-    console.log(projectionMats)
 
 }
 

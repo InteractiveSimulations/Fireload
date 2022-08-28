@@ -3,6 +3,7 @@ import { ObjectSpaceNormalMap } from 'three';
 import * as Loader from './Loader.js'
 import * as WEBSOCKET from './websocket'
 import {JoinNode} from "three/examples/jsm/nodes/utils/JoinNode";
+import * as SCRIPT from './script'
 
 
 //gui class takes in scene, objects and floor
@@ -29,10 +30,9 @@ export default class UI{
 
             setCookie(0.25, "lightIntensity")
 
+            setCookie( false, "fireDummy")
             setCookie( true, "fireCompression")
             setCookie(512, "fireResolutionXY")
-            // setCookie(2, "smokeDomainSizeXYZ")
-            // setCookie(1, "startFrame")
             setCookie(180, "endFrame")
             setCookie(30, "frameRate")
         }
@@ -83,6 +83,7 @@ export default class UI{
 
         this.JSONController = {
 
+            dummy: (getCookie("fireDummy") === 'true'),
             compression: (getCookie("fireCompression") === 'true'),
             resolutionXY: parseInt(getCookie("fireResolutionXY")),
             smokeDomainSizeXYZ: 10,
@@ -139,7 +140,9 @@ export default class UI{
                     ]
                 };
                 WEBSOCKET.requestSimulation(data);
+
             }
+
         }
 
 
@@ -183,12 +186,11 @@ export default class UI{
                 this.fireCompressionFolder.add(that.JSONController, 'compression').name('Activate').onChange(function (){ onChangeFire(that.JSONController) });
             this.resolutionFolder = this.fireFolder.addFolder('Resolution');
                 this.resolutionFolder.add(that.JSONController, 'resolutionXY', { Low: 512, Medium: 1024, High: 2048 } ).onChange(function() { onChangeFire(that.JSONController)});
-            // this.smokeDomainFolder = this.fireFolder.addFolder('Smoke Domain Size');
-            //     this.smokeDomainFolder.add(that.JSONController, 'smokeDomainSizeXYZ', 1, 10).name('XYZ').onChange(function() { onChangeFire(that.JSONController)});
             this.framesFolder = this.fireFolder.addFolder('Frames');
-                // this.framesFolder.add(that.JSONController, 'startFrame', 1, 1000).name('Start Frame').onChange(function() { onChangeFire(that.JSONController)});
                 this.framesFolder.add(that.JSONController, 'endFrame', 1, 180).name('Number Of Frames').onChange(function() { onChangeFire(that.JSONController)});
                 this.framesFolder.add(that.JSONController, 'frameRate', 30, 60).name('Frame Rate').onChange(function() { onChangeFire(that.JSONController)});
+            this.fireDummyFolder = this.fireFolder.addFolder('Show Dummy');
+                this.fireDummyFolder.add(that.JSONController, 'dummy').name('Activate').onChange(function (){ onChangeFire(that.JSONController) });
 
         //simulation folder
         this.datgui.add(this.JSONController, 'start').name('Request Simulation');
@@ -301,10 +303,9 @@ function onChangeLight(ambientLight, value){
 
 function onChangeFire(JSONController){
     //server sending
+    setCookie(JSONController.dummy, "fireDummy")
     setCookie(JSONController.compression, "fireCompression")
     setCookie(JSONController.resolutionXY, "fireResolutionXY")
-    // setCookie(JSONController.smokeDomainSizeXYZ, "smokeDomainSizeXYZ")
-    // setCookie(JSONController.startFrame, "startFrame")
     setCookie(JSONController.endFrame, "endFrame")
     setCookie(JSONController.frameRate, "frameRate")
 
