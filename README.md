@@ -18,9 +18,7 @@ The [Contribution Policy](#contribution-policy) should be consulted when contrib
 Then you have to generate the **distribution** folder with webpack.
 Please refer to [this](ThreeClient/README.md#generate-distribution-folder)
 
-
 [Start the server](Server/README.md#instructions)
-
 
 ## Contribution Policy
 Please follow this commandments :

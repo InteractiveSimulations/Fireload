@@ -6,6 +6,11 @@ This is the Server-Side of the **fireløad** project.
 
 Add the Blender executable to your $PATH varibale, so blender can be started from CLI.
 
+## Prerequisite
+- install [Python](https://www.python.org/downloads/) 
+- install [Basis Universal](https://github.com/BinomialLLC/basis_universal)
+- install [Blender](https://www.blender.org/)
+
 ## Instructions
 
 1. Run the server: 
