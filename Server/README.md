@@ -10,6 +10,7 @@ Add the Blender executable to your $PATH varibale, so blender can be started fro
 - install [Python](https://www.python.org/downloads/) 
 - install [Basis Universal](https://github.com/BinomialLLC/basis_universal)
 - install [Blender](https://www.blender.org/)
+- install [Python OpenCV](https://pypi.org/project/opencv-python/)
 
 ## Instructions
 
