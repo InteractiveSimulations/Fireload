@@ -6,8 +6,6 @@ The work and development progress of the **fireløad** project can be found in t
 > The client will then incorporate the Fire Simulation into the scene he has created.
 > Our goal is to be able to perform a simulation at a very low cost while still maintaining a high level of quality for our clients.
 
-The [Contribution Policy](#contribution-policy) should be consulted when contributing to this project
-
 ## Getting Started
 ```bash
     # clone this repo
