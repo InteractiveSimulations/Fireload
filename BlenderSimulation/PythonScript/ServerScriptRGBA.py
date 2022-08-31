@@ -1,3 +1,4 @@
+#Authors: Jonas Viel, Maximilian Berghaus
 import bpy
 import math
 context = bpy.context
@@ -6,10 +7,8 @@ import json
 import os
 from pathlib import Path
 
-#Fire properties müssen noch angepasst werden
-#Wir brauchen einen extra punkt im json welche objekte entfernt werden sollen 
+
 ############################################################################################
-#gerade funktioniert es nur ein einzelnes Objekt mit dem json hinzuzufügen 
 #open a JSON in Python 
 fileDirectory = os.path.dirname(__file__)               #directory of the Blender file
 parentDirectory1 = os.path.dirname(fileDirectory)       #directory --> FireSimulation
@@ -46,43 +45,34 @@ with open(dirJson, 'r') as json_file:
 
 ############################################################################################
 
-#legt die resolution des renderings fest
+#set the resolution of the rendering
 bpy.data.scenes["Scene"].render.resolution_x = resolutionX
 bpy.data.scenes["Scene"].render.resolution_y = resolutionY
 
-#legt die Länge der Animation fest
+#sets the length of the animation
 bpy.data.scenes["Scene"].frame_start = StartFrame
 bpy.data.scenes["Scene"].frame_end = EndFrame
 
 #Framerate
 bpy.context.scene.render.fps = Framerate #Frame Rate must be custom
 
-#Renderformat
+
 #directorys of the folder
 #Rednder images
-#dirRenderImages = os.path.join(parentDirectory4,"Fireload","BlenderSimulation","RenderImages","")
 dirRenderImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","")
 #zBuffer images
 dirZBufferImages = os.path.join(parentDirectory4,"Fireload","dist","assets","simulations","zBuffer","")
 
-#create all Nodes for the compositing
-#bpy.context.area.ui_type = 'CompositorNodeTree'
-scene = bpy.context.scene
-#nodetree = scene.node_tree
-#NodeNormalize = nodetree.nodes.new("CompositorNodeNormalize")
-#NodeRLayers = nodetree.nodes.new("CompositorNodeRLayers")
-#NodeComposite = nodetree.nodes.new("CompositorNodeComposite")
-#OutputFile = nodetree.nodes.new("CompositorNodeOutputFile")
-#link the right nodes
-#nodetree.links.new(NodeRLayers.outputs["Image"], NodeComposite.inputs[0])
+
 
 #change the output directory of every node
+scene = bpy.context.scene
 for scene in bpy.data.scenes:
     for node in scene.node_tree.nodes:
         if node.type == 'OUTPUT_FILE':
             node.base_path = dirZBufferImages
 
-
+#set the properties for the scene
 bpy.data.scenes["Scene"].render.filepath = dirRenderImages          #change the output directory of the renders images
 bpy.data.scenes["Scene"].render.image_settings.file_format = 'PNG'
 bpy.data.scenes["Scene"].render.image_settings.color_mode = 'RGBA'
@@ -152,18 +142,21 @@ def set_size_SD(name, x, y, z): #läuft nur wenn die SmokeDomain ausgewählt ist
     #bpy.ops.fluid.bake_data()
     bpy.ops.object.mode_set(mode = 'OBJECT')
 
+#set the location of an object by name of the object and values for x,y,z
 def set_location(name, x, y, z):
     obj = bpy.context.scene.objects[name]
     obj.location[0]=x 
     obj.location[1]=y
     obj.location[2]=z
     bpy.ops.object.transform_apply(location=True)
-    
+
+#set the scale of an object by name of the object and values for x,y,z    
 def set_scale(name, x, y, z):
     obj = bpy.context.scene.objects[name]
     obj.scale = (x, y, z)
     bpy.ops.object.transform_apply(scale=True)
-    
+
+#set the rotation of an object by name of the object and values for x,y,z    
 def set_rotation(name, x, y, z):
     obj = bpy.context.scene.objects[name]
     #Angle calculation
@@ -185,7 +178,7 @@ def add_obj(object):
        
     elif object == "Suzanne":
         bpy.ops.mesh.primitive_monkey_add(enter_editmode=False)
-        
+    #chair as an example for gltf     
     elif object == "Chair":
         chairPath = os.path.join(parentDirectory4,"Fireload", "BlenderSimulation", "Objects", "chair.gltf")  
         bpy.ops.import_scene.gltf( filepath = chairPath )
@@ -207,16 +200,19 @@ def add_obj(object):
     #bpy.data.collections['Collection'].objects.unlink(bpy.context.object)
 
 
-def del_obj(object):                                            #deletes a Object by name(Stirng)
+#deletes a Object by name(Stirng)
+def del_obj(object):                                           
     objs = bpy.data.objects
     objs.remove(objs[object], do_unlink=True)
-    
+
+#delete all objects in the FireEmitters Collection
 def del_all_objects():      
     for obj in bpy.data.collections['FireEmitters'].objects:    #delete all objects in the FireEmitters Collection
         bpy.data.objects.remove(obj)
     for obj in bpy.data.collections['Forces'].objects:          #delete all objects in the Forces Collection
         bpy.data.objects.remove(obj)
 
+#adding a force field as wind that influence the fire
 def add_wind(pos,rot,sca):
     bpy.ops.mesh.primitive_circle_add(enter_editmode=False)
     
@@ -236,6 +232,7 @@ def add_wind(pos,rot,sca):
     bpy.context.object.field.shape = 'POINT'
     bpy.context.object.field.strength = 1
 
+#funcition to change fire evolve to imitate the behavior of different materials 
 def fire_evolve(material):
     #change the fuel in the burning object
     for obj in bpy.data.collections['FireEmitters'].objects:
@@ -249,7 +246,8 @@ def fire_evolve(material):
         
         bpy.data.collections['Collection'].objects["SmokeDomain"].modifiers["Fluid"].domain_settings.dissolve_speed = 2
         bpy.data.collections['Collection'].objects["SmokeDomain"].keyframe_insert(data_path = 'modifiers["Fluid"].domain_settings.dissolve_speed', frame = 1)
-
+        
+        #wood as an example material
         if material == "wood":
             bpy.context.scene.frame_set(120)
             obj.modifiers["Fluid"].flow_settings.surface_distance = 1 
@@ -267,12 +265,13 @@ def fire_evolve(material):
             bpy.data.collections['Collection'].objects["SmokeDomain"].keyframe_insert(data_path = 'modifiers["Fluid"].domain_settings.dissolve_speed', frame = 200)
         
 #set_size_SD("SmokeDomain", SmokeDomain_size[0], SmokeDomain_size[1], SmokeDomain_size[2])
+
 del_all_objects() 
 add_obj(type)
 set_scale(type, scale[0], scale[1], scale[2])
 set_location(type, location[0], location[1], location[2])
 set_rotation(type, rotation[0], rotation[1], rotation[2])
-
+fire_evolve(material)
 cameraDistancePlane = 50*(((SmokeDomain_size*1000)/(-36))+1) /1000
 print(cameraDistancePlane)
 set_location("Camera_F", cameraDistancePlane-SmokeDomain_size/2 ,0,SmokeDomain_size/2)
@@ -284,6 +283,10 @@ set_location("Camera_ZL", 0,cameraDistancePlane-SmokeDomain_size/2,SmokeDomain_s
 set_location("Camera_ZR", 0,-cameraDistancePlane+SmokeDomain_size/2,SmokeDomain_size/2)
 set_location("Camera_ZB", -cameraDistancePlane+SmokeDomain_size/2,0,SmokeDomain_size/2)
 
+
+if forceId > 0:
+    add_wind(forceLocation,forceRotation,forceScale)
+    
 #get the view and projection matrix
 def modelViewMatrix(letter):
     modelViewMatrix = bpy.context.scene.objects["Camera_"+letter].matrix_world
@@ -325,37 +328,12 @@ with open(filename, "w") as file:
 # END creating json for matrix transfer
 
 
-if forceId > 0:
-    add_wind(forceLocation,forceRotation,forceScale)
-
-fire_evolve(material)
-
-#Wenn das Script läuft immer in einem EXTRA Ordner speichern!!!
-
-#refresh the cache (so every Objects is burning)
-#bpy.data.objects["SmokeDomain"].select_set(True)
-#bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'ALL'
-#bpy.data.objects["SmokeDomain"].modifiers["Fluid"].domain_settings.cache_type = 'REPLAY'
-#bpy.data.objects["SmokeDomain"].select_set(False)
-
 set_size_SD("SmokeDomain", SmokeDomain_size, SmokeDomain_size, SmokeDomain_size)
-#bpy.ops.screen.animation_play()
 
-#currentFrame = bpy.data.scenes[0].frame_current
-#print(currentFrame)
 
 #baking the scene
 bpy.ops.nla.bake(frame_start=StartFrame, frame_end=EndFrame, bake_types={'OBJECT'})
 
-#while currentFrame < 120:
-#    currentFrame = bpy.data.scenes[0].frame_current
-#    print(currentFrame)
-    #bpy.ops.screen.animation_play()
-    
-#starts the render for the RGBA Images
-#bpy.ops.render.render(animation=True) 
-
-#bpy.context.area.ui_type = 'TEXT_EDITOR'
 
 
 
