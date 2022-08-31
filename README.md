@@ -15,7 +15,7 @@ The work and development progress of the **fireløad** project can be found in t
 ```
 
 ### Prerequisite
-- [Python](https://www.python.org/)
+- [Python >= 3.8](https://www.python.org/)
 - [Blender](https://www.blender.org/)
 
 Make sure that blender is on your `$PATH` variable.
@@ -40,6 +40,6 @@ pip install opencv-python Pillow websockets
 
 Then just run the main script:
 ```bash
-python fireload.py
-python fireload.py -r # regenerates the distribution folder!
+python3 fireload.py
+python3 fireload.py -r # regenerates the distribution folder!
 ```
