@@ -27,13 +27,13 @@ cd third-party/basis_universal
 mkdir build; cd build
 cmake -DSSE=ON ..
 cmake --build .
-cmake --install . #this maybe need root permission
+cmake --install . #this maybe needs root permission
 ```
 2. Make sure `basisu` is on your path variable
 
 Install the python dependencies :
 ```python
-pip install opencv-python Pillow
+pip install opencv-python Pillow websockets
 ```
 
 ### Running
