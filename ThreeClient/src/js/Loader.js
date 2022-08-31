@@ -679,8 +679,8 @@ export function loadObjectAsOnly(objectController, scene, objects){
                     flatShading: false,
                 })
                 gltf.scene.name = objectController.objectType.toLowerCase();
-                gltf.scene.position.set(0, 0.5, 0);
-                gltf.scene.scale.set(0.5, 0.5, 0.5)
+                gltf.scene.position.set(0, 1, 0);
+                gltf.scene.scale.set(1, 1, 1)
 	    	    scene.add( gltf.scene );
                 objects.elements.push(gltf.scene);
 	        },
