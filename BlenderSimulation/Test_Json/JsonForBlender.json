@@ -3,7 +3,7 @@
   "frameRate": 30,
   "startFrame": 1,
   "endFrame": 180,
-  "resolutionXY": 1024,
+  "resolutionXY": 512,
   "fireResolution": 30,
   "material": "wood",
   "smokeDomainSizeXYZ": 10,
