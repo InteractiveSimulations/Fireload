@@ -1,0 +1,3 @@
+[submodule "third-party/basis_universal"]
+	path = third-party/basis_universal
+	url = https://github.com/BinomialLLC/basis_universal

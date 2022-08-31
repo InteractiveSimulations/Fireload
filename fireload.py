@@ -4,6 +4,9 @@ import subprocess
 import time
 import atexit
 
+# @author Dennis Oberst
+# This scripts should make it more convenient to run everything :)
+
 all_processes = []
 
 print("-----------WELCOME TO FIRELØAD-----------")
@@ -26,7 +29,7 @@ if not os.path.exists("./dist") or b_regenerate:
 
 os.chdir("Server/src")
 print("starting the server as background proc!")
-all_processes.append(subprocess.Popen(["python3", "server.py"]))
+all_processes.append(subprocess.Popen(["python", "server.py"]))
 print( "SERVER PID: " + str(all_processes[0].pid))
 
 def cleanup():
@@ -38,4 +41,4 @@ atexit.register(cleanup)
 
 time.sleep(0.5)
 print("starting the websocket")
-p2 = subprocess.run("python3 websocket.py", shell=True)
+p2 = subprocess.run("python websocket.py", shell=True)

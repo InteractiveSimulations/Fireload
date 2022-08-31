@@ -9,15 +9,37 @@ The work and development progress of the **fireløad** project can be found in t
 ## Getting Started
 ```bash
     # clone this repo
-    git clone https://github.com/InteractiveSimulations/Fireload.git
+    git clone --recursive https://github.com/InteractiveSimulations/Fireload.git
     # or ssh
-    git clone git@github.com:InteractiveSimulations/Fireload.git
-```
-Then you have to install the dependencies required by npm and then generate the distribution folder: 
-```bash
-    cd ThreeClient
-    npm install
-    npm run build
+    git clone --recursive git@github.com:InteractiveSimulations/Fireload.git
 ```
 
-To start the server please refer to [this](Server/README.md)
+### Prerequisite
+- [Python](https://www.python.org/)
+- [Blender](https://www.blender.org/)
+
+Make sure that blender is on your `$PATH` variable.
+
+### Dependencies
+1. Install basis universal
+```bash
+cd third-party/basis_universal
+mkdir build; cd build
+cmake -DSSE=ON ..
+cmake --build .
+cmake --install . #this maybe need root permission
+```
+2. Make sure `basisu` is on your path variable
+
+Install the python dependencies :
+```python
+pip install opencv-python Pillow
+```
+
+### Running
+
+Then just run the main script:
+```bash
+python fireload.py
+python fireload.py -r # regenerates the distribution folder!
+```
