@@ -7,7 +7,7 @@ import * as SCRIPT from './script'
 
 
 /*!
-    @authors Dennis Oberst, David Palm, Maximilian Berghaus, Jonas Viel
+    @authors Dennis Oberst, David Palm, Maximilian Berghaus, Jonas Viel, Steffen-Sascha Stein
     Handles all interactions with the scene and the controlling of the fire simulation.
     The session handling also gets managed here.
  */

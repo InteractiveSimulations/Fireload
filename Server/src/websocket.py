@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+"""websocket.py: Starts a websocket server which handles the exchange of simulation data and requests."""
+__author__ = "Steffen-Sascha Stein, Nataliya Elchina"
 
 import websockets
 import json
@@ -45,6 +47,6 @@ async def main():
 
 
 if __name__ == "__main__":
-    print("Start websocket server.")
+    print("Websocket server started on port 8001.")
     #asyncio.run(handler())
     asyncio.run(main())

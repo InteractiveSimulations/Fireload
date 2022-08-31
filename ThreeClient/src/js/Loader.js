@@ -8,7 +8,11 @@ import * as SCRIPT from './script'
 export let atlasFilenames = [];
 
 /*!
- *  @authors Dennis Oberst, David Palm
+ *  @authors Dennis Oberst, David Palm, Steffen-Sascha Stein, Nataliya Elchina
+ *  Loading functions for textures and 3D objects.
+*/
+
+/**
  * Loads a new or updates the parameters of a current floor texture.
  * Texture formats are .png or if compression is enabled .ktx2.
  * @param {object}     floorController - holds the current floor parameters.

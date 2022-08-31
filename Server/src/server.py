@@ -1,3 +1,6 @@
+"""server.py: Starts a simple https server which serves the web application."""
+__author__ = "Steffen-Sascha Stein, Nataliya Elchina, Dennis Oberst"
+
 import http.server
 import socketserver
 

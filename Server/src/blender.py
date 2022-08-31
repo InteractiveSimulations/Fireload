@@ -1,3 +1,6 @@
+"""blender.py: Starts blender process."""
+__author__ = "Steffen-Sascha Stein, Nataliya Elchina, Max Berghaus, Jonas Viel"
+
 import subprocess
 import os
 import json

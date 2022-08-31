@@ -7,7 +7,7 @@ import * as SCRIPT from './script'
 const vertex   = require(         '../glsl/vertex.glsl'          );
 const fragment = require(         '../glsl/fragment.glsl'        );
 /*!
-    @author David Palm,
+    @author David Palm, Steffen-Sascha Stein, Nataliya Elchina
     This class controls the visualization of the fire simulation provided through images.
  */
 export default class Fire{

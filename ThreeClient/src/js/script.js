@@ -7,7 +7,7 @@ import OrbitController from './OrbitController.js';
 import Fire from './Fire';
 import {FontLoader, TextGeometry} from "three";
 /*!
- *  @authors David Palm, Dennis Oberst
+ *  @authors David Palm, Dennis Oberst, Steffen-Sascha Stein
  *  Entry point of the application. Setup of the scene and rendering gets managed here.
  */
 window.addEventListener('resize', onWindowResize, false);

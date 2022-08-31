@@ -1,3 +1,6 @@
+"""atlasing.py: Create texture atlases and start texture compression if enabled."""
+__author__ = "Steffen-Sascha Stein, Nataliya Elchina"
+
 import math
 import subprocess
 

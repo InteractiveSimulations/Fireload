@@ -4,7 +4,7 @@ import * as SCRIPT from './script'
 import * as LOADER from './Loader'
 
 /*!
- *  @authors Steffen Stein
+ *  @authors Steffen-Sascha Stein, Nataliya Elchina
  *  Handles the communication between the server and the client.
  */
 

@@ -1,7 +1,7 @@
 precision highp float;
 
 /*!
-  @authors Steffen Stein, David Palm, Nataliya Elchina
+  @authors Steffen-Sascha Stein, David Palm, Nataliya Elchina
   Parallax Mapping fragment shader.
  */
 

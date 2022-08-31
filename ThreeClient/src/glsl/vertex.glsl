@@ -1,7 +1,7 @@
 varying vec2 vTexCoords;
 
 /*!
-  @authors Steffen Stein, David Palm
+  @authors Steffen-Sascha Stein, David Palm
   Parallax Mapping vertex shader.
  */
 
