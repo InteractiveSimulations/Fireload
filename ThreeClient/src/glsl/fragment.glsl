@@ -21,6 +21,7 @@ struct SmokeDomain {
 };
 
 struct Fire {
+
     SmokeDomain smokeDomain;
     sampler2D atlasesRGBA[4];
     sampler2D atlasesZ[4];
@@ -28,6 +29,7 @@ struct Fire {
     int resolutionXY;
     int atlasResolutionXY;
     int numberOfAtlases;
+
 };
 
 struct Camera {
@@ -41,19 +43,23 @@ struct Camera {
 };
 
 struct Spaces {
+
     vec2 window;
     vec4 ndc;
     vec4 camera;
     vec4 world;
     vec3 texture;
     vec3 atlas;
+
 };
 
 struct Ray {
+
     Spaces origin;
     Spaces end;
     vec3   direction;
     vec3   directionInv;
+
 };
 
 struct Intersection {
@@ -61,6 +67,7 @@ struct Intersection {
     bool hit;
     vec3 enter;
     vec3 exit;
+
 };
 
 varying vec2 vTexCoords;
@@ -120,50 +127,6 @@ vec2 convertToAtlasSpace( vec2 texCoords, int frameNumber, int resolution ){
     atlasCoord.y = ( texCoords.y / imagesPerDimension ) + ( row * imageSteps );
 
     return atlasCoord;
-}
-
-Intersection intersectAABB( Ray ray ) {
-
-    float t_min, t_max, t_y_min, t_y_max, t_z_min, t_z_max;
-
-    vec3 bounds[2];
-    bounds[0] = uFire.smokeDomain.min;
-    bounds[1] = uFire.smokeDomain.max;
-
-    ivec3 sign;
-    sign.x = int( ray.directionInv.x < 0.0 );
-    sign.y = int( ray.directionInv.y < 0.0 );
-    sign.z = int( ray.directionInv.z < 0.0 );
-
-    t_min   = ( bounds[ sign.x     ].x - ray.origin.world.x ) * ray.directionInv.x;
-    t_max   = ( bounds[ 1 - sign.x ].x - ray.origin.world.x ) * ray.directionInv.x;
-
-    t_y_min = ( bounds[ sign.y     ].y - ray.origin.world.y ) * ray.directionInv.y;
-    t_y_max = ( bounds[ 1 - sign.y ].y - ray.origin.world.y ) * ray.directionInv.y;
-
-    if ( t_min > t_y_max  || t_y_min > t_max )
-        return Intersection( false, vec3(0.0), vec3(0.0) );
-
-    if ( t_y_min > t_min )
-        t_min = t_y_min;
-    if ( t_y_max < t_max )
-        t_max = t_y_max;
-
-    t_z_min = ( bounds[ sign.z     ].z - ray.origin.world.z ) * ray.directionInv.z;
-    t_z_max = ( bounds[ 1 - sign.z ].z - ray.origin.world.z ) * ray.directionInv.z;
-
-    if ( t_min > t_z_max || t_z_min > t_max )
-        return Intersection( false, vec3(0.0), vec3(0.0) );
-
-    if ( t_z_min > t_min )
-        t_min = t_z_min;
-    if ( t_z_max < t_max )
-        t_max = t_z_max;
-
-    vec3 intersectionStart = ray.origin.world.xyz + ray.direction * t_min;
-    vec3 intersectionEnd = ray.origin.world.xyz + ray.direction * t_max;
-
-    return Intersection( true, intersectionStart, intersectionEnd );
 }
 
 vec2 intersectDepthMap( inout vec3 hitpoint_ws, Intersection intersection, sampler2D depthMap, int perspective, int steps, inout bool hit )
@@ -235,9 +198,6 @@ vec2 intersectDepthMap( inout vec3 hitpoint_ws, Intersection intersection, sampl
 
         ray.direction           = ray.end.texture - ray.origin.texture;
 
-//        intersection.texture    = ray.origin.texture + alpha * ray.direction;
-//        intersection.texture.z  = currentRayDepth;
-
         intersection.texture.xy = finalTexCoords;
         intersection.texture.z  = beforeDepth * weight + currentRayDepth * ( 1.0 - weight );
 
@@ -246,7 +206,7 @@ vec2 intersectDepthMap( inout vec3 hitpoint_ws, Intersection intersection, sampl
 
         hitpoint_ws             = Cam2Ws( intersection.camera.xyz, uCaptureCameras[ perspective ].viewInv       );
 
-        return currentTexCoords.xy;;
+        return finalTexCoords.xy;;
 
     }
     else
@@ -257,33 +217,36 @@ vec2 intersectDepthMap( inout vec3 hitpoint_ws, Intersection intersection, sampl
         return vec2(-1,-1);
 
     }
+
 }
 
 
-//Intersection intersectAABB( Ray ray ) {
-//
-//    vec3 rayOriginCompute  = ray.origin.world.xyz - uFire.smokeDomain.center;
-//    vec3 t_min             = ( -uFire.smokeDomain.radius - rayOriginCompute ) * ray.directionInv;
-//    vec3 t_max             = (  uFire.smokeDomain.radius - rayOriginCompute ) * ray.directionInv;
-//
-//    float t0 = maxComponent( min( t_min, t_max ) );
-//    float t1 = minComponent( max( t_min, t_max ) );
-//
-//    // Compute the intersection distance
-//    float distance = (t0 > 0.0) ? t0 : t1;
-//
-//    vec3 enter = ( ray.origin.world.xyz + ray.direction * t0);
-//    vec3 exit  = ( ray.origin.world.xyz + ray.direction * t1);
-//
-//    bool hit = (t0 <= t1) && (distance > 0.0);
-//
-//    return Intersection( hit, enter, exit);
-//
-//}
+Intersection intersectAABB( Ray ray ) {
+
+    vec3 rayOriginCompute  = ray.origin.world.xyz - uFire.smokeDomain.center;
+    vec3 t_min             = ( -uFire.smokeDomain.radius - rayOriginCompute ) * ray.directionInv;
+    vec3 t_max             = (  uFire.smokeDomain.radius - rayOriginCompute ) * ray.directionInv;
+
+    float t0 = maxComponent( min( t_min, t_max ) );
+    float t1 = minComponent( max( t_min, t_max ) );
+
+    // Compute the intersection distance
+    float distance = (t0 > 0.0) ? t0 : t1;
+
+    vec3 enter = ( ray.origin.world.xyz + ray.direction * t0);
+    vec3 exit  = ( ray.origin.world.xyz + ray.direction * t1);
+
+    bool hit = (t0 <= t1) && (distance > 0.0);
+
+    return Intersection( hit, enter, exit);
+
+}
 
 void main() {
 
     gl_FragDepth = gl_FragCoord.z;
+
+    // START determine camera ray for the current fragment in world space ---------------------------------------------
 
     Ray ray;
     ray.origin.window  = gl_FragCoord.xy;
@@ -298,7 +261,12 @@ void main() {
     ray.direction      = normalize( ray.origin.world.xyz - cameraPosition.xyz );
     ray.directionInv   = 1.0 / ray.direction;
 
+    // END determine camera ray for the current fragment in world space -----------------------------------------------
+
+    // smoke domain (AABB) intersection
     Intersection intersection = intersectAABB( ray );
+
+    // START depth map intersection -----------------------------------------------------------------------------------
 
     int  steps         = 64;
     vec2 newTexCoords  = convertToAtlasSpace( vTexCoords, uFire.atlasFrame, uFire.resolutionXY );
@@ -307,25 +275,32 @@ void main() {
 
     if ( intersection.hit ) {
 
-        float epsilon = 0.00001;
-        int   perspective;
+        // START ray dependent perspective determination --------------------------------------------------------------
 
-//                if ( abs( intersection.enter.z - uFire.smokeDomain.max.z ) < epsilon ) {
-//                    perspective = 0;
-//                    newTexCoords = intersectDepthMap( hitPointWorld, intersection, uFire.atlasesZ[0], perspective, steps, hit );
-//                }
-//                else if ( abs( intersection.enter.x - uFire.smokeDomain.max.x ) < epsilon ) {
-//                    perspective = 1;
-//                    newTexCoords = intersectDepthMap( hitPointWorld, intersection, uFire.atlasesZ[1], perspective, steps, hit );
-//                }
-//                else if ( abs( intersection.enter.z - uFire.smokeDomain.min.z ) < epsilon ) {
-//                    perspective = 2;
-//                    newTexCoords = intersectDepthMap( hitPointWorld, intersection, uFire.atlasesZ[2], perspective, steps, hit );
-//                }
-//                else if ( abs( intersection.enter.x - uFire.smokeDomain.min.x ) < epsilon ) {
-//                    perspective = 3;
-//                    newTexCoords = intersectDepthMap( hitPointWorld, intersection, uFire.atlasesZ[3], perspective, steps, hit );
-//                }
+//        float epsilon = 0.00001;
+//        int   perspective;
+//
+//        if ( abs( intersection.enter.z - uFire.smokeDomain.max.z ) < epsilon ) {
+//            perspective = 0;
+//            newTexCoords = intersectDepthMap( hitPointWorld, intersection, uFire.atlasesZ[0], perspective, steps, hit );
+//        }
+//        else if ( abs( intersection.enter.x - uFire.smokeDomain.max.x ) < epsilon ) {
+//            perspective = 1;
+//            newTexCoords = intersectDepthMap( hitPointWorld, intersection, uFire.atlasesZ[1], perspective, steps, hit );
+//        }
+//        else if ( abs( intersection.enter.z - uFire.smokeDomain.min.z ) < epsilon ) {
+//            perspective = 2;
+//            newTexCoords = intersectDepthMap( hitPointWorld, intersection, uFire.atlasesZ[2], perspective, steps, hit );
+//        }
+//        else if ( abs( intersection.enter.x - uFire.smokeDomain.min.x ) < epsilon ) {
+//            perspective = 3;
+//            newTexCoords = intersectDepthMap( hitPointWorld, intersection, uFire.atlasesZ[3], perspective, steps, hit );
+//        }
+
+        // END ray dependent perspective determination ----------------------------------------------------------------
+
+
+        // START viewer dependent perspective determination -----------------------------------------------------------
 
         switch (uCamera.perspective) {
             case 0:
@@ -342,11 +317,17 @@ void main() {
                 break;
         }
 
+        // END viewer dependent perspective determination -------------------------------------------------------------
+
+
+        // END depth map intersection ---------------------------------------------------------------------------------
+
         if (hit)
         {
 
             vec4 rgbaColor;
 
+            // for ray dependent perspective determination: uCamera.perspective -> perspective
             switch (uCamera.perspective) {
                 case 0:
                     rgbaColor = texture2D( uFire.atlasesRGBA[0], newTexCoords.xy );
@@ -364,10 +345,14 @@ void main() {
 
             gl_FragColor = rgbaColor;
 
+            // START calculate new fragment depth for correct order of concealment (depth test) -----------------------
+
             vec4 hit_ndc = uCamera.projection * uCamera.view * vec4( hitPointWorld, 1.0 );
             hit_ndc     /= hit_ndc.w;
             hit_ndc      = ( hit_ndc + 1.0 ) * 0.5;
             gl_FragDepth = hit_ndc.z;
+
+            // END calculate new fragment depth for correct order of concealment (depth test) -------------------------
 
         } else
         discard;
