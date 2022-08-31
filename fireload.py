@@ -8,9 +8,9 @@ import atexit
 # @author Dennis Oberst
 # This scripts should make it more convenient to run everything :)
 
-all_processes = []
 
 print("-----------WELCOME TO FIRELØAD-----------")
+all_processes = []
 b_regenerate = False
 if len(sys.argv) == 2:
     b_regenerate = sys.argv[1] == "-r"
