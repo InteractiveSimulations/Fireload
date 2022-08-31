@@ -7,7 +7,8 @@ import * as SCRIPT from './script'
 // holds all the atlas filenames for server download
 export let atlasFilenames = [];
 
-/**
+/*!
+ *  @authors Dennis Oberst, David Palm
  * Loads a new or updates the parameters of a current floor texture.
  * Texture formats are .png or if compression is enabled .ktx2.
  * @param {object}     floorController - holds the current floor parameters.

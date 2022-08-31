@@ -3,6 +3,11 @@ export let simStatus;
 import * as SCRIPT from './script'
 import * as LOADER from './Loader'
 
+/*!
+ *  @authors Steffen Stein
+ *  Handles the communication between the server and the client.
+ */
+
 // informs the client, that the websocket connection couldn't be established
 function showMessage(message) {
     window.setTimeout(() => window.alert(message), 50);

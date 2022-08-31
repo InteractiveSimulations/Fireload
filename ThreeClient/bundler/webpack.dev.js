@@ -1,8 +1,10 @@
 const { merge } = require('webpack-merge')
 const path = require('path')
 const commonConfiguration = require('./webpack.common.js')
-//const ip = require('internal-ip')
-//const portFinderSync = require('portfinder-sync')
+/*!
+  @author Dennis Oberst
+  Webpack dev server.
+ */
 
 const infoColor = (_message) =>
 {

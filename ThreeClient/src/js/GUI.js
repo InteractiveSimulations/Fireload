@@ -6,7 +6,11 @@ import {JoinNode} from "three/examples/jsm/nodes/utils/JoinNode";
 import * as SCRIPT from './script'
 
 
-//gui class takes in scene, objects and floor
+/*!
+    @authors Dennis Oberst, David Palm, Maximilian Berghaus, Jonas Viel
+    Handles all interactions with the scene and the controlling of the fire simulation.
+    The session handling also gets managed here.
+ */
 export default class UI{
     #objects;
     #name_controller;

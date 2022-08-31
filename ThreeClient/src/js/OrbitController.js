@@ -2,6 +2,10 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 
+/*!
+ *  @authors David Palm, Dennis Oberst
+ *  Handles the orbit view of the scene.
+ */
 export default class OrbitController{
     constructor(camera, domElement, scene, objects, selected){
         //setting up orbit controls

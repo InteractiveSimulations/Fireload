@@ -6,7 +6,10 @@ import FirstPersonController from './FirstPersonController';
 import OrbitController from './OrbitController.js';
 import Fire from './Fire';
 import {FontLoader, TextGeometry} from "three";
-
+/*!
+ *  @authors David Palm, Dennis Oberst
+ *  Entry point of the application. Setup of the scene and rendering gets managed here.
+ */
 window.addEventListener('resize', onWindowResize, false);
 window.addEventListener('pointerdown', onMouseDown, false);
 window.addEventListener('pointerup', onMouseUp, false);

@@ -3,6 +3,10 @@ import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockCont
 
 // let perspective;
 
+/*!
+    @author David Palm, Dennis Oberst
+    Handles the First Person view
+ */
 export default class FirstPersonController{
     constructor(camera, document){
         document.body.requestPointerLock();

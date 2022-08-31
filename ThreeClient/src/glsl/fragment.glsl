@@ -1,5 +1,10 @@
 precision highp float;
 
+/*!
+  @authors Steffen Stein, David Palm, Nataliya Elchina
+  Parallax Mapping fragment shader.
+ */
+
 struct Window {
 
     vec2  resolution;
@@ -371,4 +376,3 @@ void main() {
     discard;
 
 }
-

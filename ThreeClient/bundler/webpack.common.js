@@ -4,6 +4,11 @@ const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
 const webpack = require('webpack')
 
+/*!
+  @author Dennis Oberst
+  Webpack base settings.
+ */
+
 module.exports = {
     entry: path.resolve(__dirname, '../src/js/script.js'),
     output:

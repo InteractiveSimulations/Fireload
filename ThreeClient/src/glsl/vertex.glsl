@@ -1,5 +1,10 @@
 varying vec2 vTexCoords;
 
+/*!
+  @authors Steffen Stein, David Palm
+  Parallax Mapping vertex shader.
+ */
+
 void main(){
 
     vTexCoords = uv;

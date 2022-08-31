@@ -2,7 +2,7 @@
   "compression": false,
   "frameRate": 30,
   "startFrame": 1,
-  "endFrame": 180,
+  "endFrame": 1,
   "resolutionXY": 512,
   "fireResolution": 30,
   "material": "wood",
